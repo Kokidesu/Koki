@@ -18,7 +18,7 @@ PANEL=(0xE8,0xEC,0xF1); FAINT=(0x1C,0x3A,0x56); DARKFOOT=(0x90,0x9C,0xAA)
 SW_IN, SH_IN = 13.333, 7.5
 PAGE_TOTAL=20
 KEYBAND_Y, KEYBAND_H = 6.32, 0.62
-FONT_SCALE=1.10   # global text enlargement
+FONT_SCALE=1.18   # global text enlargement
 
 # ================= SPEC BUILDERS =================
 def slide(bg=WHITE): return {"bg":bg, "el":[]}
