@@ -18,6 +18,7 @@ PANEL=(0xE8,0xEC,0xF1); FAINT=(0x1C,0x3A,0x56); DARKFOOT=(0x90,0x9C,0xAA)
 SW_IN, SH_IN = 13.333, 7.5
 PAGE_TOTAL=20
 KEYBAND_Y, KEYBAND_H = 6.32, 0.62
+FONT_SCALE=1.10   # global text enlargement
 
 # ================= SPEC BUILDERS =================
 def slide(bg=WHITE): return {"bg":bg, "el":[]}
@@ -295,7 +296,7 @@ def build_pptx(path):
                     p=tf.paragraphs[0] if i==0 else tf.add_paragraph()
                     p.alignment=al; p.line_spacing=ls
                     r=p.add_run(); r.text=line
-                    r.font.size=Pt(size); r.font.bold=bold; r.font.italic=italic
+                    r.font.size=Pt(size*FONT_SCALE); r.font.bold=bold; r.font.italic=italic
                     r.font.color.rgb=to_rgb(color); r.font.name="Times New Roman"
             elif kind=="bullets":
                 _,x,y,w,h,items_,size,color,gap,bold_lead=el
@@ -307,13 +308,13 @@ def build_pptx(path):
                     if bold_lead and ": " in item:
                         lead,rest=item.split(": ",1)
                         r1=p.add_run(); r1.text="•  "+lead+": "
-                        r1.font.size=Pt(size); r1.font.bold=True
+                        r1.font.size=Pt(size*FONT_SCALE); r1.font.bold=True
                         r1.font.color.rgb=to_rgb(NAVY); r1.font.name="Times New Roman"
                         r2=p.add_run(); r2.text=rest
-                        r2.font.size=Pt(size); r2.font.color.rgb=to_rgb(color); r2.font.name="Times New Roman"
+                        r2.font.size=Pt(size*FONT_SCALE); r2.font.color.rgb=to_rgb(color); r2.font.name="Times New Roman"
                     else:
                         r=p.add_run(); r.text="•  "+item
-                        r.font.size=Pt(size); r.font.color.rgb=to_rgb(color); r.font.name="Times New Roman"
+                        r.font.size=Pt(size*FONT_SCALE); r.font.color.rgb=to_rgb(color); r.font.name="Times New Roman"
     prs.save(path)
     return len(SLIDES)
 
@@ -350,6 +351,7 @@ def render_png(spec,path):
             _,x,y,w,h,c=el; d.rectangle([I(x),I(y),I(x+w),I(y+h)],fill=c)
         elif kind=="text":
             _,x,y,w,h,t,size,color,bold,italic,align,ls=el
+            size*=FONT_SCALE
             f=font(pt(size),bold,italic); maxw=I(w); lh=int(pt(size)*1.2*ls); yy=I(y)
             for raw in t.split("\n"):
                 for line in wrap(d,raw,f,maxw):
@@ -358,6 +360,7 @@ def render_png(spec,path):
                     d.text((xx,yy),line,font=f,fill=color); yy+=lh
         elif kind=="bullets":
             _,x,y,w,h,items_,size,color,gap,bold_lead=el
+            size*=FONT_SCALE
             f=font(pt(size)); fb=font(pt(size),bold=True); maxw=I(w); lh=int(pt(size)*1.18); yy=I(y)
             indent=I(x)+d.textlength("•  ",font=f)
             for it in items_:
