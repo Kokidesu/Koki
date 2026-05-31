@@ -20,6 +20,11 @@ PAGE_TOTAL=20
 KEYBAND_Y, KEYBAND_H = 6.32, 0.62
 FONT_SCALE=1.18   # global text enlargement
 
+import os
+ASSET=os.path.join(os.path.dirname(os.path.abspath(__file__)),"assets")
+ICON={n:os.path.join(ASSET,n+".png") for n in ("globe","scales","coins","doc")}
+ICON_IMG={}   # name -> in-memory RGBA PIL.Image (populated by generate_icons)
+
 # ================= SPEC BUILDERS =================
 def slide(bg=WHITE): return {"bg":bg, "el":[]}
 def rect(s,x,y,w,h,c): s["el"].append(("rect",x,y,w,h,c))
@@ -27,11 +32,18 @@ def text(s,x,y,w,t,size=18,color=SLATE,bold=False,italic=False,align="l",ls=1.0,
     s["el"].append(("text",x,y,w,h,t,size,color,bold,italic,align,ls))
 def bullets(s,x,y,w,items,size=18,color=SLATE,gap=6,bold_lead=False,h=5.0):
     s["el"].append(("bullets",x,y,w,h,items,size,color,gap,bold_lead))
+def image(s,x,y,w,h,name): s["el"].append(("image",x,y,w,h,name))
 
-def header(s,kicker,title):
+def header(s,kicker,title,icon=None):
     rect(s,0,0,SW_IN,1.25,NAVY); rect(s,0,1.25,SW_IN,0.06,ACCENT)
     text(s,0.6,0.20,11.5,kicker,13,ACCENT,bold=True)
-    text(s,0.6,0.52,12.1,title,26,WHITE,bold=True)
+    text(s,0.6,0.52,11.0,title,26,WHITE,bold=True)
+    if icon is None:
+        k=kicker.upper()
+        icon=("globe" if ("PART 1" in k or "OVERVIEW" in k) else
+              "scales" if ("PART 2" in k or "CONCLUSION" in k) else
+              "coins" if "PART 3" in k else "doc" if "PART 4" in k else None)
+    if icon: image(s,12.08,0.33,0.6,0.6,icon)
 
 def keyband(s,txt):
     """Bottom key-line band that mirrors the top header band for balance."""
@@ -44,13 +56,15 @@ def footer(s,n,dark=False):
     rect(s,0.6,7.2,0.45,0.035,ACCENT)
     text(s,11.4,7.02,1.33,f"{n:02d} / {PAGE_TOTAL}",11,col,align="r",h=0.3)
 
-def divider(num,title,subtitle):
+def divider(num,title,subtitle,icon=None):
     s=slide(NAVY)
     text(s,7.7,0.7,5.4,f"{num:02d}",210,FAINT,bold=True,align="c",h=6.0)
     text(s,0.9,2.55,8.0,f"SECTION {num} OF 4",13,ACCENT,bold=True)
     rect(s,0.9,2.95,3.0,0.06,ACCENT)
     text(s,0.9,3.18,8.2,title,33,WHITE,bold=True,h=1.6)
     text(s,0.9,4.35,7.8,subtitle,18,LIGHT,italic=True,ls=1.15,h=1.2)
+    icon=icon or {1:"globe",2:"scales",3:"coins",4:"doc"}.get(num)
+    if icon: image(s,10.55,4.6,1.85,1.85,icon)
     return s
 
 SLIDES=[]
@@ -63,10 +77,11 @@ text(s,1.0,2.5,11.3,"TRANSNATIONAL CRIME & THE LIMITS OF INTERNATIONAL JUSTICE",
 text(s,1.0,3.0,11.3,"What the Epstein Case Reveals",40,WHITE,bold=True,align="c",h=1.1)
 rect(s,(SW_IN-3)/2,4.12,3,0.06,ACCENT)
 text(s,1.0,4.4,11.3,"A case study in cross-border exploitation, jurisdiction, and accountability",18,LIGHT,italic=True,align="c")
+image(s,(SW_IN-1.25)/2,4.95,1.25,1.25,"globe")
 text(s,1.0,6.55,11.3,"Group Presentation  •  May 2026",13,DARKFOOT,align="c")
 
 # 2 — AGENDA
-s=add(slide()); header(s,"OVERVIEW","Our Central Question & Roadmap")
+s=add(slide()); header(s,"OVERVIEW","Our Central Question & Roadmap","globe")
 rect(s,0.6,1.65,12.13,1.2,LIGHT); rect(s,0.6,1.65,0.14,1.2,ACCENT)
 text(s,0.85,1.85,11.6,"Why is transnational sexual exploitation so hard to prosecute — and what do international law and cross-border cooperation need in order to work?",19,NAVY,bold=True,italic=True,ls=1.1,h=1.0)
 bullets(s,0.8,3.35,11.8,[
@@ -287,6 +302,11 @@ def build_pptx(path):
                 sp=sl.shapes.add_shape(MSO_SHAPE.RECTANGLE,Inches(x),Inches(y),Inches(w),Inches(h))
                 sp.fill.solid(); sp.fill.fore_color.rgb=to_rgb(c)
                 sp.line.fill.background(); sp.shadow.inherit=False
+            elif kind=="image":
+                _,x,y,w,h,name=el
+                from io import BytesIO
+                buf=BytesIO(); ICON_IMG[name].save(buf,"PNG"); buf.seek(0)
+                sl.shapes.add_picture(buf,Inches(x),Inches(y),Inches(w),Inches(h))
             elif kind=="text":
                 _,x,y,w,h,t,size,color,bold,italic,align,ls=el
                 tb=sl.shapes.add_textbox(Inches(x),Inches(y),Inches(w),Inches(h))
@@ -349,6 +369,10 @@ def render_png(spec,path):
         kind=el[0]
         if kind=="rect":
             _,x,y,w,h,c=el; d.rectangle([I(x),I(y),I(x+w),I(y+h)],fill=c)
+        elif kind=="image":
+            _,x,y,w,h,name=el
+            ic=ICON_IMG[name].resize((max(1,I(w)),max(1,I(h))))
+            img.paste(ic,(I(x),I(y)),ic)
         elif kind=="text":
             _,x,y,w,h,t,size,color,bold,italic,align,ls=el
             size*=FONT_SCALE
@@ -399,7 +423,50 @@ def build_pdf(path, dpi=192):
         PX=old; _fc.clear()
     return len(SLIDES)
 
+def generate_icons():
+    """Draw clean line-art icons (transparent PNG) themed to the deck sections."""
+    import math
+    os.makedirs(ASSET,exist_ok=True)
+    col=ACCENT+(255,); SZ=1000; sw=46
+    def new():
+        im=Image.new("RGBA",(SZ,SZ),(0,0,0,0)); return im,ImageDraw.Draw(im)
+    # GLOBE — transnational / cross-border
+    im,d=new(); p=140; R=(SZ-2*p)/2; cx=cy=SZ/2
+    d.ellipse([p,p,SZ-p,SZ-p],outline=col,width=sw)
+    d.line([cx,p,cx,SZ-p],fill=col,width=int(sw*0.7))
+    for rw in (R*0.42,R*0.80):
+        d.ellipse([cx-rw,p,cx+rw,SZ-p],outline=col,width=int(sw*0.6))
+    for dy in (-R*0.55,0,R*0.55):
+        half=math.sqrt(max(R*R-dy*dy,0)); d.line([cx-half,cy+dy,cx+half,cy+dy],fill=col,width=int(sw*0.55))
+    ICON_IMG["globe"]=im; im.save(ICON["globe"])
+    # SCALES — justice / legal framework
+    im,d=new(); cx=SZ/2
+    d.line([cx,195,cx,560],fill=col,width=sw)
+    d.line([235,250,765,250],fill=col,width=sw)
+    d.ellipse([cx-32,150,cx+32,214],fill=col)
+    d.line([cx,560,350,650],fill=col,width=sw); d.line([cx,560,650,650],fill=col,width=sw)
+    d.line([320,668,680,668],fill=col,width=sw)
+    for hx in (235,765):
+        d.line([hx,250,hx-98,432],fill=col,width=int(sw*0.6)); d.line([hx,250,hx+98,432],fill=col,width=int(sw*0.6))
+        d.arc([hx-122,360,hx+122,500],8,172,fill=col,width=sw)
+    ICON_IMG["scales"]=im; im.save(ICON["scales"])
+    # COINS — wealth / offshore finance
+    im,d=new(); cx=SZ/2; ew=460; eh=156; levels=[610,475,340]
+    for yc in levels: d.ellipse([cx-ew/2,yc-eh/2,cx+ew/2,yc+eh/2],outline=col,width=sw)
+    d.line([cx-ew/2,levels[-1],cx-ew/2,levels[0]],fill=col,width=sw)
+    d.line([cx+ew/2,levels[-1],cx+ew/2,levels[0]],fill=col,width=sw)
+    d.ellipse([cx-ew/2,levels[-1]-eh/2,cx+ew/2,levels[-1]+eh/2],outline=col,width=sw)
+    ICON_IMG["coins"]=im; im.save(ICON["coins"])
+    # DOC — documents / transparency
+    im,d=new(); x0,y0,x1,y1=275,150,690,800; fold=125
+    for seg in ([x0,y0,x1-fold,y0],[x1-fold,y0,x1,y0+fold],[x1,y0+fold,x1,y1],[x1,y1,x0,y1],[x0,y1,x0,y0]):
+        d.line(seg,fill=col,width=sw)
+    d.line([x1-fold,y0,x1-fold,y0+fold],fill=col,width=int(sw*0.7)); d.line([x1-fold,y0+fold,x1,y0+fold],fill=col,width=int(sw*0.7))
+    for ty in (335,435,535,635): d.line([x0+72,ty,x1-72,ty],fill=col,width=int(sw*0.55))
+    ICON_IMG["doc"]=im; im.save(ICON["doc"])
+
 if __name__=="__main__":
+    generate_icons()
     n=build_pptx("/home/user/Koki/Epstein_Transnational_Justice.pptx")
     imgs=[render_png(s,f"/home/user/Koki/preview_slide_{i+1}.png") for i,s in enumerate(SLIDES)]
     cols,rows=4,5; tw,th=308,173; pad=12
