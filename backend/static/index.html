@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="theme-color" content="#0b0f1a" />
+<title>Koki</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body {
+    margin: 0; font: 16px/1.4 -apple-system, system-ui, sans-serif;
+    background: #0b0f1a; color: #e8ecf4;
+    padding: max(env(safe-area-inset-top), 16px) 16px 32px;
+  }
+  header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 12px; }
+  h1 { font-size: 22px; margin: 0; }
+  .counts { font-size: 13px; color: #8b94a7; }
+  button.refresh {
+    background: #1b6ef3; color: #fff; border: 0; border-radius: 10px;
+    padding: 8px 14px; font-size: 14px; font-weight: 600;
+  }
+  .card {
+    background: #131a2a; border: 1px solid #1f2940; border-radius: 14px;
+    padding: 12px 14px; margin-bottom: 10px;
+  }
+  .top { display: flex; gap: 8px; align-items: center; margin-bottom: 4px; }
+  .tag {
+    font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px;
+    text-transform: uppercase; letter-spacing: .03em;
+  }
+  .needs_reply { background: #3a1d1d; color: #ff8a8a; }
+  .fyi { background: #1d2a3a; color: #7fb0ff; }
+  .noise { background: #222; color: #888; }
+  .high::after { content: " \25CF"; color: #ff5a5a; }
+  .from { font-size: 13px; color: #9aa3b5; flex: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .summary { font-weight: 600; margin: 2px 0; }
+  .action { font-size: 13px; color: #7ad48c; margin-top: 4px; }
+  .subject { font-size: 12px; color: #6b7488; margin-top: 2px; }
+  .empty { color: #6b7488; text-align: center; padding: 40px 0; }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>Koki</h1>
+    <div class="counts" id="counts">your inbox, triaged</div>
+  </div>
+  <button class="refresh" onclick="load()">Refresh</button>
+</header>
+<div id="list"><div class="empty">Loading your digest…</div></div>
+
+<script>
+async function load() {
+  const list = document.getElementById('list');
+  list.innerHTML = '<div class="empty">Summarizing…</div>';
+  try {
+    const r = await fetch('/api/digest');
+    const data = await r.json();
+    const c = data.counts || {};
+    document.getElementById('counts').textContent =
+      `${c.needs_reply||0} need reply · ${c.fyi||0} FYI · ${c.noise||0} noise`;
+    if (!data.items.length) { list.innerHTML = '<div class="empty">Inbox clear 🎉</div>'; return; }
+    list.innerHTML = data.items.map(i => `
+      <div class="card">
+        <div class="top">
+          <span class="tag ${i.category} ${i.urgency==='high'?'high':''}">${i.category.replace('_',' ')}</span>
+          <span class="from">${escapeHtml(i.from)}</span>
+        </div>
+        <div class="summary">${escapeHtml(i.summary)}</div>
+        ${i.action ? `<div class="action">→ ${escapeHtml(i.action)}</div>` : ''}
+        <div class="subject">${escapeHtml(i.subject || '')}</div>
+      </div>`).join('');
+  } catch (e) {
+    list.innerHTML = '<div class="empty">Could not load. Is the backend running?</div>';
+  }
+}
+function escapeHtml(s){return (s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+load();
+</script>
+</body>
+</html>
