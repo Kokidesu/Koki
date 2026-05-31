@@ -386,6 +386,19 @@ def render_png(spec,path):
                 yy+=int(gap*PX/72.0)
     img.save(path); return img
 
+def build_pdf(path, dpi=192):
+    """Render every slide at high resolution and assemble a 13.33x7.5in landscape PDF."""
+    global PX
+    old=PX; PX=dpi; _fc.clear()
+    try:
+        import tempfile, os
+        pages=[render_png(s, os.path.join(tempfile.gettempdir(), f"_pdfpage_{i+1}.png"))
+               for i,s in enumerate(SLIDES)]
+        pages[0].save(path, "PDF", save_all=True, append_images=pages[1:], resolution=float(dpi))
+    finally:
+        PX=old; _fc.clear()
+    return len(SLIDES)
+
 if __name__=="__main__":
     n=build_pptx("/home/user/Koki/Epstein_Transnational_Justice.pptx")
     imgs=[render_png(s,f"/home/user/Koki/preview_slide_{i+1}.png") for i,s in enumerate(SLIDES)]
@@ -395,4 +408,5 @@ if __name__=="__main__":
         r,c=divmod(idx,cols)
         sheet.paste(im.resize((tw,th)),(pad+c*(tw+pad),pad+r*(th+pad)))
     sheet.save("/home/user/Koki/preview_all.png")
-    print(f"built {n} slides + {len(imgs)} previews + contact sheet")
+    build_pdf("/home/user/Koki/Epstein_Transnational_Justice.pdf")
+    print(f"built {n} slides + previews + contact sheet + PDF")
