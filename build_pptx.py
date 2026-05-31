@@ -41,7 +41,7 @@ def rect(slide, x, y, w, h, color):
 
 
 def txt(slide, x, y, w, h, text, size=18, color=SLATE, bold=False,
-        align=PP_ALIGN.LEFT, font="Calibri", anchor=MSO_ANCHOR.TOP, italic=False,
+        align=PP_ALIGN.LEFT, font="Times New Roman", anchor=MSO_ANCHOR.TOP, italic=False,
         line_spacing=1.0):
     tb = slide.shapes.add_textbox(x, y, w, h)
     tf = tb.text_frame
@@ -75,12 +75,12 @@ def bullets(slide, x, y, w, h, items, size=18, color=SLATE, gap=6, bold_lead=Fal
             lead, rest = item.split(": ", 1)
             r1 = p.add_run(); r1.text = "•  " + lead + ": "
             r1.font.size = Pt(size); r1.font.bold = True
-            r1.font.color.rgb = NAVY; r1.font.name = "Calibri"
+            r1.font.color.rgb = NAVY; r1.font.name = "Times New Roman"
             r2 = p.add_run(); r2.text = rest
-            r2.font.size = Pt(size); r2.font.color.rgb = color; r2.font.name = "Calibri"
+            r2.font.size = Pt(size); r2.font.color.rgb = color; r2.font.name = "Times New Roman"
         else:
             r = p.add_run(); r.text = "•  " + item
-            r.font.size = Pt(size); r.font.color.rgb = color; r.font.name = "Calibri"
+            r.font.size = Pt(size); r.font.color.rgb = color; r.font.name = "Times New Roman"
     return tb
 
 
@@ -89,9 +89,9 @@ def content_header(slide, kicker, title):
     rect(slide, 0, 0, SW, Inches(1.25), NAVY)
     rect(slide, 0, Inches(1.25), SW, Inches(0.06), ACCENT)
     txt(slide, Inches(0.6), Inches(0.18), Inches(11), Inches(0.4),
-        kicker, size=13, color=ACCENT, bold=True, font="Calibri")
+        kicker, size=13, color=ACCENT, bold=True, font="Times New Roman")
     txt(slide, Inches(0.6), Inches(0.5), Inches(12), Inches(0.7),
-        title, size=26, color=WHITE, bold=True, font="Calibri")
+        title, size=26, color=WHITE, bold=True, font="Times New Roman")
 
 
 # ============ SLIDE 1 — TITLE ============
