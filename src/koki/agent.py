@@ -95,6 +95,41 @@ class Agent:
         return "(reached max turns without a final answer)"
 
 
+    def plan(self, goal: str, on_tool: Optional[Callable[[str, dict], None]] = None) -> str:
+        """Decompose a high-level goal into concrete tasks in the DB."""
+        prompt = (
+            f"Break the following goal down into a set of concrete, independently "
+            f"actionable tasks and create each one with add_task (set sensible "
+            f"priorities, tags, and depends_on where there are prerequisites). "
+            f"Then give me a short summary of the plan.\n\nGOAL:\n{goal}"
+        )
+        return self.send(prompt, on_tool=on_tool)
+
+    def run_tasks(
+        self,
+        on_tool: Optional[Callable[[str, dict], None]] = None,
+        only_id: Optional[int] = None,
+    ) -> str:
+        """Autonomously work through outstanding tasks, respecting dependencies."""
+        if only_id is not None:
+            target = f"Work on task #{only_id} specifically."
+        else:
+            target = (
+                "Work through all tasks whose status is 'todo' or 'in_progress', "
+                "in priority order, skipping any whose dependencies (depends_on) "
+                "are not yet 'done'."
+            )
+        prompt = (
+            f"{target} First call list_tasks to see the current state. For each task "
+            f"you take on: set it to in_progress, do the actual work using run_shell / "
+            f"read_file / write_file, verify the result, log what you did with log_task, "
+            f"and mark it done (or blocked, with a reason) when finished. "
+            f"When you can make no further progress, stop and summarise what was done "
+            f"and what remains."
+        )
+        return self.send(prompt, on_tool=on_tool, max_turns=60)
+
+
 def _text_of(content: list[Any]) -> str:
     parts = [b.text for b in content if getattr(b, "type", None) == "text"]
     return "\n".join(parts).strip()

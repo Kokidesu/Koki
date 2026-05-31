@@ -100,6 +100,37 @@ def cmd_ask(args, store: TaskStore) -> None:
     console.print(reply)
 
 
+def cmd_plan(args, store: TaskStore) -> None:
+    agent = _build_agent(store, allow_shell=not args.no_shell)
+    with console.status(f"[dim]{t('thinking', detect_lang(args.goal))}[/dim]"):
+        reply = agent.plan(args.goal, on_tool=_on_tool)
+    console.print(reply)
+
+
+def cmd_run(args, store: TaskStore) -> None:
+    agent = _build_agent(store, allow_shell=not args.no_shell)
+    with console.status("[dim]working…[/dim]"):
+        reply = agent.run_tasks(on_tool=_on_tool, only_id=args.id)
+    console.print(reply)
+
+
+def cmd_gh(args, store: TaskStore) -> None:
+    from . import github_sync
+
+    lang = detect_lang()
+    try:
+        if args.gh_cmd == "pull":
+            counts = github_sync.pull_issues(store, args.repo, state=args.state)
+            console.print(f"[green]✓[/green] pulled: created={counts['created']} updated={counts['updated']}")
+            _print_tasks(store.list(), lang)
+        elif args.gh_cmd == "push":
+            res = github_sync.push_task(store, args.repo, args.id)
+            console.print(f"[green]✓[/green] created issue #{res['issue_number']}: {res['url']}")
+    except github_sync.GitHubError as e:
+        console.print(f"[red]GitHub error:[/red] {e}")
+        sys.exit(1)
+
+
 def cmd_task(args, store: TaskStore) -> None:
     lang = detect_lang(getattr(args, "title", None))
     if args.task_cmd == "add":
@@ -150,6 +181,26 @@ def build_parser() -> argparse.ArgumentParser:
     pa.add_argument("prompt")
     pa.add_argument("--no-shell", action="store_true")
     pa.set_defaults(func=cmd_ask)
+
+    pp = sub.add_parser("plan", help="Decompose a goal into tasks (LLM).")
+    pp.add_argument("goal")
+    pp.add_argument("--no-shell", action="store_true")
+    pp.set_defaults(func=cmd_plan)
+
+    pr = sub.add_parser("run", help="Autonomously execute outstanding tasks (LLM).")
+    pr.add_argument("--id", type=int, help="Run a single task by id.")
+    pr.add_argument("--no-shell", action="store_true")
+    pr.set_defaults(func=cmd_run)
+
+    pg = sub.add_parser("gh", help="GitHub Issues sync.")
+    gsub = pg.add_subparsers(dest="gh_cmd", required=True)
+    gp = gsub.add_parser("pull", help="Import issues into tasks.")
+    gp.add_argument("repo", help="owner/name")
+    gp.add_argument("--state", default="open", choices=["open", "closed", "all"])
+    gpush = gsub.add_parser("push", help="Create a GitHub issue from a task.")
+    gpush.add_argument("repo", help="owner/name")
+    gpush.add_argument("id", type=int)
+    pg.set_defaults(func=cmd_gh)
 
     pt = sub.add_parser("task", help="Direct task DB operations (no LLM).")
     tsub = pt.add_subparsers(dest="task_cmd", required=True)
