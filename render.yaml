@@ -1,0 +1,18 @@
+# Render Blueprint: deploys Koki as a free always-on web service.
+# In Render: New → Blueprint → connect this repo. Then add the secret env
+# vars (marked sync:false) in the dashboard.
+services:
+  - type: web
+    name: koki
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: free
+    healthCheckPath: /
+    envVars:
+      - key: ANTHROPIC_API_KEY
+        sync: false      # paste your Claude API key
+      - key: GMAIL_TOKEN_JSON
+        sync: false      # output of: python auth_setup.py
+      - key: KOKI_PASSCODE
+        sync: false      # a password only you know

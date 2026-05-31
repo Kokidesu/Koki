@@ -1,5 +1,6 @@
 """Thin wrapper around the Gmail API: OAuth + fetching recent messages."""
 import base64
+import json
 import os
 from email.utils import parsedate_to_datetime
 
@@ -16,19 +17,39 @@ CREDENTIALS_FILE = os.path.join(HERE, "credentials.json")
 TOKEN_FILE = os.path.join(HERE, "token.json")
 
 
-def get_service():
-    """Return an authenticated Gmail service, running OAuth on first use."""
-    creds = None
+def _load_creds():
+    """Load cached Gmail credentials from env (for servers) or local file."""
+    # On a deployed server there is no browser and the disk is ephemeral, so we
+    # read the OAuth token JSON from an env var generated once via auth_setup.py.
+    token_json = os.environ.get("GMAIL_TOKEN_JSON")
+    if token_json:
+        return Credentials.from_authorized_user_info(json.loads(token_json), SCOPES)
     if os.path.exists(TOKEN_FILE):
-        creds = Credentials.from_authorized_user_file(TOKEN_FILE, SCOPES)
+        return Credentials.from_authorized_user_file(TOKEN_FILE, SCOPES)
+    return None
+
+
+def get_service():
+    """Return an authenticated Gmail service.
+
+    Locally, the first call opens a browser for consent and caches token.json.
+    On a server, credentials come from the GMAIL_TOKEN_JSON env var and are only
+    refreshed (never re-prompted, since there is no browser).
+    """
+    creds = _load_creds()
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
+        elif os.environ.get("GMAIL_TOKEN_JSON"):
+            raise RuntimeError(
+                "GMAIL_TOKEN_JSON is set but invalid and cannot be refreshed. "
+                "Re-run auth_setup.py locally and update the env var."
+            )
         else:
             flow = InstalledAppFlow.from_client_secrets_file(CREDENTIALS_FILE, SCOPES)
             creds = flow.run_local_server(port=0)
-        with open(TOKEN_FILE, "w") as f:
-            f.write(creds.to_json())
+            with open(TOKEN_FILE, "w") as f:
+                f.write(creds.to_json())
     return build("gmail", "v1", credentials=creds)
 
 

@@ -56,7 +56,13 @@ async function load() {
   const list = document.getElementById('list');
   list.innerHTML = '<div class="empty">Summarizing…</div>';
   try {
-    const r = await fetch('/api/digest');
+    let pass = localStorage.getItem('koki_pass') || '';
+    let r = await fetch('/api/digest', { headers: { 'X-Koki-Pass': pass } });
+    if (r.status === 401) {
+      pass = prompt('Enter your Koki passcode:') || '';
+      localStorage.setItem('koki_pass', pass);
+      r = await fetch('/api/digest', { headers: { 'X-Koki-Pass': pass } });
+    }
     const data = await r.json();
     const c = data.counts || {};
     document.getElementById('counts').textContent =

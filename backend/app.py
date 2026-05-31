@@ -1,7 +1,7 @@
 """Koki backend: fetch Gmail, summarize with Claude, serve a mobile digest."""
 import os
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Header, HTTPException
 from fastapi.responses import FileResponse, JSONResponse
 
 import gmail_client
@@ -11,6 +11,15 @@ app = FastAPI(title="Koki Gmail Summarizer")
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 
+# Once deployed, the digest lives on a public URL, so we gate the data behind a
+# passcode. Set KOKI_PASSCODE on your host; leave it unset for local use.
+PASSCODE = os.environ.get("KOKI_PASSCODE")
+
+
+def _check_access(passcode):
+    if PASSCODE and passcode != PASSCODE:
+        raise HTTPException(status_code=401, detail="Bad or missing passcode")
+
 
 @app.get("/")
 def index():
@@ -18,8 +27,9 @@ def index():
 
 
 @app.get("/api/digest")
-def digest(limit: int = 15):
+def digest(limit: int = 15, x_koki_pass: str = Header(default="")):
     """Fetch recent inbox mail and return triaged summaries."""
+    _check_access(x_koki_pass)
     emails = gmail_client.fetch_recent(max_results=limit)
     items = []
     for email in emails:
@@ -43,4 +53,4 @@ def digest(limit: int = 15):
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 8000)))

@@ -41,10 +41,43 @@ First run opens a browser to grant Gmail access (token is cached in
 `backend/token.json`). Then open http://localhost:8000 on your computer, or
 visit it from your iPhone on the same network.
 
+## Deploy it to run 24/7 (free, on Render)
+
+A deployed server has no browser and a wipe-on-restart disk, so you authorize
+Gmail **once on your own computer** and hand the resulting token to the host.
+
+1. **Authorize Gmail locally** (one time):
+   ```bash
+   cd backend && pip install -r requirements.txt
+   python auth_setup.py        # opens browser, then prints a token JSON line
+   ```
+   Copy the long token JSON it prints.
+
+2. **Push this repo to GitHub** (already done on your branch).
+
+3. **Create the service on Render** (https://render.com, free, no card):
+   - New → **Blueprint** → connect your GitHub repo. It reads `render.yaml`.
+   - In the service's **Environment** tab, fill the three secrets:
+     - `ANTHROPIC_API_KEY` — your Claude key
+     - `GMAIL_TOKEN_JSON` — the token line from step 1
+     - `KOKI_PASSCODE` — any password you choose
+   - Deploy. You get a public URL like `https://koki.onrender.com`.
+
+4. **Add to your iPhone**: open that URL in Safari → Share → **Add to Home
+   Screen**. Enter your passcode once and it's saved.
+
+Notes:
+- Render's free tier sleeps after ~15 min idle and cold-starts on the next open
+  (a few seconds) — fine for personal use. Upgrade or switch to Fly.io for
+  instant-on.
+- The same `Dockerfile` deploys to Fly.io (`fly launch`) or any container host.
+- When the Gmail token eventually expires, re-run `auth_setup.py` and update the
+  `GMAIL_TOKEN_JSON` env var.
+
 ## Roadmap
 - [x] Local prototype: fetch + summarize + mobile digest
+- [x] Deploy to free cloud host (24/7)
 - [ ] Persist summaries + read/handled state (SQLite)
-- [ ] Deploy to free cloud host (24/7)
 - [ ] Real-time Gmail push (watch + Pub/Sub) + iOS web push notifications
 - [ ] "Needs reply" smart drafts
 
