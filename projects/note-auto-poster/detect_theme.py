@@ -28,12 +28,9 @@ def _urlname(account_url: str) -> str:
 def fetch_account_text(account_url: str) -> dict:
     """プロフィール文と直近の記事タイトルを集める。"""
     urlname = _urlname(account_url)
+    from session import make_context
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
-        ctx = browser.new_context(
-            storage_state=str(STORAGE) if STORAGE.exists() else None,
-            user_agent=_UA,
-        )
+        browser, ctx = make_context(p, headless=True)
         page = ctx.new_page()
         page.goto(f"https://note.com/{urlname}", wait_until="domcontentloaded")
         page.wait_for_timeout(2000)
