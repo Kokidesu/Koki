@@ -8,7 +8,6 @@
 """
 from __future__ import annotations
 
-import os
 from pathlib import Path
 
 BASE = "https://open.tiktokapis.com/v2"
@@ -23,10 +22,11 @@ def _requests():
 
 
 def _token(token: str | None) -> str:
-    tok = token or os.environ.get("TIKTOK_ACCESS_TOKEN")
-    if not tok:
-        raise RuntimeError("TIKTOK_ACCESS_TOKEN が未設定です（.env を確認）")
-    return tok
+    if token:
+        return token
+    # 明示トークンが無ければ OAuth ストア（環境変数→保存トークン、必要なら自動更新）から取得
+    from .auth_tiktok import valid_access_token
+    return valid_access_token()
 
 
 def _headers(token: str) -> dict:

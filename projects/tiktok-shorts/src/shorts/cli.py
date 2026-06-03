@@ -32,6 +32,12 @@ def main(argv=None) -> int:
     prun.add_argument("--publish", default=None, choices=["off", "draft", "direct"],
                       help="設定を上書きする投稿モード")
 
+    pa = sub.add_parser("auth", help="TikTokアカウント連携(OAuth)・トークン管理")
+    pa.add_argument("action", nargs="?", default="status",
+                    choices=["url", "login", "status", "refresh"],
+                    help="url=連携URL表示 / login=コード投入 / status=状態 / refresh=更新")
+    pa.add_argument("code", nargs="?", help="login時: リダイレクトURL または code")
+
     args = p.parse_args(argv)
     cfg = load_config(args.config)
 
@@ -52,6 +58,30 @@ def main(argv=None) -> int:
 
     elif args.cmd == "run":
         pipeline.run(args.n, publish_mode=args.publish, config_path=args.config)
+
+    elif args.cmd == "auth":
+        from . import auth_tiktok as at
+        try:
+            if args.action == "url":
+                url = at.authorize_url()
+                print("① 下のURLをブラウザで開き、対象アカウントで承認してください:\n")
+                print(url)
+                print("\n② 承認後に飛ぶリダイレクト先URL（?code=... 付き）を丸ごとコピーし:\n"
+                      '   PYTHONPATH=src python -m shorts auth login "<貼り付け>"')
+            elif args.action == "login":
+                if not args.code:
+                    print('使い方: shorts auth login "<リダイレクトURL または code>"')
+                    return 2
+                t = at.exchange_code(at.parse_code(args.code))
+                print(f"連携成功 ✅ open_id={t.get('open_id', '?')} scope={t.get('scope', '?')}")
+            elif args.action == "refresh":
+                t = at.refresh()
+                print(f"トークン更新 ✅ 有効期限(秒)={t.get('expires_in')}")
+            else:  # status
+                print(at.status_text())
+        except Exception as e:  # noqa: BLE001 — 設定不足などを分かりやすく表示
+            print(f"エラー: {e}")
+            return 1
 
     return 0
 

@@ -1,5 +1,6 @@
 .env
 config.yaml
+.tiktok_tokens.json
 out/
 assets/backgrounds/*
 assets/music/*

@@ -101,12 +101,30 @@ python -m shorts run -n 10
 
 ---
 
-## 公式API（Content Posting API）について
+## アカウント連携（1アカウント運用 / OAuth）
 
-- 投稿は **本人認証した1アカウント** に対してOAuthトークンで行います。
-- **下書き(inbox)** … スコープ `video.upload`。審査前でも使える最も安全なモード（既定）。
-- **自動公開(direct)** … スコープ `video.publish`。**公開**するにはアプリ審査(audit)が必要。審査前は `SELF_ONLY`（自分だけ閲覧）でのみ可。
-- 取得手順は https://developers.tiktok.com/ の Content Posting API を参照。
+投稿は **本人認証した1アカウント** に対して公式APIトークンで行います。
+アクセストークンは約24時間で失効しますが、**リフレッシュトークンで自動更新**するので一度連携すれば回り続けます。
+
+**準備（TikTok for Developers）**
+1. https://developers.tiktok.com/ でアプリを作成し、**Content Posting API** を追加。
+2. **Login Kit** のスコープに `video.upload`（下書き用）と、必要なら `video.publish`（自動公開用）を追加。
+3. **Redirect URI** を登録（例: `https://example.com/callback`）。`.env` の `TIKTOK_REDIRECT_URI` と完全一致させる。
+4. `.env` に `TIKTOK_CLIENT_KEY` / `TIKTOK_CLIENT_SECRET` / `TIKTOK_REDIRECT_URI` を設定。
+
+**連携する**
+```bash
+export PYTHONPATH=src
+python -m shorts auth url                       # 表示されたURLをブラウザで開いて承認
+python -m shorts auth login "<リダイレクト先URL>"  # ?code=... 付きURLを丸ごと貼る
+python -m shorts auth status                    # 連携状態を確認
+```
+以後 `run` / `make --publish draft` の投稿時に自動でトークンを使い、失効時は自動更新します。
+トークンは `.tiktok_tokens.json`（gitignore済み・**他人に渡さない**）に保存されます。
+
+**投稿モード**
+- **下書き(inbox)** … スコープ `video.upload`。審査前でも使える最も安全なモード（既定）。アプリ通知から自分で公開。
+- **自動公開(direct)** … スコープ `video.publish`。**公開**にはアプリ審査(audit)が必要。審査前は `SELF_ONLY`（自分のみ閲覧）でのみ可。
 
 ---
 
@@ -120,6 +138,7 @@ src/shorts/
   subtitles.py     タイムスタンプ→字幕(ASS)生成
   video.py         ffmpegで縦型MP4合成（字幕焼き込み）
   publish_tiktok.py 公式Content Posting APIクライアント（下書き/公開）
+  auth_tiktok.py   OAuth連携・トークン保存/自動更新（1アカウント）
   pipeline.py      バッチ・オーケストレーション
   cli.py           コマンドライン
 samples/           すぐ使えるサンプル（ネタ一覧・台本）
