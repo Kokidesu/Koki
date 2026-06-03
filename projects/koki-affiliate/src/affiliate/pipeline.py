@@ -10,7 +10,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Callable, List, Optional, Sequence, Union
 
-from . import affiliate, generate, keywords, render, store
+from . import generate, keywords, render, store
 from .config import Config
 from .generate import Article
 
@@ -59,7 +59,6 @@ def run(
             art = generate.generate(kw, config)
             if art.slug in seen:
                 continue
-            art.body_md = affiliate.inject(art.body_md, kw, config)
             store.save_article(art, config.content_dir)
             seen.add(art.slug)
             new.append(art)

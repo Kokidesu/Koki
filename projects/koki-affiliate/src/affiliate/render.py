@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import List
 
 from .config import Config
+from . import affiliate
 from .generate import Article
 from .markdown import to_html
 
@@ -82,7 +83,7 @@ def _page(*, title: str, description: str, body_html: str, config: Config, canon
 """
 
 
-def _article_body(art: Article, others: List[Article]) -> str:
+def _article_body(art: Article, others: List[Article], config: Config) -> str:
     related = "".join(
         f'<li><a href="{o.slug}.html">{_esc(o.title)}</a></li>'
         for o in others
@@ -97,7 +98,7 @@ def _article_body(art: Article, others: List[Article]) -> str:
 <p class="breadcrumb"><a href="index.html">ホーム</a> › {_esc(art.title)}</p>
 <h1>{_esc(art.title)}</h1>
 <p class="meta">公開日: {art.date} ・ 想定キーワード: {_esc(art.keyword)}</p>
-{to_html(art.body_md)}
+{to_html(affiliate.inject(art.body_md, art.keyword, config))}
 {related_block}
 </article>"""
 
@@ -130,7 +131,7 @@ def render_site(articles: List[Article], config: Config) -> List[str]:
         page = _page(
             title=art.title,
             description=art.description,
-            body_html=_article_body(art, articles),
+            body_html=_article_body(art, articles, config),
             config=config,
             canonical=f"{site}/{art.slug}.html",
         )
