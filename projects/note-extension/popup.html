@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<style>
+  body { font-family: -apple-system, sans-serif; width: 320px; margin: 0; padding: 12px; font-size: 13px; }
+  h1 { font-size: 15px; margin: 0 0 8px; }
+  label { display: block; margin: 8px 0 2px; font-weight: 600; }
+  input, select { width: 100%; box-sizing: border-box; padding: 5px; }
+  .row { display: flex; gap: 8px; }
+  .row > div { flex: 1; }
+  .btns { display: flex; gap: 6px; margin: 12px 0 6px; }
+  button { flex: 1; padding: 8px; border: 0; border-radius: 6px; cursor: pointer; font-weight: 600; }
+  #start { background: #2db55d; color: #fff; }
+  #stop { background: #e0524d; color: #fff; }
+  #save, #run { background: #eee; }
+  .status { font-size: 12px; margin: 6px 0; }
+  pre { background: #111; color: #0f0; font-size: 11px; padding: 6px; height: 110px; overflow: auto; white-space: pre-wrap; border-radius: 6px; }
+  .warn { color: #b00; font-size: 11px; }
+</style>
+</head>
+<body>
+  <h1>note 自動投稿ボット</h1>
+
+  <label>Gemini APIキー</label>
+  <input id="apiKey" type="password" placeholder="AIza...">
+
+  <label>アカウント名（note.com/＜ここ＞）</label>
+  <input id="urlname" type="text" placeholder="light_roses761">
+
+  <label>テーマ（auto=自動判定）</label>
+  <input id="theme" type="text" placeholder="auto">
+
+  <div class="row">
+    <div><label>1記事の文字数</label><input id="targetChars" type="number"></div>
+    <div><label>1日の上限</label><input id="maxPerDay" type="number"></div>
+  </div>
+  <div class="row">
+    <div><label>実行間隔(分)</label><input id="intervalMinutes" type="number"></div>
+    <div><label>投稿モード</label>
+      <select id="publish">
+        <option value="false">下書き</option>
+        <option value="true">公開</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="btns">
+    <button id="save">保存</button>
+    <button id="run">今すぐ1回</button>
+  </div>
+  <div class="btns">
+    <button id="start">▶ 開始</button>
+    <button id="stop">■ 停止</button>
+  </div>
+
+  <div class="status" id="status"></div>
+  <div class="warn">※AI記事の大量・即公開は凍結リスク。まず「下書き」＋上限低めで。</div>
+  <pre id="logs"></pre>
+
+  <script src="popup.js"></script>
+</body>
+</html>
