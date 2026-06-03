@@ -62,15 +62,9 @@ def post_article(md_path: str, tags: list[str], publish: bool,
     md = Path(md_path).read_text(encoding="utf-8")
     title, body = _md_to_plain(md)
 
-    if not STORAGE.exists():
-        raise SystemExit(
-            "storage_state.json がありません。先に `python tools/export_note_session.py` で "
-            "noteにログインしてセッションを保存してください。"
-        )
-
+    from session import make_context
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=headless)
-        ctx = browser.new_context(storage_state=str(STORAGE))
+        browser, ctx = make_context(p, headless=headless)
         page = ctx.new_page()
         page.goto(EDITOR_URL, wait_until="domcontentloaded")
         page.wait_for_timeout(3000)

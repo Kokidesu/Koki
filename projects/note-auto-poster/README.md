@@ -34,21 +34,36 @@ GitHub Actions に載せれば **あなたのPCを開いていなくても** ク
 ### 1. Gemini APIキーを取る
 <https://aistudio.google.com/apikey> でキーを発行。
 
-### 2. note のログインセッションを取り出す（自分のPCで1回だけ）
+### 2. note のログイン情報を用意する（次のどれか1つ）
+
+**A. Cookie方式（Googleログインの人はこれ・PC操作なし）**
+1. ブラウザ拡張 **Cookie-Editor** を入れる
+2. ログイン済みの **note.com** を開く
+3. Cookie-Editor の **Export → Export as JSON**（クリップボードにコピーされる）
+4. それを Secret `NOTE_COOKIES_JSON` に貼る
+
+**B. storage_state方式（自分のPCでターミナルを使える人）**
 ```bash
 cd projects/note-auto-poster
 pip install -r requirements.txt
 python -m playwright install chromium
 python tools/export_note_session.py    # 開いた画面でnoteにログイン → Enter
 ```
-→ `storage_state.json` ができます。
+→ できた `storage_state.json` の中身を Secret `NOTE_STORAGE_STATE` に貼る
 
-### 3. GitHub に Secret を2つ登録
+**C. メール+パスワード方式**
+Secret `NOTE_EMAIL` と `NOTE_PASSWORD` を設定（※note側のbot対策で弾かれる場合あり）
+
+### 3. GitHub に Secret を登録
 リポジトリ → **Settings → Secrets and variables → Actions → New repository secret**
 | 名前 | 中身 |
 |------|------|
-| `GEMINI_API_KEY` | 1.で取得したキー |
-| `NOTE_STORAGE_STATE` | `storage_state.json` の中身を**まるごとコピペ** |
+| `GEMINI_API_KEY` | 1.で取得したGeminiキー（必須） |
+| `NOTE_COOKIES_JSON` | 2-Aのエクスポート（Googleログインはこれ） |
+| `NOTE_STORAGE_STATE` | 2-Bの `storage_state.json` の中身 |
+| `NOTE_EMAIL` / `NOTE_PASSWORD` | 2-Cのメール/パスワード |
+
+> noteログインは A / B / C のどれか1つでOK。
 
 ### 4. テーマ（基本そのままでOK）
 `config.yaml` の `theme: "auto"` のままにしておくと、**実行時にあなたのアカウントの
