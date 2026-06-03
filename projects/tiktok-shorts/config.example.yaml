@@ -1,0 +1,24 @@
+# 量産する動画の設定
+niche: "雑学・豆知識"
+language: ja
+
+# TTS（edge-tts のボイス名）。日本語の例:
+#   ja-JP-NanamiNeural (女性) / ja-JP-KeitaNeural (男性)
+voice: ja-JP-NanamiNeural
+speech_rate: "+8%"      # 少し速めだとショート向き
+
+videos_per_run: 10
+resolution: [1080, 1920]
+fps: 30
+
+# 背景・BGM（任意）。ディレクトリに素材を置くとランダムで使用。無ければ自動でグラデ背景。
+backgrounds_dir: assets/backgrounds   # 縦型のループ動画(.mp4)を入れる
+music_dir: assets/music               # BGM(.mp3) を入れる
+music_volume: 0.12                    # BGM音量（0〜1）
+
+# 投稿設定
+publish:
+  mode: draft           # draft(下書き・安全) | direct(自動公開) | off(投稿しない)
+  privacy: SELF_ONLY    # direct時: PUBLIC_TO_EVERYONE | MUTUAL_FOLLOW_FRIENDS | SELF_ONLY
+
+out_dir: out

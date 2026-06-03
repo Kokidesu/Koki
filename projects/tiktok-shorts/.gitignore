@@ -1,0 +1,10 @@
+.env
+config.yaml
+out/
+assets/backgrounds/*
+assets/music/*
+!assets/backgrounds/.gitkeep
+!assets/music/.gitkeep
+__pycache__/
+*.pyc
+.venv/
