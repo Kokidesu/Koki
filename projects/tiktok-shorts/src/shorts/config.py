@@ -14,6 +14,8 @@ DEFAULTS = {
     "fps": 30,
     "font": "Noto Sans CJK JP",     # 字幕フォント（システムにあるCJKフォント名）
     "fonts_dir": "assets/fonts",    # ここに .ttf/.otf を置けばそれも使われる
+    "caption_style": "karaoke",     # karaoke(読み上げ同期で色が乗る) | plain
+    "accent_color": "#FFE100",      # カラオケ字幕のハイライト色
     "backgrounds_dir": "assets/backgrounds",
     "music_dir": "assets/music",
     "music_volume": 0.12,

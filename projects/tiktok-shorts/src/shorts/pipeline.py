@@ -27,11 +27,14 @@ def _produce(scr: script.Script, cfg: dict, index: int = 1,
 
     ass = f"{base}.ass"
     font = cfg.get("font", "Noto Sans CJK JP")
+    style = cfg.get("caption_style", "karaoke")
+    accent = cfg.get("accent_color", "#FFE100")
     if boundaries:
-        subtitles.build_ass(boundaries, ass, res, font=font)
+        subtitles.build_ass(boundaries, ass, res, font=font, style=style, accent=accent)
     else:  # 単語境界を返さないTTS用に、文字数で時間配分
         dur = video.probe_duration(audio)
-        subtitles.build_estimated([scr.hook, *scr.lines, scr.cta], dur, ass, res, font=font)
+        subtitles.build_estimated([scr.hook, *scr.lines, scr.cta], dur, ass, res,
+                                  font=font, style=style, accent=accent)
 
     mp4 = f"{base}.mp4"
     video.assemble(audio, ass, mp4, res, cfg["fps"],

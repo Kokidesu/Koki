@@ -72,7 +72,10 @@ def assemble(audio_path: str, ass_path: str, out_path: str,
     if bg:
         cmd += ["-stream_loop", "-1", "-i", bg]
     else:
-        cmd += ["-f", "lavfi", "-i", f"color=c=0x12141C:s={w}x{h}:r={fps}"]
+        # 素材が無くてもベタ塗りにならないよう、ゆっくり動くグラデを生成
+        grad = (f"gradients=s={w}x{h}:c0=0x0b1224:c1=0x223a66:c2=0x0b1224:"
+                f"x0=0:y0=0:x1={w}:y1={h}:speed=0.008:r={fps}")
+        cmd += ["-f", "lavfi", "-i", grad]
     cmd += ["-i", audio_abs]            # input 1 = voice
     if music:
         cmd += ["-stream_loop", "-1", "-i", music]  # input 2 = bgm

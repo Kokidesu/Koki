@@ -17,6 +17,10 @@ fps: 30
 font: "Noto Sans CJK JP"
 fonts_dir: assets/fonts
 
+# 字幕スタイル: karaoke=読み上げに同期して1語ずつ色が乗る(CapCut風) / plain=表示のみ
+caption_style: karaoke
+accent_color: "#FFE100"   # カラオケのハイライト色
+
 # 背景・BGM（任意）。ディレクトリに素材を置くとランダムで使用。無ければ自動でグラデ背景。
 backgrounds_dir: assets/backgrounds   # 縦型のループ動画(.mp4)を入れる
 music_dir: assets/music               # BGM(.mp3) を入れる
