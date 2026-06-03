@@ -1,7 +1,7 @@
 // popup.js — 設定UIとボタン操作
 
 const $ = (id) => document.getElementById(id);
-const FIELDS = ["apiKey", "urlname", "theme", "targetChars", "maxPerDay", "intervalMinutes"];
+const FIELDS = ["apiKey", "urlname", "theme", "model", "targetChars", "maxPerDay", "intervalMinutes"];
 
 function send(type, extra = {}) {
   return chrome.runtime.sendMessage({ type, ...extra });
@@ -23,6 +23,7 @@ function collect() {
     apiKey: $("apiKey").value.trim(),
     urlname: $("urlname").value.trim() || "light_roses761",
     theme: $("theme").value.trim() || "auto",
+    model: $("model").value.trim() || "gemini-2.5-flash",
     targetChars: parseInt($("targetChars").value) || 20000,
     maxPerDay: parseInt($("maxPerDay").value) || 3,
     intervalMinutes: parseInt($("intervalMinutes").value) || 180,

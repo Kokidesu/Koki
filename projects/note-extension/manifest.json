@@ -1,13 +1,23 @@
 {
   "manifest_version": 3,
   "name": "note 自動投稿ボット",
-  "version": "1.0",
+  "version": "1.1",
   "description": "Geminiで記事を生成し、あなたのChrome（ログイン済み）から note に自動投稿します。",
-  "permissions": ["storage", "alarms", "tabs", "scripting"],
+  "permissions": [
+    "storage",
+    "alarms",
+    "tabs",
+    "scripting"
+  ],
   "host_permissions": [
     "https://note.com/*",
     "https://generativelanguage.googleapis.com/*"
   ],
-  "background": { "service_worker": "background.js" },
-  "action": { "default_popup": "popup.html", "default_title": "note自動投稿ボット" }
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "note自動投稿ボット"
+  }
 }

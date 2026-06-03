@@ -5,7 +5,7 @@ const DEFAULTS = {
   urlname: "light_roses761",   // 投稿先アカウント（https://note.com/＜ここ＞）
   theme: "auto",               // "auto"=アカウントから自動推定 / 文字列で固定
   apiKey: "",                  // Gemini APIキー（ポップアップで設定）
-  model: "gemini-2.5-pro",
+  model: "gemini-2.5-flash",   // 無料枠が大きく速い。pro は無料枠が小さく429になりやすい
   targetChars: 20000,
   publish: false,              // false=下書き / true=公開（まずfalse推奨）
   tags: ["毎日note"],
@@ -42,13 +42,20 @@ async function bump() {
 }
 
 // ---------- Gemini ----------
-async function gem(apiKey, model, prompt) {
+async function gem(apiKey, model, prompt, retry = 0) {
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
   const res = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
   });
+  // 429（レート制限/クォータ）は待ってリトライ
+  if (res.status === 429 && retry < 3) {
+    const wait = 25000 * (retry + 1);
+    await log(`レート制限(429)。${wait / 1000}秒待って再試行(${retry + 1}/3)…`);
+    await sleep(wait);
+    return gem(apiKey, model, prompt, retry + 1);
+  }
   if (!res.ok) throw new Error("Gemini API " + res.status + " " + (await res.text()).slice(0, 200));
   const j = await res.json();
   return (j.candidates?.[0]?.content?.parts?.[0]?.text || "").trim();
@@ -75,6 +82,7 @@ async function genArticle(s, theme) {
     parts.push(p.startsWith("#") ? p : `## ${h}\n\n${p}`);
     total += p.length;
     if (total >= s.targetChars) break;
+    await sleep(5000);   // 無料枠の1分あたり上限に当たらないよう間隔を空ける
   }
   const body = parts.join("\n\n");
   await log(`生成: ${title}（約${body.length}字）`);
