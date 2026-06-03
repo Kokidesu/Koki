@@ -21,8 +21,11 @@ HERE = Path(__file__).parent
 def main() -> None:
     cfg = yaml.safe_load((HERE / "config.yaml").read_text(encoding="utf-8"))
 
-    if "ここにあなたのテーマ" in cfg.get("theme", ""):
-        raise SystemExit("config.yaml の theme を実際のテーマに書き換えてください。")
+    # テーマ: "auto"（または未設定）なら、あなたのアカウントから自動推定する。
+    theme = (cfg.get("theme") or "").strip()
+    if theme.lower() == "auto" or theme == "" or "ここにあなたのテーマ" in theme:
+        from detect_theme import detect_theme
+        cfg["theme"] = detect_theme(cfg)
 
     n = int(cfg.get("articles_per_run", 1))
     for i in range(n):

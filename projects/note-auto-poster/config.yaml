@@ -5,10 +5,11 @@
 # あなたのnoteアカウント / your note account
 account_url: "https://note.com/light_roses761"
 
-# ★★ 記事のテーマ（ここを必ず書き換える）★★
-# Theme of the articles (REQUIRED — rewrite to match your account).
-# 例 / e.g.: "30代からの節約とつみたて投資" / "猫との暮らしの工夫" / "Webデザインの小ワザ"
-theme: "（ここにあなたのテーマを書いてください）"
+# 記事のテーマ / theme.
+#   "auto" にすると、実行時にあなたのアカウント(account_url)のプロフと記事タイトルを
+#   自動取得してテーマを推定します（入力不要）。
+#   固定したい場合は文字列で指定: 例 "30代からの節約とつみたて投資"
+theme: "auto"
 
 # 1回の実行で作る記事数 / articles generated & posted per run
 articles_per_run: 1
