@@ -11,6 +11,12 @@ videos_per_run: 10
 resolution: [1080, 1920]
 fps: 30
 
+# 字幕フォント（システムに入っているCJKフォント名）。
+#   例: "Noto Sans CJK JP" / "IPAGothic" / "Hiragino Sans"(mac)
+# assets/fonts に .ttf/.otf を置けば、その同梱フォントも使われます。
+font: "Noto Sans CJK JP"
+fonts_dir: assets/fonts
+
 # 背景・BGM（任意）。ディレクトリに素材を置くとランダムで使用。無ければ自動でグラデ背景。
 backgrounds_dir: assets/backgrounds   # 縦型のループ動画(.mp4)を入れる
 music_dir: assets/music               # BGM(.mp3) を入れる

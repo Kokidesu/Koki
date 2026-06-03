@@ -11,10 +11,26 @@ _VIDEO_EXT = {".mp4", ".mov", ".webm", ".mkv"}
 _AUDIO_EXT = {".mp3", ".m4a", ".wav", ".aac"}
 
 
+def _ensure_paths() -> None:
+    """システムに ffmpeg/ffprobe が無ければ pip の静的バイナリをPATHに追加。"""
+    if shutil.which("ffmpeg") and shutil.which("ffprobe"):
+        return
+    try:
+        import static_ffmpeg
+        static_ffmpeg.add_paths()  # 初回はGitHubからDL、以降キャッシュ
+    except Exception:  # noqa: BLE001
+        pass
+
+
 def _require(bin_name: str) -> str:
     path = shutil.which(bin_name)
     if not path:
-        raise RuntimeError(f"{bin_name} が見つかりません。ffmpeg をインストールしてください。")
+        _ensure_paths()
+        path = shutil.which(bin_name)
+    if not path:
+        raise RuntimeError(
+            f"{bin_name} が見つかりません。`pip install static-ffmpeg` か、"
+            "システムに ffmpeg を入れてください。")
     return path
 
 
@@ -38,7 +54,8 @@ def _pick(directory: str, exts: set[str]) -> str | None:
 def assemble(audio_path: str, ass_path: str, out_path: str,
              resolution=(1080, 1920), fps: int = 30,
              backgrounds_dir: str = "assets/backgrounds",
-             music_dir: str = "assets/music", music_volume: float = 0.12) -> str:
+             music_dir: str = "assets/music", music_volume: float = 0.12,
+             fonts_dir: str | None = None) -> str:
     ffmpeg = _require("ffmpeg")
     w, h = resolution
     dur = probe_duration(audio_path)
@@ -60,9 +77,12 @@ def assemble(audio_path: str, ass_path: str, out_path: str,
     if music:
         cmd += ["-stream_loop", "-1", "-i", music]  # input 2 = bgm
 
+    subs = f"subtitles={ass_name}"
+    if fonts_dir and Path(fonts_dir).is_dir() and any(Path(fonts_dir).iterdir()):
+        subs += f":fontsdir={Path(fonts_dir).resolve()}"
     vchain = (
         f"[0:v]scale={w}:{h}:force_original_aspect_ratio=increase,"
-        f"crop={w}:{h},subtitles={ass_name}[v]"
+        f"crop={w}:{h},{subs}[v]"
     )
     if music:
         fc = (

@@ -1,0 +1,38 @@
+name: tiktok-shorts generate (drafts)
+
+# 動画を生成して成果物(out/)をアーティファクトとして上げるだけのワークフロー。
+# CIからの自動投稿はしない（トークンの永続化が不安定なため）。
+# 投稿まで自動化したい場合は、手元PC/VPSの cron（scripts/run_daily.sh）を推奨。
+
+on:
+  workflow_dispatch:
+    inputs:
+      count:
+        description: "生成する本数"
+        default: "5"
+  # 定期実行する場合はコメント解除（cronはUTC。23:00 UTC ≒ 翌08:00 JST）
+  # schedule:
+  #   - cron: "0 23 * * *"
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: projects/tiktok-shorts
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install deps
+        run: pip install -r requirements.txt
+      - name: Generate (no posting)
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: PYTHONPATH=src python -m shorts run -n "${{ github.event.inputs.count || 5 }}" --publish off
+      - uses: actions/upload-artifact@v4
+        with:
+          name: shorts-output
+          path: projects/tiktok-shorts/out/
+          retention-days: 7

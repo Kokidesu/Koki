@@ -12,6 +12,8 @@ DEFAULTS = {
     "videos_per_run": 10,
     "resolution": [1080, 1920],
     "fps": 30,
+    "font": "Noto Sans CJK JP",     # 字幕フォント（システムにあるCJKフォント名）
+    "fonts_dir": "assets/fonts",    # ここに .ttf/.otf を置けばそれも使われる
     "backgrounds_dir": "assets/backgrounds",
     "music_dir": "assets/music",
     "music_volume": 0.12,

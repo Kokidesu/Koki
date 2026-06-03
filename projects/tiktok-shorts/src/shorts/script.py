@@ -20,6 +20,17 @@ class Script:
         parts = [self.hook, *self.lines, self.cta]
         return "。\n".join(p.strip().rstrip("。") for p in parts if p and p.strip()) + "。"
 
+    @classmethod
+    def from_dict(cls, d: dict) -> "Script":
+        return cls(
+            topic=str(d.get("topic", "")),
+            hook=str(d.get("hook", "")),
+            lines=[str(x) for x in d.get("lines", [])],
+            cta=str(d.get("cta", "")),
+            caption=str(d.get("caption", "")),
+            hashtags=[str(h) for h in d.get("hashtags", [])],
+        )
+
     def to_dict(self) -> dict:
         return {
             "topic": self.topic,

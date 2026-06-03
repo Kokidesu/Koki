@@ -1,0 +1,4 @@
+# 字幕用フォント(.ttf/.otf)を置く場所（任意）。
+# 日本語表示には CJK フォントが必要です。例:
+#   Noto Sans CJK JP / IPAGothic / Source Han Sans
+# システムにCJKフォントが無い環境では、ここに1つ入れて config の font を合わせてください。

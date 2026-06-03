@@ -40,17 +40,24 @@
 ## セットアップ
 
 ```bash
-# 1) システム依存: ffmpeg
-sudo apt-get install -y ffmpeg        # mac: brew install ffmpeg
-
-# 2) Python依存
+# 1) Python依存（ffmpeg が無くても static-ffmpeg が自動で入る）
 cd projects/tiktok-shorts
 pip install -r requirements.txt
 
-# 3) 環境変数
+# 2) (任意) システムにffmpegを入れると高速・安定
+#    Ubuntu: sudo apt-get install -y ffmpeg / mac: brew install ffmpeg
+
+# 3) 環境変数と設定
 cp .env.example .env                  # 中身を編集
-cp config.example.yaml config.yaml    # ジャンル/本数/声などを編集
+cp config.example.yaml config.yaml    # ジャンル/本数/声/フォントなど
+
+# 4) まず環境チェック
+PYTHONPATH=src python -m shorts doctor
 ```
+
+> **日本語フォントが必要**: 字幕の焼き込みにCJKフォントを使います。`doctor` でフォントの有無は分かりませんが、
+> 文字が□になる場合は CJKフォント（Noto Sans CJK JP / IPAGothic 等）を入れ、`config.yaml` の `font` を合わせるか、
+> `assets/fonts/` に .ttf/.otf を置いてください。
 
 必要なキー（`.env`）:
 
@@ -77,12 +84,21 @@ python -m shorts script "バナナは放射性物質を含む"
 # 動画を1本作る（台本→音声→字幕→MP4）
 python -m shorts make "ハチミツは腐らない"
 
+# 保存済みの台本JSONから作る（手書き台本もOK）
+python -m shorts render samples/scripts/01_banana.json
+
 # 10本まとめて生成（投稿はしない）
 python -m shorts batch -n 10
 
 # フル実行: 調査→10本生成→公式APIで下書き投稿
 python -m shorts run -n 10
+
+# 環境・連携状態のチェック
+python -m shorts doctor
 ```
+
+> **今日から試す（投稿なし）**: TikTok連携が未完了でも、`ANTHROPIC_API_KEY` だけ設定すれば
+> `batch` / `make` / `render` で動画は量産できます。中身を確認してから連携→投稿に進むのが安全です。
 
 出力は `out/` 配下に `動画.mp4` ＋ `manifest.json`（台本・字幕・投稿ステータス）として保存されます。
 
@@ -91,13 +107,18 @@ python -m shorts run -n 10
 ## 1日10投稿の運用
 
 `run` 1回で10本まとめて下書きに上げ、人が確認して公開、が安全運用です。
-完全自動の定期実行にしたい場合は cron（例: 朝に10本下書き生成）:
+定期実行は用途に合わせて選べます:
 
-```cron
-0 8 * * *  cd /path/to/projects/tiktok-shorts && PYTHONPATH=src python -m shorts run -n 10 >> run.log 2>&1
-```
+- **cron / systemd（推奨）** … 手元PCやVPSで毎朝自動生成。`scripts/run_daily.sh` を使い、
+  `deploy/crontab.example` か `deploy/shorts-daily.{service,timer}` を参照。トークンが永続化され投稿まで自動化できる。
+  ```bash
+  ./scripts/run_daily.sh 10        # 10本生成→設定どおり下書き投稿
+  ```
+- **GitHub Actions** … `.github/workflows/tiktok-shorts-generate.yml`。CIで生成して成果物を
+  ダウンロードできる（**投稿はしない**。CIはトークン永続化が不安定なため生成専用）。
 
-> リポジトリ内の `/loop` スキルでも定期実行できます。ただし **投稿頻度はアカウントの状態を見ながら** 調整してください（新規アカウントでいきなり10連投はスパム判定されやすい）。
+> **投稿頻度はアカウントの状態を見ながら**調整してください。新規アカウントでいきなり10連投は
+> スパム判定されやすいので、最初は1日3〜5本から徐々に増やすのが安全です。
 
 ---
 
@@ -140,7 +161,10 @@ src/shorts/
   publish_tiktok.py 公式Content Posting APIクライアント（下書き/公開）
   auth_tiktok.py   OAuth連携・トークン保存/自動更新（1アカウント）
   pipeline.py      バッチ・オーケストレーション
-  cli.py           コマンドライン
+  cli.py           コマンドライン（research/script/make/render/batch/run/auth/doctor）
 samples/           すぐ使えるサンプル（ネタ一覧・台本）
-assets/            背景動画/BGMを置く場所（任意）
+assets/            背景動画/BGM/フォントを置く場所（任意）
+scripts/           run_daily.sh（定期実行ラッパ）
+deploy/            cron / systemd の設定例
+docs/              SETUP_TIKTOK.md（API連携の手順）
 ```

@@ -1,0 +1,8 @@
+[Unit]
+Description=tiktok-shorts daily generation
+
+[Service]
+Type=oneshot
+# パスは実環境に合わせて変更
+WorkingDirectory=/path/to/projects/tiktok-shorts
+ExecStart=/path/to/projects/tiktok-shorts/scripts/run_daily.sh 10

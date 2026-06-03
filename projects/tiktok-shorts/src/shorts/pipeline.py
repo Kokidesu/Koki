@@ -14,38 +14,37 @@ def _slug(topic: str, index: int) -> str:
     return f"{index:02d}_{safe[:28]}"
 
 
-def make_one(topic: str, cfg: dict, index: int = 1,
+def _produce(scr: script.Script, cfg: dict, index: int = 1,
              publish_mode: str | None = None, token: str | None = None) -> dict:
-    """1本ぶんを生成（必要なら投稿）して記録dictを返す。"""
+    """台本(Script)→音声→字幕→動画→(投稿) の本体。"""
     out = Path(cfg["out_dir"])
     out.mkdir(parents=True, exist_ok=True)
-    base = out / _slug(topic, index)
-
-    scr = script.generate(topic, cfg["language"])
+    base = out / _slug(scr.topic or "video", index)
+    res = tuple(cfg["resolution"])
 
     audio = f"{base}.mp3"
     boundaries = tts.synthesize(scr.narration(), audio, cfg["voice"], cfg.get("speech_rate", "+0%"))
 
     ass = f"{base}.ass"
-    total = None
-    if not boundaries:
-        try:
-            total = video.probe_duration(audio)
-        except Exception:  # noqa: BLE001
-            total = None
-    subtitles.build_ass(boundaries, ass, tuple(cfg["resolution"]), total_duration=total)
+    font = cfg.get("font", "Noto Sans CJK JP")
+    if boundaries:
+        subtitles.build_ass(boundaries, ass, res, font=font)
+    else:  # 単語境界を返さないTTS用に、文字数で時間配分
+        dur = video.probe_duration(audio)
+        subtitles.build_estimated([scr.hook, *scr.lines, scr.cta], dur, ass, res, font=font)
 
     mp4 = f"{base}.mp4"
-    video.assemble(audio, ass, mp4, tuple(cfg["resolution"]), cfg["fps"],
-                   cfg["backgrounds_dir"], cfg["music_dir"], cfg["music_volume"])
+    video.assemble(audio, ass, mp4, res, cfg["fps"],
+                   cfg["backgrounds_dir"], cfg["music_dir"], cfg["music_volume"],
+                   fonts_dir=cfg.get("fonts_dir"))
 
-    rec = {"topic": topic, "script": scr.to_dict(),
+    rec = {"topic": scr.topic, "script": scr.to_dict(),
            "files": {"audio": audio, "subtitles": ass, "video": mp4}}
 
     mode = publish_mode if publish_mode is not None else cfg["publish"]["mode"]
     if mode and mode != "off":
         try:
-            title = (scr.caption or topic)
+            title = scr.caption or scr.topic
             if scr.hashtags:
                 title = f"{title} {' '.join(scr.hashtags)}".strip()
             rec["publish"] = publish_tiktok.publish(
@@ -53,6 +52,19 @@ def make_one(topic: str, cfg: dict, index: int = 1,
         except Exception as e:  # noqa: BLE001 — 投稿失敗でも生成物は残す
             rec["publish"] = {"error": str(e)}
     return rec
+
+
+def make_one(topic: str, cfg: dict, index: int = 1,
+             publish_mode: str | None = None, token: str | None = None) -> dict:
+    """トピック文字列から台本を生成して1本作る。"""
+    scr = script.generate(topic, cfg["language"])
+    return _produce(scr, cfg, index, publish_mode, token)
+
+
+def make_from_script(scr: script.Script, cfg: dict, index: int = 1,
+                     publish_mode: str | None = None, token: str | None = None) -> dict:
+    """保存済みの台本(JSON)から1本作る（手書き台本の利用に便利）。"""
+    return _produce(scr, cfg, index, publish_mode, token)
 
 
 def run(n: int | None = None, publish_mode: str | None = None,

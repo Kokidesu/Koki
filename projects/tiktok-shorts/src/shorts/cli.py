@@ -32,6 +32,12 @@ def main(argv=None) -> int:
     prun.add_argument("--publish", default=None, choices=["off", "draft", "direct"],
                       help="設定を上書きする投稿モード")
 
+    prn = sub.add_parser("render", help="保存済みの台本JSONから動画を作る")
+    prn.add_argument("path", help="台本JSON（例: samples/scripts/01_banana.json）")
+    prn.add_argument("--publish", default="off", choices=["off", "draft", "direct"])
+
+    sub.add_parser("doctor", help="環境チェック（ffmpeg/依存/連携状態）")
+
     pa = sub.add_parser("auth", help="TikTokアカウント連携(OAuth)・トークン管理")
     pa.add_argument("action", nargs="?", default="status",
                     choices=["url", "login", "status", "refresh"],
@@ -58,6 +64,31 @@ def main(argv=None) -> int:
 
     elif args.cmd == "run":
         pipeline.run(args.n, publish_mode=args.publish, config_path=args.config)
+
+    elif args.cmd == "render":
+        with open(args.path, encoding="utf-8") as f:
+            data = json.load(f)
+        scr = script.Script.from_dict(data)
+        rec = pipeline.make_from_script(scr, cfg, 1, args.publish)
+        print(json.dumps(rec, ensure_ascii=False, indent=2))
+
+    elif args.cmd == "doctor":
+        import os
+        from . import auth_tiktok as at, video
+        print("== 環境チェック ==")
+        for b in ("ffmpeg", "ffprobe"):
+            try:
+                print(f"{b:8}: OK ({video._require(b)})")
+            except Exception as e:  # noqa: BLE001
+                print(f"{b:8}: NG — {e}")
+        for mod in ("edge_tts", "requests", "yaml", "anthropic"):
+            try:
+                __import__(mod)
+                print(f"{mod:8}: OK")
+            except Exception:  # noqa: BLE001
+                print(f"{mod:8}: 未インストール（pip install -r requirements.txt）")
+        print("ANTHROPIC_API_KEY:", "設定済み" if os.environ.get("ANTHROPIC_API_KEY") else "未設定")
+        print(at.status_text())
 
     elif args.cmd == "auth":
         from . import auth_tiktok as at

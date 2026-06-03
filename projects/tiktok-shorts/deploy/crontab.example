@@ -1,0 +1,6 @@
+# 1日10投稿の定期実行例（crontab -e に貼り、パスを実環境に合わせる）
+# 朝8時に10本まとめて生成して、設定どおり下書き(draft)へアップ
+0 8 * * * /path/to/projects/tiktok-shorts/scripts/run_daily.sh 10
+
+# ※ 新規アカウントは最初から10連投せず、3〜5本で様子を見るのが安全:
+# 0 8,18 * * * /path/to/projects/tiktok-shorts/scripts/run_daily.sh 3
