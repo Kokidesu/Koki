@@ -1,0 +1,18 @@
+# koki-affiliate 設定サンプル。
+# コピーして config.toml を作り、自分の値に書き換えてください。
+
+site_title = "おすすめガジェット研究所"
+site_url   = "https://your-name.github.io/koki-affiliate"
+base_dir   = "out"
+tagline    = "ガジェットを比較・解説する自動更新ブログ"
+
+[affiliate]
+# AmazonアソシエイトのトラッキングID（例: yourname-22）。空ならタグなしリンク。
+amazon_tag     = ""
+# 楽天などの検索リンクテンプレート。{kw} が検索語に置換されます。
+rakuten_search = "https://search.rakuten.co.jp/search/mall/{kw}/"
+
+[generation]
+model = "claude-sonnet-4-6"
+words = 1200
+tone  = "親しみやすく、初心者にもわかりやすい"

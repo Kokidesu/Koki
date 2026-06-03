@@ -1,0 +1,20 @@
+[project]
+name = "koki-affiliate"
+version = "0.1.0"
+description = "全自動アフィリエイト記事ジェネレーター（キーワード→Claude生成→静的サイト出力）"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+llm = ["anthropic>=0.40.0"]
+
+[project.scripts]
+affiliate = "affiliate.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
