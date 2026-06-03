@@ -1,56 +1,80 @@
-"""Orchestration: seed -> keywords -> articles -> static site."""
+"""Orchestration: seed(s) -> new articles -> persist -> rebuild static site.
+
+The pipeline is *accumulating*: each run only generates keywords it hasn't
+written before, saves them to the content store, and rebuilds the whole site
+from everything stored so far. Run it daily and the site grows.
+"""
 
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Callable, List, Optional
+from typing import Callable, List, Optional, Sequence, Union
 
-from . import affiliate, generate, keywords, render
+from . import affiliate, generate, keywords, render, store
 from .config import Config
 from .generate import Article
 
 
 @dataclass
 class Report:
-    seed: str
-    keywords: List[str]
-    articles: List[Article]
+    new_articles: List[Article]
+    total: int
     out_dir: str
 
 
 def run(
-    seed: str,
-    count: int,
+    seeds: Union[str, Sequence[str]],
+    per_run: int,
     config: Config,
     *,
     on_event: Optional[Callable[[str], None]] = None,
 ) -> Report:
+    """Generate up to `per_run` brand-new articles across the given seeds,
+    persist them, and rebuild the site from the full content store."""
+
     def ev(msg: str) -> None:
         if on_event:
             on_event(msg)
 
-    ev(f"キーワード展開：「{seed}」→ {count}本")
-    kws = keywords.expand(seed, count, config)
+    if isinstance(seeds, str):
+        seeds = [seeds]
+    seeds = [s.strip() for s in seeds if s and s.strip()]
 
-    articles: List[Article] = []
-    seen: set[str] = set()
-    for idx, kw in enumerate(kws, 1):
-        ev(f"[{idx}/{len(kws)}] 記事生成：{kw}")
-        art = generate.generate(kw, config)
+    existing = store.load_all(config.content_dir)
+    seen = {a.slug for a in existing}
+    new: List[Article] = []
 
-        # Ensure a unique slug across the batch.
-        base = art.slug or f"post-{idx}"
-        slug, k = base, 2
-        while slug in seen:
-            slug = f"{base}-{k}"
-            k += 1
-        seen.add(slug)
-        art.slug = slug
+    for seed in seeds:
+        if len(new) >= per_run:
+            break
+        ev(f"キーワード展開：「{seed}」")
+        candidates = keywords.expand(seed, max(per_run * 4, 20), config)
+        for kw in candidates:
+            if len(new) >= per_run:
+                break
+            slug = generate.slugify(kw)
+            if slug in seen:
+                continue  # already written -> skip (saves an API call)
+            ev(f"記事生成：{kw}")
+            art = generate.generate(kw, config)
+            if art.slug in seen:
+                continue
+            art.body_md = affiliate.inject(art.body_md, kw, config)
+            store.save_article(art, config.content_dir)
+            seen.add(art.slug)
+            new.append(art)
 
-        art.body_md = affiliate.inject(art.body_md, kw, config)
-        articles.append(art)
+    all_articles = store.load_all(config.content_dir)
+    ev(f"サイト出力：{config.base_dir}/（全{len(all_articles)}記事）")
+    render.render_site(all_articles, config)
 
-    ev(f"サイト出力：{config.base_dir}/")
+    return Report(new_articles=new, total=len(all_articles), out_dir=config.base_dir)
+
+
+def build(config: Config, *, on_event: Optional[Callable[[str], None]] = None) -> int:
+    """Rebuild the static site from the content store, generating nothing."""
+    articles = store.load_all(config.content_dir)
+    if on_event:
+        on_event(f"再ビルド：{len(articles)}記事 → {config.base_dir}/")
     render.render_site(articles, config)
-
-    return Report(seed=seed, keywords=kws, articles=articles, out_dir=config.base_dir)
+    return len(articles)

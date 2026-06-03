@@ -17,6 +17,7 @@ class Config:
     site_title: str = "おすすめ研究所"
     site_url: str = "https://example.com"
     base_dir: str = "out"
+    content_dir: str = "content"
     tagline: str = ""
     disclosure: str = (
         "当サイトはアフィリエイトプログラムを利用しています。"
@@ -45,6 +46,7 @@ class Config:
             site_title=data.get("site_title", cls.site_title),
             site_url=data.get("site_url", cls.site_url),
             base_dir=data.get("base_dir", cls.base_dir),
+            content_dir=data.get("content_dir", cls.content_dir),
             tagline=data.get("tagline", cls.tagline),
             disclosure=data.get("disclosure", cls.disclosure),
             amazon_tag=aff.get("amazon_tag", cls.amazon_tag),
