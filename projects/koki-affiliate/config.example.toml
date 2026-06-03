@@ -13,6 +13,10 @@ amazon_tag     = ""
 rakuten_search = "https://search.rakuten.co.jp/search/mall/{kw}/"
 
 [generation]
-model = "claude-sonnet-4-6"
+# 生成エンジンは環境変数 KOKI_LLM で切替: auto(既定) / anthropic / ollama / none
+#   anthropic … ANTHROPIC_API_KEY が必要（課金・高品質）
+#   ollama    … ローカルのOllamaで生成（完全無料）。OLLAMA_MODEL で機種変更可
+#   none      … テンプレ生成（オフライン・無料）
+model = "claude-sonnet-4-6"   # anthropic 利用時のモデル
 words = 1200
 tone  = "親しみやすく、初心者にもわかりやすい"

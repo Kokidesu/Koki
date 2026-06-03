@@ -29,7 +29,11 @@ class TestPipeline(unittest.TestCase):
             for name in ("index.html", "style.css", "sitemap.xml", "robots.txt"):
                 self.assertTrue((base / name).exists(), f"missing {name}")
 
-            page = (base / f"{report.new_articles[0].slug}.html").read_text("utf-8")
+            slug0 = report.new_articles[0].slug
+            self.assertTrue((base / f"{slug0}.svg").exists())  # eyecatch image
+            page = (base / f"{slug0}.html").read_text("utf-8")
+            self.assertIn('class="eyecatch"', page)
+            self.assertIn("og:image", page)
             self.assertIn("amazon.co.jp", page)
             self.assertIn("tag=test-22", page)
             self.assertIn("アフィリエイトプログラム", page)

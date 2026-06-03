@@ -1,14 +1,14 @@
-"""Render articles into a static site (index, posts, css, sitemap, robots)."""
+"""Render articles into a static site: index, posts, eyecatch SVGs, css, sitemap, robots."""
 
 from __future__ import annotations
 
 import html
 from datetime import date
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
+from . import affiliate, images
 from .config import Config
-from . import affiliate
 from .generate import Article
 from .markdown import to_html
 
@@ -25,6 +25,7 @@ h1 { font-size:1.7rem; line-height:1.35; margin:.2em 0 .6em; }
 h2 { font-size:1.3rem; margin:1.8em 0 .6em; padding-bottom:.3em; border-bottom:2px solid var(--line); }
 .meta,.breadcrumb { color:var(--muted); font-size:.86rem; }
 .breadcrumb { margin-bottom:1.2em; }
+.eyecatch { width:100%; height:auto; border-radius:12px; margin:.4em 0 1.4em; display:block; }
 table { width:100%; border-collapse:collapse; margin:1.2em 0; background:var(--card); }
 th,td { border:1px solid var(--line); padding:10px 12px; text-align:left; }
 th { background:#eef2f8; }
@@ -32,10 +33,12 @@ th { background:#eef2f8; }
 .cards { display:grid; gap:16px; grid-template-columns:1fr; }
 @media(min-width:620px){ .cards{ grid-template-columns:1fr 1fr; } }
 .card { display:block; background:var(--card); border:1px solid var(--line); border-radius:12px;
-  padding:18px; text-decoration:none; color:inherit; transition:.15s; }
+  overflow:hidden; text-decoration:none; color:inherit; transition:.15s; }
 .card:hover { border-color:var(--accent); transform:translateY(-2px); }
-.card h2 { font-size:1.05rem; border:0; margin:0 0 .4em; }
-.card p { margin:0; color:var(--muted); font-size:.9rem; }
+.card-img { width:100%; height:auto; display:block; aspect-ratio:1200/630; object-fit:cover; }
+.card-body { padding:16px; }
+.card-body h2 { font-size:1.05rem; border:0; margin:0 0 .4em; }
+.card-body p { margin:0; color:var(--muted); font-size:.9rem; }
 .cta { background:#fff8ec; border:1px solid #f1d9a8; border-radius:12px; padding:18px; margin:1.6em 0; }
 .cta-label { font-size:.72rem; letter-spacing:.08em; color:#a9762a; margin:0 0 .4em; font-weight:700; }
 .cta .btn { display:inline-block; margin:6px 8px 0 0; padding:11px 18px; border-radius:8px;
@@ -53,8 +56,17 @@ def _esc(s: str) -> str:
     return html.escape(s, quote=True)
 
 
-def _page(*, title: str, description: str, body_html: str, config: Config, canonical: str) -> str:
+def _page(
+    *,
+    title: str,
+    description: str,
+    body_html: str,
+    config: Config,
+    canonical: str,
+    image: Optional[str] = None,
+) -> str:
     year = date.today().year
+    og_image = f'<meta property="og:image" content="{_esc(image)}">' if image else ""
     return f"""<!doctype html>
 <html lang="ja">
 <head>
@@ -66,6 +78,7 @@ def _page(*, title: str, description: str, body_html: str, config: Config, canon
 <meta property="og:title" content="{_esc(title)}">
 <meta property="og:description" content="{_esc(description)}">
 <meta property="og:type" content="website">
+{og_image}
 <meta name="generator" content="koki-affiliate">
 <link rel="stylesheet" href="style.css">
 </head>
@@ -98,6 +111,7 @@ def _article_body(art: Article, others: List[Article], config: Config) -> str:
 <p class="breadcrumb"><a href="index.html">ホーム</a> › {_esc(art.title)}</p>
 <h1>{_esc(art.title)}</h1>
 <p class="meta">公開日: {art.date} ・ 想定キーワード: {_esc(art.keyword)}</p>
+<img class="eyecatch" src="{art.slug}.svg" alt="{_esc(art.title)}" width="1200" height="630" loading="lazy">
 {to_html(affiliate.inject(art.body_md, art.keyword, config))}
 {related_block}
 </article>"""
@@ -105,8 +119,10 @@ def _article_body(art: Article, others: List[Article], config: Config) -> str:
 
 def _index_body(articles: List[Article], config: Config) -> str:
     cards = "".join(
-        f'<a class="card" href="{a.slug}.html"><h2>{_esc(a.title)}</h2>'
-        f"<p>{_esc(a.description)}</p></a>"
+        f'<a class="card" href="{a.slug}.html">'
+        f'<img class="card-img" src="{a.slug}.svg" alt="" width="1200" height="630" loading="lazy">'
+        f'<div class="card-body"><h2>{_esc(a.title)}</h2>'
+        f"<p>{_esc(a.description)}</p></div></a>"
         for a in articles
     )
     lead = f'<p class="lead">{_esc(config.tagline)}</p>' if config.tagline else ""
@@ -127,13 +143,15 @@ def render_site(articles: List[Article], config: Config) -> List[str]:
 
     write("style.css", STYLE_CSS)
 
-    for art in articles:
+    for i, art in enumerate(articles):
+        write(f"{art.slug}.svg", images.eyecatch_svg(art.title, config.site_title, seed=i))
         page = _page(
             title=art.title,
             description=art.description,
             body_html=_article_body(art, articles, config),
             config=config,
             canonical=f"{site}/{art.slug}.html",
+            image=f"{site}/{art.slug}.svg",
         )
         write(f"{art.slug}.html", page)
 
@@ -143,6 +161,7 @@ def render_site(articles: List[Article], config: Config) -> List[str]:
         body_html=_index_body(articles, config),
         config=config,
         canonical=f"{site}/index.html",
+        image=(f"{site}/{articles[0].slug}.svg" if articles else None),
     )
     write("index.html", index)
 
