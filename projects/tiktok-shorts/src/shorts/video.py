@@ -112,3 +112,65 @@ def assemble(audio_path: str, ass_path: str, out_path: str,
     subprocess.run(cmd, cwd=workdir, check=True,
                    stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
     return out_path
+
+
+def assemble_slideshow(segments, audio_path: str, ass_path: str, out_path: str,
+                       resolution=(1080, 1920), fps: int = 30,
+                       music_dir: str = "assets/music", music_volume: float = 0.12,
+                       fonts_dir: str | None = None, zoom: float = 0.10) -> str:
+    """画像のスライドショー（各画像をゆっくりズーム）に字幕を焼いて合成。
+
+    segments: [(image_path, duration_sec), ...]
+    """
+    ffmpeg = _require("ffmpeg")
+    w, h = resolution
+    sw, sh = int(w * 1.5), int(h * 1.5)   # ズーム用の余白
+    audio_abs = str(Path(audio_path).resolve())
+    music = _pick(music_dir, _AUDIO_EXT)
+
+    workdir = str(Path(out_path).resolve().parent)
+    ass_name = Path(ass_path).name
+    out_abs = str(Path(out_path).resolve())
+
+    cmd = [ffmpeg, "-y"]
+    vparts = []
+    n = len(segments)
+    for i, (img, dur) in enumerate(segments):
+        cmd += ["-loop", "1", "-t", f"{dur:.3f}", "-i", str(Path(img).resolve())]
+        frames = max(1, int(round(dur * fps)))
+        zinc = zoom / frames
+        vparts.append(
+            f"[{i}:v]scale={sw}:{sh}:force_original_aspect_ratio=increase,crop={sw}:{sh},"
+            f"zoompan=z='min(zoom+{zinc:.6f},{1 + zoom:.3f})':d={frames}"
+            f":x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':s={w}x{h}:fps={fps},setsar=1[v{i}]"
+        )
+    cmd += ["-i", audio_abs]              # voice = index n
+    voice_idx = n
+    if music:
+        cmd += ["-stream_loop", "-1", "-i", music]   # music = index n+1
+
+    concat = "".join(f"[v{i}]" for i in range(n)) + f"concat=n={n}:v=1:a=0[bg]"
+    subs = f"[bg]subtitles={ass_name}"
+    if fonts_dir and Path(fonts_dir).is_dir() and any(Path(fonts_dir).iterdir()):
+        subs += f":fontsdir={Path(fonts_dir).resolve()}"
+    subs += "[v]"
+
+    if music:
+        aud = (f"[{voice_idx}:a]volume=1.7[a1];[{voice_idx + 1}:a]volume={music_volume}[a2];"
+               f"[a1][a2]amix=inputs=2:duration=first:dropout_transition=0[a]")
+    else:
+        aud = f"[{voice_idx}:a]volume=1.7[a]"
+
+    fc = ";".join(vparts + [concat, subs, aud])
+    cmd += [
+        "-filter_complex", fc,
+        "-map", "[v]", "-map", "[a]",
+        "-r", str(fps),
+        "-c:v", "libx264", "-preset", "veryfast", "-pix_fmt", "yuv420p",
+        "-c:a", "aac", "-b:a", "192k",
+        "-movflags", "+faststart", "-shortest",
+        out_abs,
+    ]
+    subprocess.run(cmd, cwd=workdir, check=True,
+                   stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+    return out_path

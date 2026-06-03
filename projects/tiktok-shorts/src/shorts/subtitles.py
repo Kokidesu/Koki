@@ -148,7 +148,8 @@ def _kara(units: list[dict]) -> str:
 
 
 def _ass_document(chunks: list[dict], resolution, font: str,
-                  style: str = "karaoke", accent: str = "#FFE100") -> str:
+                  style: str = "karaoke", accent: str = "#FFE100",
+                  hook: str | None = None, hook_dur: float = 2.8) -> str:
     w, h = resolution
     fontsize = _fontsize(w)
     cap = _line_capacity(w)
@@ -156,6 +157,7 @@ def _ass_document(chunks: list[dict], resolution, font: str,
     shadow = max(1, fontsize // 24)
     accent_ass = _rgb_to_ass(accent)
     white = "&H00FFFFFF"
+    hook_size = int(fontsize * 1.18)
 
     if style == "karaoke":
         primary, secondary = accent_ass, white   # 未読=白 → 読了=accent に塗られる
@@ -172,11 +174,18 @@ ScaledBorderAndShadow: yes
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV
 Style: Main,{font},{fontsize},{primary},{secondary},&H00101010,&H64000000,1,1,{outline},{shadow},2,{_MARGIN},{_MARGIN},{int(h * 0.20)}
+Style: Hook,{font},{hook_size},{accent_ass},{accent_ass},&H00101010,&H64000000,1,1,{outline + 2},{shadow + 1},8,{_MARGIN},{_MARGIN},{int(h * 0.12)}
 
 [Events]
 Format: Layer, Start, End, Style, MarginL, MarginR, MarginV, Effect, Text
 """
     lines = []
+    if hook and hook.strip():
+        htext = _wrap(hook.strip().replace("{", "(").replace("}", ")"), cap)
+        lines.append(
+            f"Dialogue: 1,{_fmt_time(0)},{_fmt_time(hook_dur)},Hook,0,0,0,,"
+            r"{\fad(160,140)}" + htext
+        )
     for c in chunks:
         start, end = _fmt_time(c["start"]), _fmt_time(c["end"])
         if style == "karaoke":
@@ -191,19 +200,22 @@ Format: Layer, Start, End, Style, MarginL, MarginR, MarginV, Effect, Text
 
 def build_ass(boundaries: list[dict], out_path: str, resolution=(1080, 1920),
               font: str = "Noto Sans CJK JP", max_chars: int | None = None,
-              style: str = "karaoke", accent: str = "#FFE100") -> str:
+              style: str = "karaoke", accent: str = "#FFE100",
+              hook: str | None = None) -> str:
     cap = max_chars or _line_capacity(resolution[0])
     chunks = _chunk_boundaries(boundaries, cap) if boundaries else []
     for c in chunks:
         c["units"] = _units_from_words(c["words"])
-    Path(out_path).write_text(_ass_document(chunks, resolution, font, style, accent), encoding="utf-8")
+    doc = _ass_document(chunks, resolution, font, style, accent, hook=hook)
+    Path(out_path).write_text(doc, encoding="utf-8")
     return out_path
 
 
 def build_estimated(segments: list[str], total_duration: float, out_path: str,
                     resolution=(1080, 1920), font: str = "Noto Sans CJK JP",
                     max_chars: int | None = None,
-                    style: str = "karaoke", accent: str = "#FFE100") -> str:
+                    style: str = "karaoke", accent: str = "#FFE100",
+                    hook: str | None = None) -> str:
     cap = max_chars or _line_capacity(resolution[0])
     pieces: list[str] = []
     for s in segments:
@@ -217,5 +229,7 @@ def build_estimated(segments: list[str], total_duration: float, out_path: str,
         dur = total_duration * len(p) / total_chars
         chunks.append({"start": t, "end": t + dur, "units": _units_from_text(p, dur)})
         t += dur
-    Path(out_path).write_text(_ass_document(chunks, resolution, font, style, accent), encoding="utf-8")
+    hook_dur = min(2.8, total_duration * 0.28)
+    doc = _ass_document(chunks, resolution, font, style, accent, hook=hook, hook_dur=hook_dur)
+    Path(out_path).write_text(doc, encoding="utf-8")
     return out_path

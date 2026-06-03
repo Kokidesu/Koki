@@ -16,6 +16,8 @@ DEFAULTS = {
     "fonts_dir": "assets/fonts",    # ここに .ttf/.otf を置けばそれも使われる
     "caption_style": "karaoke",     # karaoke(読み上げ同期で色が乗る) | plain
     "accent_color": "#FFE100",      # カラオケ字幕のハイライト色
+    # 背景: ai_images=セリフごとにAI画像生成＋ズーム / gradient=動くグラデ / file=assets素材
+    "background": {"mode": "ai_images", "provider": "openai", "model": "gpt-image-1", "zoom": 0.10},
     "backgrounds_dir": "assets/backgrounds",
     "music_dir": "assets/music",
     "music_volume": 0.12,

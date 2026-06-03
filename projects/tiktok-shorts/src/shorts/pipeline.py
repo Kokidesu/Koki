@@ -5,7 +5,7 @@ import json
 import re
 from pathlib import Path
 
-from . import publish_tiktok, script, subtitles, trends, tts, video
+from . import images, publish_tiktok, script, subtitles, trends, tts, video
 from .config import load_config
 
 
@@ -30,18 +30,43 @@ def _produce(scr: script.Script, cfg: dict, index: int = 1,
     style = cfg.get("caption_style", "karaoke")
     accent = cfg.get("accent_color", "#FFE100")
     if boundaries:
-        subtitles.build_ass(boundaries, ass, res, font=font, style=style, accent=accent)
+        subtitles.build_ass(boundaries, ass, res, font=font, style=style, accent=accent,
+                            hook=scr.topic)
     else:  # 単語境界を返さないTTS用に、文字数で時間配分
         dur = video.probe_duration(audio)
         subtitles.build_estimated([scr.hook, *scr.lines, scr.cta], dur, ass, res,
-                                  font=font, style=style, accent=accent)
+                                  font=font, style=style, accent=accent, hook=scr.topic)
 
     mp4 = f"{base}.mp4"
-    video.assemble(audio, ass, mp4, res, cfg["fps"],
-                   cfg["backgrounds_dir"], cfg["music_dir"], cfg["music_volume"],
-                   fonts_dir=cfg.get("fonts_dir"))
+    bg = cfg.get("background", {}) or {}
+    done = False
+    if bg.get("mode") == "ai_images":
+        try:
+            segs = [s for s in [scr.hook, *scr.lines, scr.cta] if s and s.strip()]
+            prompts = images.build_prompts(scr)
+            imgs = images.generate(prompts, out_dir=f"{base}_img",
+                                   provider=bg.get("provider"), model=bg.get("model"))
+            total = video.probe_duration(audio)
+            weights = [len(s) for s in segs][:len(imgs)]
+            tot = sum(weights) or 1
+            durs = [total * wt / tot for wt in weights]
+            durs[-1] = max(0.5, total - sum(durs[:-1]))   # 端数を最後に寄せて尺を合わせる
+            slideshow = list(zip(imgs, durs))
+            video.assemble_slideshow(slideshow, audio, ass, mp4, res, cfg["fps"],
+                                     cfg["music_dir"], cfg["music_volume"],
+                                     fonts_dir=cfg.get("fonts_dir"),
+                                     zoom=float(bg.get("zoom", 0.10)))
+            rec_bg = "ai_images"
+            done = True
+        except Exception as e:  # noqa: BLE001 — 失敗してもグラデ背景で必ず1本出す
+            print(f"[bg] AI画像生成に失敗→グラデ背景にフォールバック: {e}")
+    if not done:
+        video.assemble(audio, ass, mp4, res, cfg["fps"],
+                       cfg["backgrounds_dir"], cfg["music_dir"], cfg["music_volume"],
+                       fonts_dir=cfg.get("fonts_dir"))
+        rec_bg = "file_or_gradient"
 
-    rec = {"topic": scr.topic, "script": scr.to_dict(),
+    rec = {"topic": scr.topic, "script": scr.to_dict(), "background": rec_bg,
            "files": {"audio": audio, "subtitles": ass, "video": mp4}}
 
     mode = publish_mode if publish_mode is not None else cfg["publish"]["mode"]

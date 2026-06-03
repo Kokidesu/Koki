@@ -21,6 +21,13 @@ fonts_dir: assets/fonts
 caption_style: karaoke
 accent_color: "#FFE100"   # カラオケのハイライト色
 
+# 背景の作り方
+background:
+  mode: ai_images       # ai_images=セリフごとにAI画像生成＋ズーム / gradient=動くグラデ / file=assets素材
+  provider: openai      # 画像生成プロバイダ（要 OPENAI_API_KEY）
+  model: gpt-image-1    # OpenAIなら gpt-image-1 または dall-e-3
+  zoom: 0.10            # Ken Burnsのズーム量（0で無効）
+
 # 背景・BGM（任意）。ディレクトリに素材を置くとランダムで使用。無ければ自動でグラデ背景。
 backgrounds_dir: assets/backgrounds   # 縦型のループ動画(.mp4)を入れる
 music_dir: assets/music               # BGM(.mp3) を入れる

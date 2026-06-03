@@ -30,7 +30,8 @@
 - 🔎 **トレンド調査** … いま伸びている雑学の切り口をClaudeでリサーチしてネタ出し
 - ✍️ **台本生成** … フック→本編→CTA の構成で日本語ナレーション原稿を一括生成
 - 🔊 **AI音声(TTS)** … 既定は無料の `edge-tts`（APIキー不要）。ElevenLabs等にも差し替え可
-- 💬 **自動字幕** … TTSの単語タイムスタンプから字幕(ASS)を自動生成・焼き込み
+- 💬 **カラオケ字幕** … 読み上げに同期して1語ずつ色が乗るCapCut風テロップ＋冒頭の大見出し(フック)
+- 🖼 **AI画像背景** … セリフごとに内容に合うAI画像を生成し、Ken Burnsズームで動かす（無料グラデ/自前素材にも切替可）
 - 🎬 **動画合成** … 背景＋音声＋字幕を 1080x1920 の縦型MP4に（ffmpeg）
 - 📤 **公式API投稿** … 既定は「下書き(inbox)」アップロード。審査後は自動公開(direct)も可
 - 🔁 **バッチ実行** … `run` で「調査→10本生成→下書き投稿」を一気に
@@ -63,10 +64,11 @@ PYTHONPATH=src python -m shorts doctor
 
 | 変数 | 用途 |
 | --- | --- |
-| `ANTHROPIC_API_KEY` | 台本・トレンド調査（必須） |
-| `TIKTOK_ACCESS_TOKEN` | 公式API投稿用。TikTok for Developers のOAuthで取得 |
+| `ANTHROPIC_API_KEY` | 台本・画像プロンプト・トレンド調査（必須） |
+| `OPENAI_API_KEY` | AI画像背景を使う場合（`background.mode: ai_images`）。不要なら `gradient` に |
+| `TIKTOK_CLIENT_KEY` / `TIKTOK_CLIENT_SECRET` / `TIKTOK_REDIRECT_URI` | 公式API投稿の連携用（`docs/SETUP_TIKTOK.md`） |
 
-> TTSは既定で **edge-tts（キー不要・無料）** を使うので、最初の動画生成だけなら `ANTHROPIC_API_KEY` だけでOKです。
+> TTSは既定で **edge-tts（キー不要・無料）**。背景を `gradient` にすれば、最初は `ANTHROPIC_API_KEY` だけで動画が作れます。
 
 ---
 
@@ -156,8 +158,9 @@ src/shorts/
   trends.py        トレンド調査（Claude / 任意で検索API）
   script.py        雑学ナレーション台本の生成
   tts.py           TTS（既定 edge-tts、差し替え可）+ 単語タイムスタンプ
-  subtitles.py     タイムスタンプ→字幕(ASS)生成
-  video.py         ffmpegで縦型MP4合成（字幕焼き込み）
+  subtitles.py     カラオケ字幕(ASS)生成＋冒頭フック見出し
+  images.py        セリフごとのAI画像プロンプト生成＋画像生成(OpenAI)
+  video.py         ffmpegで縦型MP4合成（AI画像スライドショー＋Ken Burns＋字幕焼き込み）
   publish_tiktok.py 公式Content Posting APIクライアント（下書き/公開）
   auth_tiktok.py   OAuth連携・トークン保存/自動更新（1アカウント）
   pipeline.py      バッチ・オーケストレーション
