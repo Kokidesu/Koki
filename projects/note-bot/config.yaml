@@ -1,0 +1,32 @@
+# =========================================================
+#  note 自動投稿（ローカル版）設定
+# =========================================================
+account_url: "https://note.com/light_roses761"
+
+# テーマ: "auto"=自分のアカウントから自動推定 / 文字列で固定も可
+theme: "auto"
+
+# 1記事の目標文字数（2万字はかなり長い。最初は3000〜で試すのも可）
+target_chars: 20000
+
+# 公開モード:  false=下書き保存だけ（まずこれ）/ true=そのまま公開
+publish: false
+
+tags: ["毎日note"]
+thumbnail: true
+
+# Geminiモデル
+text_model: "gemini-2.5-pro"
+image_model: "imagen-3.0-generate-002"
+style: "読みやすい見出し付き。体験談トーン。煽りすぎない。"
+
+# 1回の実行で作る本数
+articles_per_run: 1
+
+# ---- 連続実行（PCが起きてる間ずっと回す）----
+loop: false             # true にすると連続モード
+interval_minutes: 180   # 何分ごとに実行するか
+max_per_day: 3          # ★1日の投稿上限（スパム判定・凍結を避ける安全装置。必ず付ける）
+
+# 投稿の様子を画面表示する？ false=表示 / true=非表示
+headless: false

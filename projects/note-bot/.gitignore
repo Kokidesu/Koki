@@ -1,0 +1,5 @@
+# ログイン状態・生成物はコミットしない
+.note-profile/
+output/
+__pycache__/
+*.pyc
