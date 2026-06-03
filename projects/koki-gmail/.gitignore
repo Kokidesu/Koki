@@ -1,0 +1,14 @@
+# Secrets — never commit these
+backend/credentials.json
+backend/token.json
+.env
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# DB
+*.db
+*.sqlite3

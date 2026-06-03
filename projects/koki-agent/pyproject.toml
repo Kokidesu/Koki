@@ -1,0 +1,20 @@
+[project]
+name = "koki"
+version = "0.1.0"
+description = "Koki - a bilingual (JA/EN) task-managing & task-executing AI agent"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "anthropic>=0.40.0",
+    "rich>=13.0.0",
+]
+
+[project.scripts]
+koki = "koki.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
