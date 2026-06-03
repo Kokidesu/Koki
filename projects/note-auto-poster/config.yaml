@@ -1,0 +1,37 @@
+# =============================================================
+#  note 自動投稿 設定ファイル / note auto-poster config
+# =============================================================
+
+# あなたのnoteアカウント / your note account
+account_url: "https://note.com/light_roses761"
+
+# ★★ 記事のテーマ（ここを必ず書き換える）★★
+# Theme of the articles (REQUIRED — rewrite to match your account).
+# 例 / e.g.: "30代からの節約とつみたて投資" / "猫との暮らしの工夫" / "Webデザインの小ワザ"
+theme: "（ここにあなたのテーマを書いてください）"
+
+# 1回の実行で作る記事数 / articles generated & posted per run
+articles_per_run: 1
+
+# 1記事の目標文字数 / target characters per article
+# ※2万字はかなり長文です。スパム判定・品質リスクを考え最初は 3000〜5000 を推奨。
+target_chars: 20000
+
+# 公開モード / publish mode
+#   true  = そのまま公開 / publish immediately
+#   false = 下書き保存だけ / save as draft only  ← 最初はこちらを強く推奨
+publish: true
+
+# 付けるハッシュタグ / hashtags (note allows up to ~10)
+tags:
+  - "毎日note"
+
+# 使うGeminiモデル / Gemini models
+text_model: "gemini-2.5-pro"        # 本文生成 / article text
+image_model: "imagen-3.0-generate-002"  # サムネ画像生成 / thumbnail image
+
+# サムネを生成する？ / generate a thumbnail image?
+thumbnail: true
+
+# 生成スタイルの指示（任意）/ extra style guidance (optional)
+style: "読みやすい見出し付き。一次情報の体験談トーン。煽りすぎない。"

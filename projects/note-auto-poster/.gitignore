@@ -1,0 +1,6 @@
+# 生成物・秘密情報はコミットしない / never commit outputs or secrets
+output/
+storage_state.json
+.env
+__pycache__/
+*.pyc
