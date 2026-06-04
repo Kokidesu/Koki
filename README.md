@@ -13,6 +13,7 @@
 | `projects/transnational-justice/` | Transnational Justice プレゼン一式（pptx / PDF / 原稿 / 画像 / 生成スクリプト） | ecstatic-archimedes |
 | `projects/koki-agent/` | Koki エージェント本体（CLI・計画・自動実行・GitHub同期・テスト） | hopeful-ritchie |
 | `projects/koki-gmail/` | Koki Gmail要約プロトタイプ（FastAPI + Claude + デプロイ設定） | trusting-pascal |
+| `projects/koki-affiliate/` | 全自動アフィリエイト記事ジェネレーター（キーワード→Claude生成→静的サイト出力 / オフラインfallback付き） | blissful-gates-9mbz3 |
 
 ## メモ
 - 各プロジェクトの元のブランチもGitHubにそのまま残っています（消していません）。

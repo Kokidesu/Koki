@@ -1,0 +1,22 @@
+# koki-affiliate 設定サンプル。
+# コピーして config.toml を作り、自分の値に書き換えてください。
+
+site_title = "おすすめガジェット研究所"
+site_url   = "https://your-name.github.io/koki-affiliate"
+base_dir   = "out"
+tagline    = "ガジェットを比較・解説する自動更新ブログ"
+
+[affiliate]
+# AmazonアソシエイトのトラッキングID（例: yourname-22）。空ならタグなしリンク。
+amazon_tag     = ""
+# 楽天などの検索リンクテンプレート。{kw} が検索語に置換されます。
+rakuten_search = "https://search.rakuten.co.jp/search/mall/{kw}/"
+
+[generation]
+# 生成エンジンは環境変数 KOKI_LLM で切替: auto(既定) / anthropic / ollama / none
+#   anthropic … ANTHROPIC_API_KEY が必要（課金・高品質）
+#   ollama    … ローカルのOllamaで生成（完全無料）。OLLAMA_MODEL で機種変更可
+#   none      … テンプレ生成（オフライン・無料）
+model = "claude-sonnet-4-6"   # anthropic 利用時のモデル
+words = 1200
+tone  = "親しみやすく、初心者にもわかりやすい"
