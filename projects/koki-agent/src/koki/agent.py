@@ -14,6 +14,37 @@ from .tools import TOOL_SCHEMAS, ToolBox
 
 DEFAULT_MODEL = os.environ.get("KOKI_MODEL", "claude-sonnet-4-6")
 
+# The research path defaults to the most capable available model. Override with
+# KOKI_RESEARCH_MODEL if your API key targets a different Opus/Sonnet snapshot.
+RESEARCH_MODEL = os.environ.get("KOKI_RESEARCH_MODEL", "claude-opus-4-8")
+
+RESEARCH_SYSTEM_PROMPT = """\
+You are Hono-chan (ほのちゃん), a world-class research analyst with the friendliness of
+a sharp, caring friend. Your job is to answer ANY question — in any field — with
+extreme specificity and rigor, as if the smartest expert in the world were briefing
+the user, while keeping a warm, approachable tone.
+
+Process (do this every time):
+1. Search the web aggressively. Don't rely on memory for anything factual, recent,
+   numeric, or contestable — look it up. Run several searches from different angles.
+2. Cross-check important claims across at least two independent sources. If sources
+   disagree, say so and explain which is more credible and why.
+3. Prefer primary sources, official data, and recent publications. Note dates.
+
+Answer rules:
+- Be SPECIFIC: concrete numbers, names, dates, mechanisms, trade-offs — never vague.
+- Lead with the direct answer, then the reasoning and evidence behind it.
+- Cite sources inline (the search tool attaches citations automatically) and end
+  with a short "出典 / Sources" list of the key URLs you relied on.
+- Distinguish established fact from your own inference or estimate. Flag uncertainty
+  honestly with a confidence note rather than bluffing.
+- If the question is ambiguous, state the interpretation you're answering, then
+  answer the most useful version.
+
+Language rule: ALWAYS respond in the same language the user used (Japanese → 自然な
+日本語, English → English).
+"""
+
 SYSTEM_PROMPT = """\
 You are Koki (コウキ), a world-class autonomous task-management and execution agent.
 
@@ -95,6 +126,42 @@ class Agent:
         return "(reached max turns without a final answer)"
 
 
+    def research(
+        self,
+        question: str,
+        on_tool: Optional[Callable[[str, dict], None]] = None,
+        max_searches: int = 8,
+    ) -> str:
+        """Answer a question with web research: Hono-chan, the smart research persona.
+
+        Uses the most capable model, extended thinking, and Anthropic's server-side
+        web_search tool, then returns a specific, cross-checked, cited answer.
+        """
+        web_search = {
+            "type": "web_search_20250305",
+            "name": "web_search",
+            "max_uses": max_searches,
+        }
+        messages = [{"role": "user", "content": question}]
+        if on_tool:
+            on_tool("web_search", {"query": question})
+
+        # A single create call: the server runs searches inline and returns the
+        # final, citation-bearing answer. Extended thinking sharpens the analysis.
+        resp = self.client.messages.create(
+            model=RESEARCH_MODEL,
+            max_tokens=8192,
+            system=RESEARCH_SYSTEM_PROMPT,
+            tools=[web_search],
+            messages=messages,
+            thinking={"type": "enabled", "budget_tokens": 4000},
+        )
+        answer = _text_of(resp.content)
+        sources = _sources_of(resp.content)
+        if sources:
+            answer += "\n\n出典 / Sources:\n" + "\n".join(f"- {s}" for s in sources)
+        return answer or "(no answer produced)"
+
     def plan(self, goal: str, on_tool: Optional[Callable[[str, dict], None]] = None) -> str:
         """Decompose a high-level goal into concrete tasks in the DB."""
         prompt = (
@@ -133,3 +200,15 @@ class Agent:
 def _text_of(content: list[Any]) -> str:
     parts = [b.text for b in content if getattr(b, "type", None) == "text"]
     return "\n".join(parts).strip()
+
+
+def _sources_of(content: list[Any]) -> list[str]:
+    """Collect unique source URLs from web_search citations, preserving order."""
+    seen: dict[str, str] = {}
+    for block in content:
+        for cite in getattr(block, "citations", None) or []:
+            url = getattr(cite, "url", None)
+            if url and url not in seen:
+                title = getattr(cite, "title", None)
+                seen[url] = f"{title} — {url}" if title else url
+    return list(seen.values())

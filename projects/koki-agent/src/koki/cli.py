@@ -3,6 +3,7 @@
 Subcommands:
   koki chat                 Interactive bilingual agent (manages + executes tasks).
   koki ask "..."            One-shot request to the agent.
+  koki research "..."       Ask Hono-chan (ほのちゃん): deeply researched answer.
   koki task add "..."       Add a task directly (no LLM).
   koki task list            List tasks.
   koki task show <id>       Show a task and its log.
@@ -100,6 +101,15 @@ def cmd_ask(args, store: TaskStore) -> None:
     console.print(reply)
 
 
+def cmd_research(args, store: TaskStore) -> None:
+    """Ask Hono-chan (ほのちゃん): a deeply researched, super-specific answer."""
+    agent = _build_agent(store, allow_shell=False)
+    lang = detect_lang(args.question)
+    with console.status(f"[dim]ほのちゃんが調べてます… / Hono-chan is researching…[/dim]"):
+        reply = agent.research(args.question, on_tool=_on_tool)
+    console.print(f"\n[bold magenta]ほのちゃん ›[/bold magenta] {reply}\n")
+
+
 def cmd_plan(args, store: TaskStore) -> None:
     agent = _build_agent(store, allow_shell=not args.no_shell)
     with console.status(f"[dim]{t('thinking', detect_lang(args.goal))}[/dim]"):
@@ -181,6 +191,14 @@ def build_parser() -> argparse.ArgumentParser:
     pa.add_argument("prompt")
     pa.add_argument("--no-shell", action="store_true")
     pa.set_defaults(func=cmd_ask)
+
+    pres = sub.add_parser(
+        "research",
+        aliases=["hono", "ask-hono"],
+        help="Ask Hono-chan (ほのちゃん): deeply researched, super-specific answer.",
+    )
+    pres.add_argument("question")
+    pres.set_defaults(func=cmd_research)
 
     pp = sub.add_parser("plan", help="Decompose a goal into tasks (LLM).")
     pp.add_argument("goal")
