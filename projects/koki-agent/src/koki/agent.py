@@ -40,9 +40,17 @@ Answer rules:
   honestly with a confidence note rather than bluffing.
 - If the question is ambiguous, state the interpretation you're answering, then
   answer the most useful version.
+- ALWAYS end your answer with a confidence line:
+  "確信度 / Confidence: NN% — <one-line reason>" (NN = 0–100). Base it on source
+  quality and agreement; be honest when evidence is thin.
 
-Language rule: ALWAYS respond in the same language the user used (Japanese → 自然な
-日本語, English → English).
+If you are given "Past research notes" (your own earlier findings), reuse what is
+still valid, and re-verify anything that may have changed or aged.
+
+Language rule: ALWAYS respond in exactly the same language the user used — natural
+Japanese for Japanese input, fluent English for English input. Never mix languages
+in the body of the answer (the fixed labels 確信度/Confidence and 出典/Sources may
+stay bilingual).
 """
 
 SYSTEM_PROMPT = """\
@@ -137,12 +145,17 @@ class Agent:
         Uses the most capable model, extended thinking, and Anthropic's server-side
         web_search tool, then returns a specific, cross-checked, cited answer.
         """
+        from .memory import HonoMemory
+
+        memory = HonoMemory()
         web_search = {
             "type": "web_search_20250305",
             "name": "web_search",
             "max_uses": max_searches,
         }
-        messages = [{"role": "user", "content": question}]
+        context = memory.as_context(question)
+        user_content = f"{context}\n\n---\n\n{question}" if context else question
+        messages = [{"role": "user", "content": user_content}]
         if on_tool:
             on_tool("web_search", {"query": question})
 
@@ -160,6 +173,8 @@ class Agent:
         sources = _sources_of(resp.content)
         if sources:
             answer += "\n\n出典 / Sources:\n" + "\n".join(f"- {s}" for s in sources)
+        if answer:
+            memory.add(question, answer, sources)
         return answer or "(no answer produced)"
 
     def plan(self, goal: str, on_tool: Optional[Callable[[str, dict], None]] = None) -> str:

@@ -69,6 +69,23 @@ def _build_agent(store: TaskStore, allow_shell: bool):
     return Agent(toolbox)
 
 
+def _hono_request(user: str) -> str | None:
+    """If the message invokes Hono-chan, return the bare question; else None.
+
+    Triggers: '/hono ...', '/research ...', or a message addressed to 'ほのちゃん'
+    / 'hono' (e.g. 'ほのちゃん、〜教えて').
+    """
+    text = user.strip()
+    low = text.lower()
+    for prefix in ("/hono", "/research", "hono:", "ほのちゃん:"):
+        if low.startswith(prefix):
+            return text[len(prefix):].lstrip(" 　,、:：").strip() or text
+    for name in ("ほのちゃん", "ほの "):
+        if text.startswith(name):
+            return text[len(name):].lstrip(" 　,、:：").strip() or text
+    return None
+
+
 def _on_tool(name: str, args: dict) -> None:
     preview = ", ".join(f"{k}={v}" for k, v in list(args.items())[:3])
     console.print(f"[dim]→ {name}({preview})[/dim]")
@@ -89,6 +106,13 @@ def cmd_chat(args, store: TaskStore) -> None:
             console.print(f"[dim]{t('bye', detect_lang(user))}[/dim]")
             break
         if not user:
+            continue
+        # Route to Hono-chan when the user invokes her by name or with /hono.
+        hono_q = _hono_request(user)
+        if hono_q is not None:
+            with console.status("[dim]ほのちゃんが調べてます… / Hono-chan is researching…[/dim]"):
+                reply = agent.research(hono_q, on_tool=_on_tool)
+            console.print(f"\n[bold magenta]ほのちゃん ›[/bold magenta] {reply}\n")
             continue
         with console.status(f"[dim]{t('thinking', detect_lang(user))}[/dim]"):
             reply = agent.send(user, on_tool=_on_tool)
