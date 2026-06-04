@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Uber Eats 面接対策デッキ</title>
+<style>
+  :root{
+    --bg:#0b0b0c; --fg:#f5f5f7; --sub:#a1a1a6; --accent:#06c167; /* Uber green */
+    --card:#161618; --line:#2a2a2e; --warn:#f5a623;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    background:var(--bg);color:var(--fg);
+    font-family:-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;
+    overflow:hidden;
+  }
+  #deck{height:100vh;width:100vw;position:relative}
+  .slide{
+    position:absolute;inset:0;display:none;flex-direction:column;
+    justify-content:center;padding:6vh 8vw;animation:fade .35s ease;
+  }
+  .slide.active{display:flex}
+  @keyframes fade{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+  .kicker{color:var(--accent);font-weight:700;letter-spacing:.08em;font-size:1rem;margin-bottom:.6rem}
+  h1{font-size:3.4rem;line-height:1.15;margin-bottom:1rem}
+  h2{font-size:2.4rem;line-height:1.2;margin-bottom:1.6rem}
+  h2 .num{color:var(--accent)}
+  p.lead{font-size:1.5rem;color:var(--sub);line-height:1.6}
+  ul{list-style:none;display:flex;flex-direction:column;gap:1rem;margin-top:.5rem}
+  li{font-size:1.5rem;line-height:1.45;padding-left:1.6rem;position:relative}
+  li::before{content:"";position:absolute;left:0;top:.7em;width:.6rem;height:.6rem;background:var(--accent);border-radius:2px}
+  .big{font-size:2rem;font-weight:700}
+  .accent{color:var(--accent)}
+  .warn{color:var(--warn)}
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.2rem;margin-top:1rem}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:1.6rem 1.8rem}
+  .card h3{font-size:1.2rem;color:var(--accent);margin-bottom:.6rem}
+  .card .v{font-size:2.2rem;font-weight:800;line-height:1.1}
+  .card .s{font-size:1rem;color:var(--sub);margin-top:.4rem}
+  table{width:100%;border-collapse:collapse;margin-top:1rem;font-size:1.3rem}
+  th,td{text-align:left;padding:.85rem 1rem;border-bottom:1px solid var(--line)}
+  th{color:var(--accent);font-size:1.05rem}
+  td.r{text-align:right;font-variant-numeric:tabular-nums;font-weight:700}
+  .note{margin-top:1.4rem;font-size:1.05rem;color:var(--sub)}
+  .quote{font-size:1.7rem;line-height:1.6;border-left:4px solid var(--accent);padding-left:1.4rem;color:#e8e8ea}
+  .footer{position:absolute;bottom:2.4vh;left:8vw;right:8vw;display:flex;justify-content:space-between;font-size:.95rem;color:var(--sub)}
+  .pill{display:inline-block;background:rgba(6,193,103,.12);color:var(--accent);border:1px solid rgba(6,193,103,.4);border-radius:999px;padding:.2rem .8rem;font-size:1rem;margin-bottom:1rem}
+  .nav{position:fixed;bottom:2vh;right:2vw;display:flex;gap:.5rem;z-index:10}
+  .nav button{background:var(--card);color:var(--fg);border:1px solid var(--line);border-radius:10px;padding:.5rem .9rem;font-size:1rem;cursor:pointer}
+  .nav button:hover{border-color:var(--accent)}
+  .progress{position:fixed;top:0;left:0;height:4px;background:var(--accent);transition:width .3s;z-index:10}
+  .center{text-align:center;align-items:center}
+  .center h1{max-width:18ch}
+  small.src{color:var(--sub);font-size:.95rem}
+</style>
+</head>
+<body>
+<div class="progress" id="prog"></div>
+<div id="deck">
+
+  <!-- 1 Title -->
+  <section class="slide active center">
+    <div class="pill">AE / BPS 面接対策 — 2025〜2026 最新版</div>
+    <h1>Uber Eats Japan<br>市場・事業 データブリーフ</h1>
+    <p class="lead">なぜ今、Uber EatsのAEなのか —<br>市場・競合・事業戦略を数字で読む</p>
+  </section>
+
+  <!-- 2 Agenda -->
+  <section class="slide">
+    <div class="kicker">AGENDA</div>
+    <h2>本日の構成</h2>
+    <ul>
+      <li>① 市場 — 成熟・微成長局面と「2強」</li>
+      <li>② 競合 — Wolt撤退で鮮明になった構図</li>
+      <li>③ 事業 — Uberの成長性と日本の地方拡大</li>
+      <li>④ 商品 — AEが売る加盟店ソリューション</li>
+      <li>⑤ 論点 — 地方拡大の鍵は「配達供給」</li>
+      <li>⑥ 結論 — なぜUberのAEなのか</li>
+    </ul>
+  </section>
+
+  <!-- 3 Market -->
+  <section class="slide">
+    <div class="kicker">① 市場</div>
+    <h2>市場は「成熟・微成長」局面へ</h2>
+    <table>
+      <tr><th>年（外食デリバリー / Circana基準）</th><th class="r">市場規模</th><th class="r">前年比</th></tr>
+      <tr><td>2023年（ピーク）</td><td class="r">8,622億円</td><td class="r">+11%</td></tr>
+      <tr><td>2024年（調整）</td><td class="r">7,967億円</td><td class="r">−7.6%</td></tr>
+      <tr><td>2025年（見込み）</td><td class="r accent">8,240億円</td><td class="r accent">+2.0%</td></tr>
+    </table>
+    <p class="note">爆発的成長は終了。コロナ前の約2倍水準で定着し、再び微増へ。<br>→ だからこそ「新領域の開拓」が成長のカギ。<small class="src"> 出典: Circana Japan (2024–2025)</small></p>
+  </section>
+
+  <!-- 4 Competition -->
+  <section class="slide">
+    <div class="kicker">② 競合</div>
+    <h2>2強構造 ＋ <span class="warn">Wolt撤退</span></h2>
+    <div class="grid">
+      <div class="card"><h3>Uber Eats</h3><div class="v">利用率 約6割</div><div class="s">独走首位・黒字化済み</div></div>
+      <div class="card"><h3>出前館</h3><div class="v">約3割</div><div class="s">2位／2025年8月期 約49.7億円の赤字</div></div>
+      <div class="card"><h3>Wolt</h3><div class="v warn">2026年3月 撤退</div><div class="s">値下げ競争＋物価高で収益化できず</div></div>
+      <div class="card"><h3>menu (KDDI系)</h3><div class="v">数%</div><div class="s">ニッチ／au経済圏連携</div></div>
+    </div>
+    <p class="note">消耗戦に資本力で勝つUberの独走が一層鮮明に。<small class="src"> 出典: S.E.ネットワーク調査, 日経 (2025–2026)</small></p>
+  </section>
+
+  <!-- 5 Uber growth -->
+  <section class="slide">
+    <div class="kicker">③ 事業 — 成長性</div>
+    <h2>成長し、かつ黒字の事業</h2>
+    <div class="grid">
+      <div class="card"><h3>総取扱高 (2025通年)</h3><div class="v">$193.5B</div><div class="s">前年比 +19%</div></div>
+      <div class="card"><h3>調整後EBITDA</h3><div class="v">$8.73B</div><div class="s">+35%・過去最高</div></div>
+      <div class="card"><h3>Delivery部門EBITDA</h3><div class="v accent">$3.6B</div><div class="s">前年比 +$1.1B</div></div>
+      <div class="card"><h3>月間利用者</h3><div class="v">2.02億人</div><div class="s">+18%</div></div>
+    </div>
+    <p class="note">Deliveryは赤字事業ではなく「利益の柱」に成長。<small class="src"> 出典: Uber SEC 8-K / IR (FY2025)</small></p>
+  </section>
+
+  <!-- 6 Japan expansion -->
+  <section class="slide">
+    <div class="kicker">③ 事業 — 日本の拡大</div>
+    <h2>地方へ。「<span class="num">100都市</span>」を達成</h2>
+    <ul>
+      <li>2025年3月：「年内100都市以上」拡大を公表</li>
+      <li>4〜9月：毎月6県前後を追加し続ける</li>
+      <li><span class="accent">2025年10月：100都市計画を達成</span></li>
+      <li>2026年5月：新潟・長野・山梨の観光地12市町村へ</li>
+    </ul>
+    <p class="note">戦略フレーム「3つのA」: <b>Anything</b>（小売・日用品、売上前年比2倍）／<b>Anywhere</b>（地方・観光地）／<b>Affordable</b>（手頃さ）<small class="src"> 出典: Uberニュースルーム, ダイヤモンド・チェーンストア (2025–2026)</small></p>
+  </section>
+
+  <!-- 7 Merchant solutions -->
+  <section class="slide">
+    <div class="kicker">④ 商品 — AEが売るもの</div>
+    <h2>加盟店ソリューション</h2>
+    <table>
+      <tr><th>プラン</th><th class="r">手数料（税抜）</th></tr>
+      <tr><td>配達あり（Uber配達網）</td><td class="r">35%</td></tr>
+      <tr><td>自前配達（店が配達）</td><td class="r">15%</td></tr>
+      <tr><td>テイクアウト（ピックアップ）</td><td class="r">12%</td></tr>
+    </table>
+    <ul style="margin-top:1.2rem">
+      <li><b>広告（リテールメディア）</b>：Uber Ads年間$1.5B規模・前年比+60%</li>
+      <li><b>Uber Direct</b>：自社サイト注文をUber配達網で（スシロー等）</li>
+      <li><b>グローサリー/リテール</b>：ローソン7,000店超、ロボ配達も</li>
+    </ul>
+    <p class="note"><small class="src">出典: 加盟店支援各社, Uber公式, MarkeZine (2025–2026)</small></p>
+  </section>
+
+  <!-- 8 Key issue -->
+  <section class="slide">
+    <div class="kicker">⑤ 論点 — AEの視点</div>
+    <h2>地方拡大の鍵は「配達供給」</h2>
+    <ul>
+      <li>加盟店・注文者・配達パートナーの<b>3者が揃って</b>初めて回るマーケットプレイス</li>
+      <li>地方ほど<b>配達距離が長く、供給確保が構造的に難しい</b></li>
+      <li>2024〜25年始には需給バランスが崩れ配達遅延も発生</li>
+    </ul>
+    <p class="quote" style="margin-top:1.6rem">AEは店を開拓するだけでなく、需要を作り、<br>配達ネットワーク全体が回る状態まで意識して優先順位をつけるべき。</p>
+  </section>
+
+  <!-- 9 Conclusion -->
+  <section class="slide">
+    <div class="kicker">⑥ 結論</div>
+    <h2>なぜ Uber の AE なのか</h2>
+    <ul>
+      <li><b>成長市場でパイを取りに行ける</b> — 唯一黒字で独走する勝ち組</li>
+      <li><b>End to Endの営業</b> — 開拓〜交渉〜クロージングを一気通貫で担える</li>
+      <li><b>様々な規模の店に提案</b> — 個人店〜チェーンで営業スキルの幅が育つ</li>
+    </ul>
+    <p class="quote" style="margin-top:1.6rem">市場の成長に、自分の手で貢献しながら成長したい。<br>その全部が揃っているのが Uber Eats の AE です。</p>
+  </section>
+
+  <!-- 10 Closing -->
+  <section class="slide center">
+    <div class="pill">Thank you</div>
+    <h1>ご質問をお待ちしています</h1>
+    <p class="lead">※ 数字は2025〜2026年公開情報ベース。一部は「私の理解では」と前置き推奨。</p>
+  </section>
+
+</div>
+
+<div class="nav">
+  <button onclick="go(-1)">◀ 前</button>
+  <button onclick="go(1)">次 ▶</button>
+</div>
+
+<script>
+  const slides=[...document.querySelectorAll('.slide')];
+  let i=0;
+  function render(){
+    slides.forEach((s,n)=>s.classList.toggle('active',n===i));
+    document.getElementById('prog').style.width=((i+1)/slides.length*100)+'%';
+  }
+  function go(d){i=Math.max(0,Math.min(slides.length-1,i+d));render();}
+  document.addEventListener('keydown',e=>{
+    if(['ArrowRight','ArrowDown',' ','PageDown'].includes(e.key)){go(1);e.preventDefault();}
+    if(['ArrowLeft','ArrowUp','PageUp'].includes(e.key)){go(-1);e.preventDefault();}
+    if(e.key==='Home'){i=0;render();}
+    if(e.key==='End'){i=slides.length-1;render();}
+  });
+  render();
+</script>
+</body>
+</html>
