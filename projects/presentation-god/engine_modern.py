@@ -81,6 +81,25 @@ def _has_cjk(t: str) -> bool:
     return bool(_CJK_RE.search(t))
 
 
+_MEASURE = ImageDraw.Draw(Image.new("RGB", (10, 10)))
+
+
+def _fit_size(text: str, max_w_in: float, start: int, min_size: int = 18) -> int:
+    """Largest point size (≤ start) at which `text` fits `max_w_in` on one line.
+
+    Width is measured at 72 px/in so it is resolution-independent.
+    """
+    cjk = _has_cjk(text)
+    target_px = max_w_in * 72.0
+    size = start
+    while size > min_size:
+        f = _font(size, True, False, cjk)
+        if _MEASURE.textlength(text, font=f) <= target_px:
+            break
+        size -= 2
+    return size
+
+
 def _font(size: int, bold: bool, italic: bool, cjk: bool):
     if cjk:
         path, idx = (_JP_BOLD if bold else _JP_REG)
@@ -138,15 +157,15 @@ class ModernDeck:
         s = Slide()
         s.grad = (self.accent, self.dark)
         # subtle lighter wedge top-right for depth
-        s.text(MARGIN, 1.55, 8.5, kicker, 16, WHITE, bold=True)
+        s.text(MARGIN, 1.45, 8.5, kicker, 19, WHITE, bold=True)
         # headline: large, bold, left-aligned, multi-line allowed via \n
-        s.text(MARGIN, 2.35, 8.6, headline, 40, WHITE, bold=True, ls=1.18, h=3.2)
+        s.text(MARGIN, 2.25, 8.6, headline, 48, WHITE, bold=True, ls=1.16, h=3.2)
         if subline:
-            s.text(MARGIN, 5.55, 8.4, subline, 17, (0xDF, 0xE8, 0xFF), ls=1.3, h=0.9)
+            s.text(MARGIN, 5.6, 8.4, subline, 21, (0xDF, 0xE8, 0xFF), ls=1.3, h=0.9)
         if company:
-            s.text(MARGIN, 6.7, 6.0, company, 14, (0xCF, 0xDD, 0xFF), bold=True)
+            s.text(MARGIN, 6.75, 6.0, company, 16, (0xCF, 0xDD, 0xFF), bold=True)
         if note:
-            s.text(7.0, 6.95, 5.4, note, 11, (0xBF, 0xD0, 0xFB), align="r")
+            s.text(7.0, 6.98, 5.4, note, 13, (0xBF, 0xD0, 0xFB), align="r")
         if mock is not None:
             s.image(9.2, 1.2, 3.2, 5.1, mock)
         return self._add(s)
@@ -154,19 +173,19 @@ class ModernDeck:
     def _head(self, s, section, title, lead=""):
         # thin accent bar + small section label
         s.rect(MARGIN, 0.62, 0.07, 0.42, self.accent)
-        s.text(MARGIN + 0.2, 0.62, 10.5, section, 13, MUTE, bold=True, h=0.4)
-        s.text(MARGIN, 1.22, 11.5, title, 30, INK, bold=True, h=0.95, ls=1.1)
+        s.text(MARGIN + 0.2, 0.60, 10.5, section, 15, MUTE, bold=True, h=0.4)
+        s.text(MARGIN, 1.18, 11.5, title, 35, INK, bold=True, h=1.0, ls=1.08)
         if lead:
-            s.text(MARGIN, 2.18, 11.5, lead, 14.5, BODY, ls=1.35, h=0.8)
+            s.text(MARGIN, 2.22, 11.5, lead, 18, BODY, ls=1.3, h=0.8)
 
     def section(self, no, total, title, lead=""):
         s = Slide()
         s.grad = (self.accent, self.dark)
-        s.text(MARGIN, 2.5, 4.0, f"{no:02d} / {total:02d}", 16, (0xCF, 0xDD, 0xFF), bold=True)
+        s.text(MARGIN, 2.5, 4.0, f"{no:02d} / {total:02d}", 18, (0xCF, 0xDD, 0xFF), bold=True)
         s.rect(MARGIN, 3.15, 1.7, 0.06, WHITE)
-        s.text(MARGIN, 3.45, 10.8, title, 36, WHITE, bold=True, h=1.7, ls=1.12)
+        s.text(MARGIN, 3.42, 10.8, title, 40, WHITE, bold=True, h=1.7, ls=1.1)
         if lead:
-            s.text(MARGIN, 5.2, 10.0, lead, 16, (0xDF, 0xE8, 0xFF), ls=1.35, h=1.0)
+            s.text(MARGIN, 5.25, 10.0, lead, 20, (0xDF, 0xE8, 0xFF), ls=1.3, h=1.0)
         return self._add(s)
 
     def cards(self, section, title, cards, lead="", next_=""):
@@ -177,18 +196,18 @@ class ModernDeck:
         gap = 0.4
         total_w = SW_IN - 2 * MARGIN
         cw = (total_w - gap * (n - 1)) / n
-        top = 2.95
+        top = 3.05
         ch = 3.55
         for i, (head, bul, summ) in enumerate(cards):
             x = MARGIN + i * (cw + gap)
             s.rect(x, top, cw, ch, SOFT, r=0.12)
             s.rect(x, top, cw, 0.09, self.accent, r=0.0)  # top accent line
-            s.text(x + 0.3, top + 0.32, cw - 0.6, head, 18, INK, bold=True, h=0.8, ls=1.1)
-            s.bullets(x + 0.3, top + 1.25, cw - 0.6, bul, 13, BODY, gap=8)
+            s.text(x + 0.3, top + 0.34, cw - 0.6, head, 22, INK, bold=True, h=0.8, ls=1.1)
+            s.bullets(x + 0.3, top + 1.32, cw - 0.6, bul, 16, BODY, gap=10)
             # summary strip at the bottom of the card
-            strip_h = 0.82
+            strip_h = 0.92
             s.rect(x, top + ch - strip_h, cw, strip_h, self.band, r=0.0)
-            s.text(x + 0.3, top + ch - strip_h + 0.16, cw - 0.6, summ, 13.5, self.dark, bold=True, h=0.55, ls=1.15)
+            s.text(x + 0.3, top + ch - strip_h + 0.2, cw - 0.6, summ, 16, self.dark, bold=True, h=0.6, ls=1.15)
         self._foot(s, next_)
         return self._add(s)
 
@@ -197,9 +216,9 @@ class ModernDeck:
         s = Slide()
         self._head(s, section, title, lead)
         n = len(items)
-        y0 = 3.0 if n <= 3 else 2.7
-        gap = {1: 30, 2: 22, 3: 16, 4: 12}.get(n, 9)
-        s.bullets(MARGIN + 0.1, y0, SW_IN - 2 * MARGIN - 0.2, items, 16, BODY, gap=gap)
+        y0 = 3.1 if n <= 3 else 2.85
+        gap = {1: 34, 2: 28, 3: 22, 4: 15}.get(n, 11)
+        s.bullets(MARGIN + 0.1, y0, SW_IN - 2 * MARGIN - 0.2, items, 21, BODY, gap=gap)
         self._foot(s, next_)
         return self._add(s)
 
@@ -211,13 +230,14 @@ class ModernDeck:
         gap = 0.4
         total_w = SW_IN - 2 * MARGIN
         cw = (total_w - gap * (n - 1)) / n
-        top = 3.1
-        ch = 2.7
+        top = 3.05
+        ch = 3.0
         for i, (num, lab) in enumerate(stats):
             x = MARGIN + i * (cw + gap)
             s.rect(x, top, cw, ch, SOFT, r=0.12)
-            s.text(x + 0.25, top + 0.45, cw - 0.5, num, 46, self.accent, bold=True, align="c", h=1.2)
-            s.text(x + 0.25, top + 1.75, cw - 0.5, lab, 13.5, BODY, align="c", ls=1.25, h=0.8)
+            num_size = _fit_size(num, cw - 0.5, start=60, min_size=30)
+            s.text(x + 0.2, top + 0.55, cw - 0.4, num, num_size, self.accent, bold=True, align="c", h=1.3)
+            s.text(x + 0.2, top + 2.0, cw - 0.4, lab, 16, BODY, align="c", ls=1.25, h=0.85)
         self._foot(s, next_)
         return self._add(s)
 
@@ -239,8 +259,8 @@ class ModernDeck:
             x = MARGIN + c * (bw + gap_x)
             y = top + r * (bh + gap_y)
             s.rect(x, y, bw, bh, self.box, r=0.1)
-            s.text(x + 0.25, y + bh / 2 - 0.55, bw - 0.5, name, 18, WHITE, bold=True, align="c", h=0.6)
-            s.text(x + 0.25, y + bh / 2 + 0.05, bw - 0.5, sub, 12.5, (0xE4, 0xEC, 0xFF), align="c", ls=1.2, h=0.7)
+            s.text(x + 0.25, y + bh / 2 - 0.62, bw - 0.5, name, 23, WHITE, bold=True, align="c", h=0.6)
+            s.text(x + 0.25, y + bh / 2 + 0.08, bw - 0.5, sub, 15, (0xE4, 0xEC, 0xFF), align="c", ls=1.2, h=0.7)
             centers.append((x, y, bw, bh))
         # arrows between consecutive boxes
         for i in range(n - 1):
@@ -257,22 +277,22 @@ class ModernDeck:
         """items = list of (n, head, sub). Numbered, clean."""
         s = Slide()
         self._head(s, section, title)
-        y = 2.85
+        y = 2.95
         for num, head, sub in items:
-            s.rect(MARGIN, y, 0.62, 0.62, self.accent, r=0.1)
-            s.text(MARGIN, y + 0.13, 0.62, num, 20, WHITE, bold=True, align="c", h=0.4)
-            s.text(MARGIN + 0.95, y + 0.02, 10.6, head, 17, INK, bold=True, h=0.45)
-            s.text(MARGIN + 0.95, y + 0.45, 10.6, sub, 13, BODY, h=0.4, ls=1.2)
-            y += 0.98
+            s.rect(MARGIN, y, 0.7, 0.7, self.accent, r=0.1)
+            s.text(MARGIN, y + 0.15, 0.7, num, 23, WHITE, bold=True, align="c", h=0.4)
+            s.text(MARGIN + 1.05, y + 0.04, 10.5, head, 21, INK, bold=True, h=0.5)
+            s.text(MARGIN + 1.05, y + 0.56, 10.5, sub, 15, BODY, h=0.45, ls=1.2)
+            y += 1.12
         if sources:
-            s.rect(MARGIN, 6.35, SW_IN - 2 * MARGIN, 0.7, SOFT, r=0.08)
-            s.text(MARGIN + 0.25, 6.46, 11.0, "SOURCES / 出典", 10, MUTE, bold=True, h=0.3)
-            s.text(MARGIN + 0.25, 6.72, 11.4, sources, 10, BODY, ls=1.2, h=0.3)
+            s.rect(MARGIN, 6.42, SW_IN - 2 * MARGIN, 0.66, SOFT, r=0.08)
+            s.text(MARGIN + 0.25, 6.5, 11.0, "SOURCES / 出典", 11, MUTE, bold=True, h=0.3)
+            s.text(MARGIN + 0.25, 6.76, 11.4, sources, 11, BODY, ls=1.2, h=0.3)
         return self._add(s)
 
     def _foot(self, s, next_):
         if next_:
-            s.text(MARGIN, 7.0, 8.0, f"NEXT ▶ {next_}", 11, MUTE, h=0.3)
+            s.text(MARGIN, 7.02, 8.0, f"NEXT ▶ {next_}", 12.5, MUTE, h=0.3)
 
     # ---------------- build ----------------
     def build(self, outdir, name, pdf=True, contact=True):

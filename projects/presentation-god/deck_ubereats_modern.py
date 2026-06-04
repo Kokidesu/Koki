@@ -40,7 +40,7 @@ def build_ja(theme="green"):
 
     d.kpis("実績 / TRACTION", "規模と収益性を、同時に実現",
            [("1.4億人", "2024年にUber Eatsで\n注文した利用者"),
-            ("$20.1B", "四半期のデリバリー総取扱高\n(2024 Q4・前年比 +18%)"),
+            ("$20.1B", "デリバリー総取扱高\n(2024 Q4, 前年比+18%)"),
             ("1.71億人", "Uber全体の\n月間利用者数"),
             ("45カ国", "展開国数\n(11,000都市超)")],
            lead="「成長」と「利益」を両立できるフェーズに入った。",
@@ -91,7 +91,7 @@ def build_en(theme="blue"):
 
     d.kpis("TRACTION", "Scale and profitability, at the same time",
            [("140M", "consumers ordered on\nUber Eats in 2024"),
-            ("$20.1B", "quarterly Delivery Gross\nBookings (Q4 2024, +18%)"),
+            ("$20.1B", "Delivery Gross Bookings\n(Q4 2024, +18% YoY)"),
             ("171M", "monthly active consumers\nacross Uber"),
             ("45", "countries\n(11,000+ cities)")],
            lead="We have entered the phase of growing and earning at once.",
