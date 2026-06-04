@@ -73,23 +73,28 @@ THEMES = {
 
 
 # ---------- fonts (CJK-aware) ----------
+# English: Liberation Serif locally (metric-compatible with Times New Roman),
+#          and "Times New Roman" written into the .pptx so PowerPoint shows it.
+# Japanese: Noto Serif CJK JP locally (an elegant mincho serif that pairs with
+#          Times New Roman), and 游明朝 / "Yu Mincho" written into the .pptx.
 _LATIN = {
     "regular": "/usr/share/fonts/truetype/liberation/LiberationSerif-Regular.ttf",
     "bold": "/usr/share/fonts/truetype/liberation/LiberationSerif-Bold.ttf",
     "italic": "/usr/share/fonts/truetype/liberation/LiberationSerif-Italic.ttf",
     "bolditalic": "/usr/share/fonts/truetype/liberation/LiberationSerif-BoldItalic.ttf",
 }
-_CJK_CANDIDATES = [
-    "/usr/share/fonts/opentype/ipafont-gothic/ipagp.ttf",
-    "/usr/share/fonts/opentype/ipafont-gothic/ipag.ttf",
-    "/usr/share/fonts/truetype/fonts-japanese-gothic.ttf",
-]
-_CJK = next((p for p in _CJK_CANDIDATES if os.path.exists(p)), None)
+# (path, index) for the .ttc collections; JP is index 0 in Noto's CJK files.
+_CJK_REG = ("/usr/share/fonts/opentype/noto/NotoSerifCJK-Regular.ttc", 0)
+_CJK_BOLD = ("/usr/share/fonts/opentype/noto/NotoSerifCJK-Bold.ttc", 0)
+_CJK_FALLBACK = ("/usr/share/fonts/opentype/ipafont-gothic/ipagp.ttf", 0)
+if not os.path.exists(_CJK_REG[0]):
+    _CJK_REG = _CJK_BOLD = _CJK_FALLBACK
+
 _CJK_RE = __import__("re").compile(r"[぀-ヿ぀-ゟ゠-ヿ一-鿿０-ｚ]")
 
-# pptx font names: pick something both PowerPoint and Keynote resolve well.
-PPTX_LATIN_FONT = "Georgia"
-PPTX_CJK_FONT = "Yu Gothic"
+# pptx font names that resolve beautifully on both Windows and Mac PowerPoint.
+PPTX_LATIN_FONT = "Times New Roman"
+PPTX_CJK_FONT = "Yu Mincho"  # 游明朝 — elegant, ships with Windows & macOS
 
 
 def _has_cjk(text: str) -> bool:
@@ -100,14 +105,14 @@ _fontcache: dict[tuple, ImageFont.FreeTypeFont] = {}
 
 
 def _pil_font(size: int, bold: bool, italic: bool, cjk: bool):
-    if cjk and _CJK:
-        path = _CJK  # IPA Gothic has a single weight; emulate via the same file
+    if cjk:
+        path, index = _CJK_BOLD if bold else _CJK_REG
     else:
         key = "bolditalic" if (bold and italic) else "bold" if bold else "italic" if italic else "regular"
-        path = _LATIN[key]
-    ck = (path, size)
+        path, index = _LATIN[key], 0
+    ck = (path, index, size)
     if ck not in _fontcache:
-        _fontcache[ck] = ImageFont.truetype(path, size)
+        _fontcache[ck] = ImageFont.truetype(path, size, index=index)
     return _fontcache[ck]
 
 
@@ -192,10 +197,16 @@ class Deck:
             self._image(s, 10.55, 4.6, 1.85, 1.85, icon)
         return s
 
-    def bullets(self, kicker, title, items, key="", size=18, gap=26, bold_lead=False, icon=None):
+    def bullets(self, kicker, title, items, key="", size=18, gap=None, bold_lead=False, icon=None):
         s = self._slide()
         self._header(s, kicker, title, icon)
-        self._bullets(s, 0.7, 2.0, 11.9, items, size, self.t.slate, gap=gap, bold_lead=bold_lead)
+        # Auto-balance: spread the list through the body band so it never bunches
+        # at the top with dead space above the key-line.
+        n = len(items)
+        if gap is None:
+            gap = {1: 60, 2: 48, 3: 40, 4: 30, 5: 22}.get(n, 16)
+        y0 = {1: 3.1, 2: 2.7, 3: 2.35, 4: 2.1}.get(n, 1.95)
+        self._bullets(s, 0.7, y0, 11.9, items, size, self.t.slate, gap=gap, bold_lead=bold_lead)
         if key:
             self._keyband(s, key)
         return s
