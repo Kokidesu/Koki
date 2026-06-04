@@ -114,40 +114,71 @@ async function postToNote(s, article) {
 }
 
 // ↓ note の編集画面で実行されるDOM操作（UI変更でズレたらここを調整）
+// 失敗時は画面の状態(候補要素・ボタン名)を文字列で返すので、それを見てセレクタを直せる。
 function postInPage(title, bodyText, publish, tags) {
   return (async () => {
     const sleep = (ms) => new Promise(r => setTimeout(r, ms));
     const pick = (sels) => { for (const s of sels) { const el = document.querySelector(s); if (el) return el; } return null; };
+    // 画面診断：今あるボタン名・編集系要素を一覧化（失敗時に返して原因特定に使う）
+    const diag = () => {
+      const btns = [...document.querySelectorAll("button")]
+        .map(b => (b.innerText || b.getAttribute("aria-label") || "").trim())
+        .filter(Boolean).slice(0, 25);
+      const edits = [...document.querySelectorAll('textarea,input,[contenteditable="true"]')]
+        .map(e => `${e.tagName.toLowerCase()}[ph=${e.getAttribute("placeholder") || e.getAttribute("aria-label") || e.getAttribute("data-placeholder") || ""}]`)
+        .slice(0, 15);
+      return ` | URL:${location.pathname} | 編集欄:${JSON.stringify(edits)} | ボタン:${JSON.stringify(btns)}`;
+    };
     const clickByText = (texts) => {
-      for (const b of document.querySelectorAll("button")) {
-        const t = (b.innerText || "").trim();
+      for (const b of document.querySelectorAll('button,[role="button"],a')) {
+        const t = (b.innerText || b.getAttribute("aria-label") || "").trim();
         if (texts.some(x => t.includes(x))) { b.click(); return true; }
       }
       return false;
     };
 
-    const tb = pick(['textarea[placeholder*="タイトル"]', 'input[placeholder*="タイトル"]', "textarea"]);
-    if (!tb) return "NG: タイトル欄が見つからない（ログイン切れ/UI変更の可能性）";
+    if (location.pathname.includes("/login")) return "NG: ログイン画面です（noteにログインしてから実行してください）" + diag();
+
+    // --- タイトル ---
+    const tb = pick([
+      'textarea[placeholder="記事タイトル"]',
+      'textarea[placeholder*="タイトル"]',
+      'input[placeholder*="タイトル"]',
+      '[contenteditable="true"][data-placeholder*="タイトル"]',
+      'textarea',
+    ]);
+    if (!tb) return "NG: タイトル欄が見つからない（ログイン切れ/UI変更の可能性）" + diag();
     tb.focus();
-    if (!document.execCommand("insertText", false, title)) { tb.value = title; tb.dispatchEvent(new Event("input", { bubbles: true })); }
+    if (tb.isContentEditable) { document.execCommand("insertText", false, title); }
+    else if (!document.execCommand("insertText", false, title)) {
+      tb.value = title; tb.dispatchEvent(new Event("input", { bubbles: true }));
+    }
     await sleep(800);
 
-    const bb = pick(['div[contenteditable="true"][role="textbox"]', 'div.ProseMirror[contenteditable="true"]', '[contenteditable="true"]']);
-    if (!bb) return "NG: 本文欄が見つからない";
+    // --- 本文 ---
+    const bb = pick(['div.ProseMirror[contenteditable="true"]', 'div[contenteditable="true"][role="textbox"]', '[contenteditable="true"]']);
+    if (!bb) return "NG: 本文欄が見つからない" + diag();
     bb.focus();
     for (const para of bodyText.split("\n").filter(x => x.trim())) {
-      document.execCommand("insertText", false, para);
+      // 「## 見出し」は note のマークダウン変換を狙って "## " を先に確定入力する
+      const m = para.match(/^(#{1,3})\s+(.*)$/);
+      if (m) {
+        document.execCommand("insertText", false, m[1] + " ");
+        document.execCommand("insertText", false, m[2]);
+      } else {
+        document.execCommand("insertText", false, para);
+      }
       document.execCommand("insertParagraph");
     }
     await sleep(1500);
 
-    if (!publish) return "OK: 下書き保存まで（noteが自動保存）";
+    if (!publish) return "OK: 本文まで入力（下書きはnoteが自動保存）" + diag();
 
-    if (!clickByText(["公開に進む", "公開"])) return "OK(本文まで): 「公開に進む」ボタンが見つからず止めました";
-    await sleep(1800);
-    clickByText(["投稿する", "公開する", "公開"]);
+    if (!clickByText(["公開に進む", "公開設定", "公開"])) return "OK(本文まで): 「公開に進む」ボタンが見つからず停止" + diag();
+    await sleep(2000);
+    const done = clickByText(["投稿する", "公開する"]);
     await sleep(3000);
-    return "OK: 公開まで実行";
+    return (done ? "OK: 公開まで実行" : "OK(公開画面まで): 最終ボタンが見つからず停止") + diag();
   })();
 }
 
