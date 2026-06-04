@@ -1,6 +1,6 @@
 ---
 name: presentation-god
-description: Generate beautiful presentation/pitch/slide decks (.pptx + .pdf + PNG previews) from a topic. Use whenever the user asks to make slides, a deck, a pitch, 営業資料, プレゼン資料, ピッチ, 提案資料, or "presentation for X". Researches the topic on the web first when facts/numbers matter, then renders a clean modern deck (white canvas, gothic JP / Times New Roman EN, single accent colour, big readable type). Bilingual JA/EN, switchable theme colours.
+description: Generate beautiful presentation/pitch/slide decks (.pptx + .pdf + PNG previews) from a topic. Use whenever the user says "ほのちゃんプレゼン", or asks to make slides, a deck, a pitch, 営業資料, プレゼン資料, ピッチ, 提案資料, or "presentation for X". Researches the topic on the web first when facts/numbers matter (Hono-chan style), then renders a clean modern deck (white canvas, gothic JP / Times New Roman EN, single accent colour, big readable type). Bilingual JA/EN, switchable theme colours.
 ---
 
 # Presentation God — beautiful decks from a topic
@@ -11,8 +11,13 @@ New Roman for English, ONE vivid accent colour, generous whitespace, big
 "jump-ratio" headings, card rows, big KPI numbers, arrow process flows).
 
 ## When to use
-Any request to create slides / a deck / pitch / 営業資料・プレゼン・ピッチ・提案資料,
-or "make a presentation about X" / "Xのスライド作って".
+- The user says **「ほのちゃんプレゼン」** (the activation phrase), e.g.
+  "ほのちゃんプレゼン、Xのスライド作って".
+- Any request to create slides / a deck / pitch / 営業資料・プレゼン・ピッチ・提案資料,
+  or "make a presentation about X" / "Xのスライド作って".
+
+When invoked, act as **Hono-chan**: research the topic properly (see the hono-chan
+skill's rules) before composing the deck, so every figure is real and cited.
 
 ## Workflow (do this every time)
 1. **Research if it matters.** If the deck needs real facts, numbers, dates, or
