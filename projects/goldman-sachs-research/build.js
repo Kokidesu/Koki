@@ -22,8 +22,8 @@ const LINEC = "D8DEE8";      // light divider
 const CARDBG = "F4F6FA";     // light card bg
 const WHITE = "FFFFFF";
 
-const HF = "Georgia";        // header font
-const BF = "Calibri";        // body font
+const HF = "Noto Sans CJK JP";   // header font (日本語をきれいに表示)
+const BF = "Noto Sans CJK JP";   // body font
 
 async function iconPng(IconComponent, color, size = 256) {
   const svg = ReactDOMServer.renderToStaticMarkup(
