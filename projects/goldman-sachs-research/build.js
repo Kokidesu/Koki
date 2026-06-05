@@ -84,12 +84,12 @@ function statCard(slide, x, y, w, h, big, label, sub, opt = {}) {
   // preload icons
   const ic = {};
   const need = [
-    ["history", FaUniversity, GOLD], ["ceo", FaUserTie, NAVY],
+    ["history", FaUniversity, GOLD], ["ceo", FaUserTie, GOLDL],
     ["chart", FaChartLine, GOLD], ["scale", FaBalanceScale, GOLD],
     ["gavel", FaGavel, GOLD], ["shield", FaShieldAlt, GOLD],
-    ["cogs", FaCogs, GOLD], ["globe", FaGlobeAsia, NAVY],
-    ["hand", FaHandshake, NAVY], ["coins", FaCoins, NAVY],
-    ["layer", FaLayerGroup, NAVY], ["swap", FaExchangeAlt, GOLD],
+    ["cogs", FaCogs, GOLDL], ["globe", FaGlobeAsia, GOLDL],
+    ["hand", FaHandshake, NAVY], ["coins", FaCoins, GOLDL],
+    ["layer", FaLayerGroup, GOLDL], ["swap", FaExchangeAlt, GOLD],
     ["bldg", FaBuilding, NAVY], ["arrow", FaArrowRight, GOLD],
     ["trophy", FaTrophy, GOLD], ["pie", FaChartPie, NAVY],
     ["target", FaCrosshairs, NAVY], ["sync", FaSyncAlt, GOLD],
@@ -254,7 +254,7 @@ function statCard(slide, x, y, w, h, big, label, sub, opt = {}) {
     const segs = [
       { icon: ic.layer, t: "Global Banking\n& Markets", desc: "投資銀行 ＋ FICC ＋ Equities", rev: "$34.94B", tag: "営業部門はここ", hi: true },
       { icon: ic.coins, t: "Asset & Wealth\nManagement", desc: "運用（GSAM）＋ ウェルス（PWM）", rev: "$16.14B", tag: "アセマネ部門はここ", hi: true },
-      { icon: ic.cogs, t: "Platform\nSolutions", desc: "カード提携 等", rev: "約 $1.76B", tag: "縮小・黒字化途上", hi: false }
+      { icon: ic.cogs, t: "Platform\nSolutions", desc: "カード提携 等", rev: "約 $2.43B", tag: "縮小・黒字化途上", hi: false }
     ];
     segs.forEach((sg, i) => {
       const x = xs[i];
@@ -341,7 +341,7 @@ function statCard(slide, x, y, w, h, big, label, sub, opt = {}) {
       chartArea: { fill: { color: WHITE } },
       catAxisLabelColor: INK, catAxisLabelFontSize: 13, catAxisLabelFontBold: true, catAxisLabelFontFace: BF,
       valAxisHidden: true, valGridLine: { style: "none" }, catGridLine: { style: "none" },
-      showValue: true, dataLabelPosition: "outEnd", dataLabelColor: NAVY, dataLabelFontSize: 16, dataLabelFontBold: true, dataLabelFontFace: HF,
+      showValue: true, dataLabelPosition: "outEnd", dataLabelColor: NAVY, dataLabelFontSize: 16, dataLabelFontBold: true, dataLabelFontFace: HF, dataLabelFormatCode: "0.00",
       showLegend: false, valAxisMaxVal: 3.6, valAxisMinVal: 0
     });
     s.addShape(pres.shapes.RECTANGLE, { x: 6.5, y: 5.85, w: 6.2, h: 0.62, fill: { color: CARDBG }, line: { color: GOLD, width: 1.3 } });
@@ -374,12 +374,10 @@ function statCard(slide, x, y, w, h, big, label, sub, opt = {}) {
 
     // after card (fees)
     s.addShape(pres.shapes.RECTANGLE, { x: 6.75, y: by, w: 5.95, h: bh, fill: { color: NAVY }, shadow: makeShadow() });
-    s.addText("代わりに運用報酬を拡大", { x: 6.95, y: by + 0.18, w: 5.5, h: 0.4, fontFace: BF, fontSize: 13.5, bold: true, color: GOLDL, margin: 0 });
-    s.addText([
-      { text: "Management & other fees ", options: { fontSize: 16, color: WHITE, bold: false } },
-      { text: "$10B超", options: { fontSize: 46, color: WHITE, bold: true } }
-    ], { x: 6.95, y: by + 0.55, w: 5.5, h: 1.0, fontFace: HF, valign: "middle", margin: 0 });
-    s.addText("（2024年）安定的なフィー収益が収益の柱に", { x: 6.95, y: by + 1.5, w: 5.5, h: 0.35, fontFace: BF, fontSize: 12.5, color: "AEBAD0", margin: 0 });
+    s.addText("代わりに運用報酬を拡大", { x: 6.95, y: by + 0.16, w: 5.5, h: 0.35, fontFace: BF, fontSize: 13.5, bold: true, color: GOLDL, margin: 0 });
+    s.addText("Management & other fees（2024）", { x: 6.95, y: by + 0.5, w: 5.6, h: 0.34, fontFace: BF, fontSize: 13, color: "AEBAD0", margin: 0 });
+    s.addText("$10B超", { x: 6.92, y: by + 0.82, w: 5.6, h: 0.85, fontFace: HF, fontSize: 50, bold: true, color: WHITE, margin: 0, valign: "middle" });
+    s.addText("安定的なフィー収益が収益の柱に", { x: 6.95, y: by + 1.62, w: 5.5, h: 0.3, fontFace: BF, fontSize: 12, color: "8E9CB8", margin: 0 });
 
     // result: margin chart
     s.addText("結果：税前マージンが激変", { x: 0.6, y: 4.2, w: 6, h: 0.35, fontFace: HF, fontSize: 16, bold: true, color: NAVY, margin: 0 });
@@ -445,7 +443,7 @@ function statCard(slide, x, y, w, h, big, label, sub, opt = {}) {
       chartArea: { fill: { color: WHITE } },
       catAxisLabelColor: INK, catAxisLabelFontSize: 12, catAxisLabelFontBold: true, catAxisLabelFontFace: BF,
       valAxisHidden: true, valGridLine: { style: "none" }, catGridLine: { style: "none" },
-      showValue: true, dataLabelPosition: "outEnd", dataLabelColor: NAVY, dataLabelFontSize: 13, dataLabelFontBold: true, dataLabelFontFace: HF,
+      showValue: true, dataLabelPosition: "outEnd", dataLabelColor: NAVY, dataLabelFontSize: 13, dataLabelFontBold: true, dataLabelFontFace: HF, dataLabelFormatCode: "0.0\"兆\"",
       showLegend: false, valAxisMaxVal: 13
     });
     s.addShape(pres.shapes.RECTANGLE, { x: 6.45, y: 5.95, w: 6.25, h: 1.05, fill: { color: NAVY }, shadow: makeShadow() });
@@ -536,7 +534,7 @@ function statCard(slide, x, y, w, h, big, label, sub, opt = {}) {
       chartArea: { fill: { color: WHITE } },
       catAxisLabelColor: INK, catAxisLabelFontSize: 12, catAxisLabelFontBold: true, catAxisLabelFontFace: BF,
       valAxisHidden: true, valGridLine: { style: "none" }, catGridLine: { style: "none" },
-      showValue: true, dataLabelPosition: "outEnd", dataLabelColor: NAVY, dataLabelFontSize: 13, dataLabelFontBold: true, dataLabelFontFace: HF,
+      showValue: true, dataLabelPosition: "outEnd", dataLabelColor: NAVY, dataLabelFontSize: 13, dataLabelFontBold: true, dataLabelFontFace: HF, dataLabelFormatCode: "$0.0\"B\"",
       showLegend: false, valAxisMaxVal: 10.5
     });
     s.addText("※2019年は概算（CAGR15%からの逆算イメージ）", { x: 8.3, y: 5.78, w: 4.4, h: 0.25, fontFace: BF, fontSize: 8.5, italic: true, color: SLATE, margin: 0 });
@@ -561,13 +559,13 @@ function statCard(slide, x, y, w, h, big, label, sub, opt = {}) {
     // Big hero stat left
     s.addShape(pres.shapes.RECTANGLE, { x: 0.6, y: 2.0, w: 5.7, h: 4.5, fill: { color: NAVY }, shadow: makeShadow() });
     s.addImage({ data: ic.trophy, x: 0.95, y: 2.35, w: 0.9, h: 0.9 });
-    s.addText("21年連続", { x: 0.9, y: 3.35, w: 5.1, h: 1.2, fontFace: HF, fontSize: 70, bold: true, color: GOLDL, margin: 0 });
+    s.addText("7年連続", { x: 0.9, y: 3.35, w: 5.1, h: 1.2, fontFace: HF, fontSize: 70, bold: true, color: GOLDL, margin: 0 });
     s.addText("M&Aアドバイザリー 世界No.1", { x: 0.95, y: 4.55, w: 5.0, h: 0.5, fontFace: HF, fontSize: 20, bold: true, color: WHITE, margin: 0 });
-    s.addText("助言ビジネスで圧倒的なトップポジションを維持。", { x: 0.95, y: 5.15, w: 5.0, h: 0.8, fontFace: BF, fontSize: 13.5, color: "AEBAD0", margin: 0, valign: "top" });
+    s.addText("（2023年時点）助言ビジネスで世界トップを維持。", { x: 0.95, y: 5.15, w: 5.0, h: 0.8, fontFace: BF, fontSize: 13.5, color: "AEBAD0", margin: 0, valign: "top" });
 
     // Right stacked stats
     const rx = 6.65, rw = 6.05;
-    statCard(s, rx, 2.0, rw, 1.35, "約$1.48兆 / シェア約32%", "2024 グローバルM&A 取扱額（首位）", null, { accent: GOLD, bigSize: 27 });
+    statCard(s, rx, 2.0, rw, 1.35, "約$1.48兆 / シェア約32%", "完了M&A 取扱額（世界首位級・直近2025集計）", null, { accent: GOLD, bigSize: 27 });
     statCard(s, rx, 3.5, rw, 1.35, "No.1", "株式引受ボリューム（2023）", null, { accent: NAVY, bigSize: 40 });
     // recent waves card
     s.addShape(pres.shapes.RECTANGLE, { x: rx, y: 5.0, w: rw, h: 1.5, fill: { color: CARDBG }, line: { color: LINEC, width: 1 }, shadow: makeShadow() });
@@ -581,7 +579,7 @@ function statCard(slide, x, y, w, h, big, label, sub, opt = {}) {
     ], { x: rx + 0.25, y: 5.5, w: rw - 0.5, h: 0.9, fontFace: BF, fontSize: 15, valign: "middle", margin: 0 });
 
     pageNum(s, 11);
-    s.addNotes("業界ポジション。M&A助言で21年連続世界No.1、2024年シェア約32%。近年は2022好調→2023減速→2024V字。");
+    s.addNotes("業界ポジション。M&A助言で世界No.1（2023時点で7年連続）。完了M&A取扱額は直近で約$1.48兆・シェア約32%（2025集計）。近年は2022好調→2023減速→2024V字。");
   }
 
   // ============================================================ SLIDE 12 — backbone strategy + consumer exit (light)
