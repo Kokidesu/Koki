@@ -3,6 +3,8 @@
 from fpdf import FPDF
 
 FONT = "/usr/share/fonts/truetype/fonts-japanese-gothic.ttf"
+SERIF = "/usr/share/fonts/truetype/liberation/LiberationSerif-Regular.ttf"
+SERIF_B = "/usr/share/fonts/truetype/liberation/LiberationSerif-Bold.ttf"
 BG = (11, 11, 12)
 CARD = (22, 22, 24)
 FG = (245, 245, 247)
@@ -15,8 +17,13 @@ W, H = 297, 167  # 16:9 landscape (mm)
 
 pdf = FPDF(orientation="L", unit="mm", format=(H, W))
 pdf.set_auto_page_break(False)
+pdf.set_line_width(0.3)
+# Latin/English = Times New Roman相当 (Liberation Serif), 日本語 = ゴシックでフォールバック
+pdf.add_font("serif", "", SERIF)
+pdf.add_font("serif", "B", SERIF_B)
 pdf.add_font("jp", "", FONT)
-pdf.add_font("jp", "B", FONT)  # same file; bold faked via size
+pdf.add_font("jp", "B", FONT)
+pdf.set_fallback_fonts(["jp"])
 
 def bg():
     pdf.set_fill_color(*BG)
@@ -31,16 +38,16 @@ def footer(i, n, label=""):
     pdf.line(MX, H - 12, W - MX, H - 12)
     text(MX, H - 9.5, "Uber Eats Japan — AE 面接デッキ", 8, SUB)
     pdf.set_xy(W - MX - 30, H - 9.5)
-    pdf.set_font("jp", "B", 8)
+    pdf.set_font("serif", "B", 8)
     pdf.set_text_color(*ACC)
     pdf.cell(30, 4, f"{i+1:02d}", align="R")
     pdf.set_text_color(*SUB)
-    pdf.set_font("jp", "", 8)
+    pdf.set_font("serif", "", 8)
     pdf.cell(0, 4, f" / {n:02d}")
 
 def text(x, y, s, size, color=FG, bold=False, w=0, align="L", lh=1.3):
     pdf.set_xy(x, y)
-    pdf.set_font("jp", "B" if bold else "", size)
+    pdf.set_font("serif", "B" if bold else "", size)
     pdf.set_text_color(*color)
     if w:
         pdf.multi_cell(w, size * 0.42 * lh, s, align=align)
@@ -83,7 +90,7 @@ def hook(i, n):
     text(MX, 40, "つかみ", 11, ACC, True)
     text(MX, 52, "日本のフードデリバリーは", 22, FG)
     text(MX, 66, "「2強 → 1強」へ。", 34, FG, True)
-    pdf.set_text_color(*ACC); pdf.set_font("jp", "B", 70)
+    pdf.set_text_color(*ACC); pdf.set_font("serif", "B", 70)
     pdf.set_xy(MX, 86); pdf.cell(0, 30, "約6割")
     text(MX, 122, "Uber Eatsの利用率シェア。Wolt撤退・出前館赤字の中、唯一黒字で独走。", 13, SUB)
     footer(i, n)
@@ -118,7 +125,7 @@ def table(x, y, rows, colw, header=True):
             col = ACC if (header and ri == 0) else FG
             align = "L" if ci == 0 else "R"
             pdf.set_xy(cx, ry + 1)
-            pdf.set_font("jp", "B" if (ri == 0 or ci > 0) else "", 12.5 if not (header and ri==0) else 11)
+            pdf.set_font("serif", "B" if (ri == 0 or ci > 0) else "", 12.5 if not (header and ri==0) else 11)
             pdf.set_text_color(*col)
             pdf.cell(colw[ci], 9, cell, align=align)
             cx += colw[ci]
@@ -218,9 +225,9 @@ def node(cx, cy, label, sub):
     pdf.set_fill_color(*CARD); pdf.set_draw_color(*ACC)
     pdf.set_line_width(0.5)
     pdf.ellipse(cx - r, cy - r, 2 * r, 2 * r, "DF")
-    pdf.set_xy(cx - r, cy - 5); pdf.set_font("jp", "B", 11); pdf.set_text_color(*FG)
+    pdf.set_xy(cx - r, cy - 5); pdf.set_font("serif", "B", 11); pdf.set_text_color(*FG)
     pdf.cell(2 * r, 5, label, align="C")
-    pdf.set_xy(cx - r, cy + 1); pdf.set_font("jp", "", 8); pdf.set_text_color(*SUB)
+    pdf.set_xy(cx - r, cy + 1); pdf.set_font("serif", "", 8); pdf.set_text_color(*SUB)
     pdf.cell(2 * r, 4, sub, align="C")
 
 def s8(i, n):
