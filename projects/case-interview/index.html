@@ -3,17 +3,17 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<meta name="description" content="全コンサルのケース面接対策アプリ。MBB・戦略系・総合系ファーム別ガイド、フレームワーク、練習ケース、フェルミ推定、暗算トレーナー、思考タイマー。" />
-<title>ケース面接ドリル | 全コンサル対応</title>
+<meta name="description" content="志望ファームを選ぶと、その会社の出題傾向に合わせたケース面接の模擬問題が面接形式で出てくる対策アプリ。MBB・戦略系・総合系の12ファーム対応。" />
+<title>ケース面接ドリル | 会社を選んで模擬面接</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📊</text></svg>" />
 <!-- リンク共有時のプレビュー（OGP / Twitterカード） -->
 <meta property="og:type" content="website" />
-<meta property="og:title" content="ケース面接ドリル｜全コンサル対応" />
-<meta property="og:description" content="MBB〜総合系まで12ファームの型・フレームワーク・練習ケース8問・フェルミ推定・暗算トレーナー。スマホ1つでケース面接対策。" />
+<meta property="og:title" content="ケース面接ドリル｜会社を選んで模擬面接" />
+<meta property="og:description" content="志望ファームを選ぶと、その会社らしいケース問題が面接形式で出題。構造化タイマー・計算の答え合わせ・模範解答つき。" />
 <meta property="og:url" content="https://kokidesu.github.io/Koki/" />
 <meta name="twitter:card" content="summary" />
-<meta name="twitter:title" content="ケース面接ドリル｜全コンサル対応" />
-<meta name="twitter:description" content="MBB〜総合系まで12ファームの型・フレームワーク・練習ケース・フェルミ推定・暗算トレーナー。" />
+<meta name="twitter:title" content="ケース面接ドリル｜会社を選んで模擬面接" />
+<meta name="twitter:description" content="志望ファームを選ぶと、その会社らしいケース問題が面接形式で出題される対策アプリ。" />
 <style>
   :root{
     --navy:#0b1f3a; --navy2:#13294b; --blue:#2f6df6; --blue-soft:#e8f0ff;
@@ -30,100 +30,144 @@
   a{color:var(--blue);text-decoration:none}
   header.site{
     background:linear-gradient(135deg,var(--navy),var(--navy2));
-    color:#fff; padding:22px 16px 14px; position:sticky; top:0; z-index:50;
+    color:#fff; padding:18px 16px 12px; position:sticky; top:0; z-index:50;
     box-shadow:0 2px 12px rgba(11,31,58,.18);
+    border-bottom:2px solid rgba(201,162,39,.85);
   }
   .head-inner{max-width:1040px;margin:0 auto}
   .brand{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-  .brand h1{font-size:20px;margin:0;font-weight:800;letter-spacing:.02em}
+  .brand h1{font-size:19px;margin:0;font-weight:800;letter-spacing:.02em}
   .brand .tag{font-size:11px;background:var(--gold);color:#1c1300;padding:2px 8px;border-radius:999px;font-weight:700}
-  .sub{font-size:12.5px;color:#b9c6dd;margin-top:3px}
-  nav.tabs{max-width:1040px;margin:12px auto 0;display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;-webkit-overflow-scrolling:touch}
+  .sub{font-size:12px;color:#b9c6dd;margin-top:2px}
+  nav.tabs{max-width:1040px;margin:10px auto 0;display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;-webkit-overflow-scrolling:touch}
   nav.tabs button{
     flex:0 0 auto;background:rgba(255,255,255,.08);color:#dce6f7;border:1px solid rgba(255,255,255,.14);
     padding:7px 13px;border-radius:999px;font-size:13px;cursor:pointer;white-space:nowrap;font-weight:600;transition:.15s
   }
   nav.tabs button:hover{background:rgba(255,255,255,.18)}
   nav.tabs button.active{background:#fff;color:var(--navy);border-color:#fff}
-  main{max-width:1040px;margin:0 auto;padding:20px 16px 80px}
+  main{max-width:1040px;margin:0 auto;padding:18px 14px 80px}
   section.view{display:none;animation:fade .25s ease}
   section.view.active{display:block}
   @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-  h2.view-title{font-size:22px;margin:4px 0 2px;font-weight:800;color:var(--navy)}
-  .lead{color:var(--muted);margin:0 0 18px;font-size:14px}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin:0 0 14px;box-shadow:0 1px 3px rgba(16,31,58,.05)}
-  .grid{display:grid;gap:14px}
+  h2.view-title{font-size:21px;margin:4px 0 2px;font-weight:800;color:var(--navy)}
+  .lead{color:var(--muted);margin:0 0 16px;font-size:13.5px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin:0 0 12px;box-shadow:0 1px 3px rgba(16,31,58,.05)}
+  .grid{display:grid;gap:12px}
   @media(min-width:680px){.grid.cols-2{grid-template-columns:1fr 1fr}.grid.cols-3{grid-template-columns:1fr 1fr 1fr}}
   .pill{display:inline-block;font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;background:var(--blue-soft);color:var(--blue);margin:0 5px 5px 0}
   .pill.led{background:#fff3e0;color:#b45309}
   .pill.cand{background:#e7f7ee;color:#15803d}
   .pill.mbb{background:#0b1f3a;color:#ffd766}
-  .firm-h{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px}
-  .firm-h h3{margin:0;font-size:17px;font-weight:800}
-  .logo-dot{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:14px;flex:0 0 auto}
+  /* ロゴ風モノグラム（ブランドカラー×セリフ体×光沢） */
+  .logo-dot{
+    width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+    font-family:Georgia,"Times New Roman",serif;font-weight:700;color:#fff;font-size:15px;letter-spacing:.04em;
+    flex:0 0 auto;position:relative;overflow:hidden;
+    box-shadow:0 4px 10px rgba(11,31,58,.22), inset 0 1px 0 rgba(255,255,255,.25);
+    text-shadow:0 1px 2px rgba(0,0,0,.25);
+  }
+  .logo-dot::after{
+    content:"";position:absolute;top:-60%;left:-30%;width:70%;height:220%;
+    background:linear-gradient(105deg,transparent,rgba(255,255,255,.32),transparent);
+    transform:rotate(18deg);
+  }
+  .logo-dot.lg{width:56px;height:56px;font-size:18px;border-radius:14px}
   ul.tight{margin:8px 0 0;padding-left:20px}
   ul.tight li{margin:3px 0}
   .kv{font-size:13px;color:var(--muted)}
   .kv b{color:var(--ink)}
-  details.acc{border:1px solid var(--line);border-radius:12px;margin:0 0 12px;background:#fff;overflow:hidden}
-  details.acc>summary{cursor:pointer;padding:14px 16px;font-weight:700;list-style:none;display:flex;align-items:center;gap:10px;justify-content:space-between}
-  details.acc>summary::-webkit-details-marker{display:none}
-  details.acc>summary .meta{font-size:11px;color:var(--muted);font-weight:600}
-  details.acc>summary .chev{transition:.2s;color:var(--blue)}
-  details.acc[open]>summary .chev{transform:rotate(90deg)}
-  details.acc .body{padding:0 16px 16px;border-top:1px solid var(--line)}
   .badge{display:inline-block;font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:6px;color:#fff}
-  .b-prof{background:#2563eb}.b-entry{background:#0891b2}.b-ma{background:#7c3aed}
-  .b-price{background:#db2777}.b-cost{background:#ea580c}.b-growth{background:#16a34a}.b-size{background:#475569}
-  .step{border-left:3px solid var(--blue);padding:2px 0 2px 14px;margin:10px 0}
-  .step h5{margin:0 0 2px;font-size:14px;color:var(--navy)}
-  .reveal-btn{background:var(--blue);color:#fff;border:none;padding:8px 14px;border-radius:8px;font-weight:700;cursor:pointer;font-size:13px}
-  .reveal-btn:hover{background:#1d5be0}
-  .hidden{display:none}
-  .answer{background:#f0f6ff;border:1px solid #cfe0ff;border-radius:10px;padding:12px 14px;margin-top:10px}
-  .calc{background:#0b1f3a;color:#dce6f7;border-radius:10px;padding:12px 14px;font-family:"SF Mono",ui-monospace,Menlo,Consolas,monospace;font-size:13px;margin-top:8px;overflow-x:auto}
-  .calc .res{color:#ffd766;font-weight:700}
-  /* trainer */
-  .trainer{text-align:center}
-  .mm-problem{font-size:40px;font-weight:800;color:var(--navy);margin:14px 0;letter-spacing:.02em}
-  .mm-input{font-size:26px;text-align:center;width:200px;max-width:70%;padding:10px;border:2px solid var(--line);border-radius:12px;outline:none}
-  .mm-input:focus{border-color:var(--blue)}
-  .mm-stats{display:flex;justify-content:center;gap:22px;margin-top:14px;flex-wrap:wrap}
-  .mm-stat{text-align:center}
-  .mm-stat .n{font-size:24px;font-weight:800;color:var(--navy)}
-  .mm-stat .l{font-size:11px;color:var(--muted)}
+  .b-profit{background:#db2777}.b-entry{background:#0891b2}.b-ma{background:#7c3aed}
+  .b-pricing{background:#d97706}.b-cost{background:#ea580c}.b-growth{background:#16a34a}
+  .b-sizing{background:#475569}.b-dx{background:#2563eb}.b-pei{background:#0b1f3a}.b-dd{background:#9333ea}
   .btn{background:var(--blue);color:#fff;border:none;padding:10px 18px;border-radius:10px;font-weight:700;cursor:pointer;font-size:14px}
   .btn:hover{filter:brightness(1.05)}
   .btn.ghost{background:#fff;color:var(--blue);border:1.5px solid var(--blue)}
-  .btn.warn{background:var(--warn)}
+  .btn.sm{padding:7px 13px;font-size:13px;border-radius:8px}
+  .btn.gold{background:var(--gold);color:#1c1300}
+  .reveal-btn{background:var(--blue);color:#fff;border:none;padding:8px 14px;border-radius:8px;font-weight:700;cursor:pointer;font-size:13px}
+  .reveal-btn:hover{background:#1d5be0}
+  .hidden{display:none}
+  .answer{background:#f0f6ff;border:1px solid #cfe0ff;border-radius:10px;padding:12px 14px;margin-top:10px;font-size:14px}
+  .answer.green{background:#f0fff5;border-color:#bff0cf}
+  .calc{background:#0b1f3a;color:#dce6f7;border-radius:10px;padding:12px 14px;font-family:"SF Mono",ui-monospace,Menlo,Consolas,monospace;font-size:13px;margin-top:10px;overflow-x:auto}
+  .calc .res{color:#ffd766;font-weight:700}
+  .note{font-size:12.5px;color:var(--muted);background:#fbfcfe;border:1px dashed var(--line);border-radius:10px;padding:10px 12px;margin-top:8px}
+  /* ===== 会社選択 ===== */
+  .firm-grid{display:grid;gap:10px;grid-template-columns:1fr 1fr}
+  @media(min-width:680px){.firm-grid{grid-template-columns:1fr 1fr 1fr}}
+  .firm-card{background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:16px 14px 14px;cursor:pointer;transition:.18s;display:flex;gap:11px;align-items:flex-start;position:relative;overflow:hidden}
+  .firm-card::before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--c,#2f6df6),transparent 85%)}
+  .firm-card:hover{border-color:var(--c,var(--blue));box-shadow:0 6px 18px rgba(47,109,246,.13);transform:translateY(-2px)}
+  .firm-card:hover{box-shadow:0 8px 22px color-mix(in srgb, var(--c, #2f6df6) 28%, transparent)}
+  .eyebrow{font-size:11px;letter-spacing:.22em;font-weight:800;color:var(--gold);margin-bottom:2px}
+  .firm-card .fc-name{font-weight:800;font-size:14px;line-height:1.35;color:var(--navy)}
+  .firm-card .fc-sub{font-size:11px;color:var(--muted);margin-top:2px}
+  .firm-card .fc-n{font-size:11px;color:var(--blue);font-weight:700;margin-top:4px}
+  /* ===== ファーム詳細 ===== */
+  .crumb{font-size:13px;margin-bottom:10px}
+  .crumb a{cursor:pointer;font-weight:700}
+  .firm-head{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-bottom:6px}
+  .firm-head h2{margin:0;font-size:21px;font-weight:800;color:var(--navy)}
+  .case-row{display:flex;justify-content:space-between;gap:10px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:9px;background:#fff;flex-wrap:wrap}
+  .case-row .ttl{font-weight:700;font-size:14px}
+  .case-row .meta{font-size:11.5px;color:var(--muted)}
+  /* ===== 面接セッション（チャット風） ===== */
+  .sess-head{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;position:sticky;top:96px;z-index:10}
+  .sess-head .t{font-weight:800;font-size:14px;color:var(--navy)}
+  .sess-head .p{font-size:12px;color:var(--muted)}
+  .prog{height:6px;background:#eef2f8;border-radius:999px;overflow:hidden;margin-top:6px;width:100%}
+  .prog>i{display:block;height:100%;background:var(--blue);transition:width .3s}
+  .bubble{display:flex;gap:10px;margin:14px 0;animation:fade .3s ease}
+  .bubble .avatar{width:38px;height:38px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:19px;flex:0 0 auto;margin-top:2px}
+  .bubble .msg{background:#fff;border:1px solid var(--line);border-radius:4px 14px 14px 14px;padding:12px 16px;font-size:14.5px;max-width:760px;box-shadow:0 1px 3px rgba(16,31,58,.05)}
+  .bubble .who{font-size:11px;color:var(--muted);font-weight:700;margin-bottom:2px}
+  .you-zone{background:var(--blue-soft);border:1.5px dashed #b9d0ff;border-radius:14px;padding:14px 16px;margin:10px 0 4px}
+  .you-zone .yz-t{font-weight:800;font-size:13px;color:var(--blue);margin-bottom:6px}
+  .you-zone textarea{width:100%;min-height:74px;border:1.5px solid #cfe0ff;border-radius:10px;padding:10px;font-size:14px;font-family:inherit;resize:vertical;outline:none;background:#fff}
+  .you-zone textarea:focus{border-color:var(--blue)}
+  .qa-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px}
+  .num-in{font-size:18px;text-align:right;width:150px;padding:8px 10px;border:1.5px solid #cfe0ff;border-radius:10px;outline:none;background:#fff}
+  .num-in:focus{border-color:var(--blue)}
+  .unit{font-weight:700;font-size:14px}
+  .judge{font-weight:800;font-size:14px;min-width:90px}
+  .judge.ok{color:var(--good)}.judge.ng{color:var(--bad)}
+  .timer-chip{background:var(--navy);color:#ffd766;border:none;border-radius:999px;padding:7px 15px;font-weight:800;font-size:14px;cursor:pointer;font-variant-numeric:tabular-nums}
+  .next-wrap{text-align:center;margin:18px 0 6px}
+  .data-list{margin-top:8px;background:#fbfcfe;border:1px solid var(--line);border-radius:10px;padding:10px 14px;font-size:13.5px}
+  .data-list b{color:var(--navy)}
+  /* debrief */
+  .check-item{display:flex;gap:9px;align-items:flex-start;padding:8px 0;border-bottom:1px dashed var(--line);font-size:14px}
+  .check-item:last-child{border-bottom:none}
+  .check-item input{width:19px;height:19px;margin-top:3px;accent-color:var(--blue)}
+  /* trainer */
+  .trainer{text-align:center}
+  .mm-problem{font-size:38px;font-weight:800;color:var(--navy);margin:14px 0;letter-spacing:.02em}
+  .mm-input{font-size:25px;text-align:center;width:200px;max-width:70%;padding:10px;border:2px solid var(--line);border-radius:12px;outline:none}
+  .mm-input:focus{border-color:var(--blue)}
+  .mm-stats{display:flex;justify-content:center;gap:22px;margin-top:14px;flex-wrap:wrap}
+  .mm-stat .n{font-size:23px;font-weight:800;color:var(--navy)}
+  .mm-stat .l{font-size:11px;color:var(--muted)}
   .seg{display:inline-flex;background:#eef2f8;border-radius:10px;padding:3px;gap:3px;flex-wrap:wrap}
   .seg button{border:none;background:transparent;padding:7px 13px;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;color:var(--muted)}
   .seg button.active{background:#fff;color:var(--navy);box-shadow:0 1px 3px rgba(0,0,0,.1)}
   .mm-feedback{font-weight:800;min-height:24px;margin-top:10px;font-size:15px}
   .ok{color:var(--good)}.ng{color:var(--bad)}
-  /* timer */
-  .timer-display{font-size:62px;font-weight:800;color:var(--navy);text-align:center;font-variant-numeric:tabular-nums;margin:10px 0}
-  .timer-display.run{color:var(--blue)}
-  .timer-display.warn{color:var(--bad)}
-  .progress{height:8px;background:#eef2f8;border-radius:999px;overflow:hidden;margin:6px 0 14px}
-  .progress>i{display:block;height:100%;background:var(--blue);width:100%;transition:width .9s linear}
   .row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+  /* frameworks accordion */
+  details.acc{border:1px solid var(--line);border-radius:12px;margin:0 0 12px;background:#fff;overflow:hidden}
+  details.acc>summary{cursor:pointer;padding:13px 16px;font-weight:700;list-style:none;display:flex;align-items:center;gap:10px;justify-content:space-between;font-size:14px}
+  details.acc>summary::-webkit-details-marker{display:none}
+  details.acc>summary .chev{transition:.2s;color:var(--blue)}
+  details.acc[open]>summary .chev{transform:rotate(90deg)}
+  details.acc .body{padding:0 16px 16px;border-top:1px solid var(--line)}
   /* glossary */
   .search{width:100%;padding:11px 14px;border:1.5px solid var(--line);border-radius:10px;font-size:15px;outline:none}
   .search:focus{border-color:var(--blue)}
   .gloss dt{font-weight:800;color:var(--navy);margin-top:12px}
   .gloss dd{margin:2px 0 0;color:var(--ink);font-size:14px}
   .gloss .en{font-size:12px;color:var(--muted);font-weight:600}
-  .note{font-size:12.5px;color:var(--muted);background:#fbfcfe;border:1px dashed var(--line);border-radius:10px;padding:10px 12px;margin-top:8px}
-  .hero{background:linear-gradient(135deg,#0b1f3a,#1d4ed8);color:#fff;border-radius:18px;padding:26px 22px;margin-bottom:18px}
-  .hero h2{color:#fff;margin:0 0 6px;font-size:24px}
-  .hero p{color:#cdddff;margin:0 0 14px}
-  .hero .row{justify-content:flex-start}
-  .hero .btn.ghost{background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.4)}
-  .stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:6px}
-  .stat-box{background:rgba(255,255,255,.1);border-radius:12px;padding:12px;text-align:center}
-  .stat-box .n{font-size:22px;font-weight:800}
-  .stat-box .l{font-size:11px;color:#cdddff}
   footer{max-width:1040px;margin:0 auto;padding:24px 16px 40px;color:var(--muted);font-size:12px;text-align:center}
   .share{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1.5px solid var(--blue);color:var(--blue);padding:8px 14px;border-radius:10px;font-weight:700;cursor:pointer;font-size:13px}
   .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--navy);color:#fff;padding:11px 20px;border-radius:10px;font-size:14px;opacity:0;transition:.25s;z-index:100;pointer-events:none}
@@ -135,123 +179,62 @@
   <div class="head-inner">
     <div class="brand">
       <h1>ケース面接ドリル</h1>
-      <span class="tag">全コンサル対応</span>
+      <span class="tag">会社別 模擬面接</span>
     </div>
-    <div class="sub">MBB・戦略系・総合系まで網羅 ／ フレームワーク・練習ケース・フェルミ推定・暗算・思考タイマー</div>
+    <div class="sub">志望ファームを選ぶと、その会社らしいケース問題が面接形式で出題されます</div>
   </div>
   <nav class="tabs" id="tabs">
-    <button data-view="home" class="active">ホーム</button>
-    <button data-view="firms">ファーム別</button>
+    <button data-view="interview" class="active">🎤 模擬面接</button>
     <button data-view="frameworks">フレームワーク</button>
-    <button data-view="cases">練習ケース</button>
-    <button data-view="sizing">フェルミ推定</button>
     <button data-view="math">暗算トレーナー</button>
-    <button data-view="timer">思考タイマー</button>
     <button data-view="glossary">用語集</button>
   </nav>
 </header>
 
 <main>
-  <!-- ============ HOME ============ -->
-  <section class="view active" id="view-home">
-    <div class="hero">
-      <h2>ケース面接、構造的に攻略する。</h2>
-      <p>マッキンゼーからアクセンチュアまで。ファームごとの「型」を押さえ、フレームワーク → 練習ケース → 計算ドリルで仕上げる。スマホ1つでどこでも。</p>
-      <div class="row">
-        <button class="btn ghost" onclick="go('firms')">ファーム別ガイド →</button>
-        <button class="btn ghost" onclick="go('cases')">練習ケースを解く →</button>
-      </div>
-      <div class="stat-row" style="margin-top:18px">
-        <div class="stat-box"><div class="n">12+</div><div class="l">対応ファーム</div></div>
-        <div class="stat-box"><div class="n">8</div><div class="l">練習ケース</div></div>
-        <div class="stat-box"><div class="n">∞</div><div class="l">暗算問題</div></div>
-      </div>
+  <!-- ============ 模擬面接 ============ -->
+  <section class="view active" id="view-interview">
+
+    <!-- 会社選択 -->
+    <div id="subSelect">
+      <div class="eyebrow">SELECT YOUR TARGET FIRM</div>
+      <h2 class="view-title">どの会社の面接を受けますか？</h2>
+      <p class="lead">会社を選ぶと、その会社の出題傾向・面接スタイルに合わせた模擬面接が始まります。</p>
+      <div class="firm-grid" id="firmGrid"></div>
+      <p style="text-align:center;margin-top:18px">
+        <button class="share" onclick="shareApp()">🔗 このアプリを友達に送る</button>
+      </p>
     </div>
 
-    <div class="grid cols-2">
-      <div class="card">
-        <h3 style="margin-top:0">📋 ケース面接の全体像</h3>
-        <p class="kv">多くのファームで共通する標準的な流れ。<b>30〜45分</b>が目安。</p>
-        <div class="step"><h5>1. 問題提示を聞く</h5><span class="kv">クライアントの状況とゴールを正確に把握。前提・指標・スコープを確認。</span></div>
-        <div class="step"><h5>2. 明確化の質問</h5><span class="kv">目的・期間・地理・成功の定義を質問。1〜3問に絞る。</span></div>
-        <div class="step"><h5>3. 構造化（フレーム）</h5><span class="kv">MECEに論点を分解。30〜90秒で枠組みを作り、口頭で宣言。</span></div>
-        <div class="step"><h5>4. 分析・計算</h5><span class="kv">仮説を立て、数字で検証。声に出して思考過程を共有。</span></div>
-        <div class="step"><h5>5. 結論・提言</h5><span class="kv">「結論 → 根拠3点 → リスクと次の一手」で30秒に要約。</span></div>
-      </div>
+    <!-- ファーム詳細（問題選択） -->
+    <div id="subFirm" class="hidden"></div>
 
-      <div class="card">
-        <h3 style="margin-top:0">🎯 評価される5つの力</h3>
-        <ul class="tight">
-          <li><b>構造化力</b>：論点をMECEに分解できるか</li>
-          <li><b>定量力</b>：暗算・概算を素早く正確に</li>
-          <li><b>ビジネス感覚</b>：数字の意味を解釈できるか</li>
-          <li><b>コミュニケーション</b>：結論ファースト・簡潔さ</li>
-          <li><b>柔軟性</b>：新情報で軌道修正できるか</li>
-        </ul>
-        <div class="note">💡 「正解」より<b>思考プロセス</b>が見られている。声に出して考え、面接官を巻き込もう。</div>
+    <!-- 面接セッション -->
+    <div id="subSession" class="hidden">
+      <div class="crumb"><a onclick="quitSession()">← 中断して問題選択へ戻る</a></div>
+      <div class="sess-head">
+        <div>
+          <div class="t" id="sessTitle">—</div>
+          <div class="p" id="sessProg">—</div>
+        </div>
+        <div class="prog"><i id="sessBar" style="width:0%"></i></div>
       </div>
+      <div id="sessLog"></div>
+      <div class="next-wrap" id="sessNext"></div>
     </div>
-
-    <div class="card">
-      <h3 style="margin-top:0">🚀 おすすめの進め方</h3>
-      <div class="grid cols-3">
-        <div><span class="pill">STEP 1</span><br><b>ファーム別</b>で志望先の「型」（面接官主導か候補者主導か）を把握。</div>
-        <div><span class="pill">STEP 2</span><br><b>フレームワーク</b>で収益性・市場参入など8つの型を暗記。</div>
-        <div><span class="pill">STEP 3</span><br><b>練習ケース</b>を時間を計って解き、<b>暗算</b>で計算スピードを底上げ。</div>
-      </div>
-    </div>
-    <p style="text-align:center;margin-top:18px">
-      <button class="share" onclick="shareApp()">🔗 このアプリを友達に送る</button>
-    </p>
-  </section>
-
-  <!-- ============ FIRMS ============ -->
-  <section class="view" id="view-firms">
-    <h2 class="view-title">ファーム別ガイド</h2>
-    <p class="lead">同じ「ケース面接」でもファームごとに進め方とカルチャーが違う。志望先の<b>型</b>に合わせて準備しよう。</p>
-    <div class="card" style="padding:14px 16px">
-      <span class="pill led">面接官主導</span> = 面接官が次の論点を順に振る（誘導あり）
-      <span class="pill cand">候補者主導</span> = 自分でケースを進める（主体性が問われる）
-      <span class="pill mbb">MBB</span> = 戦略系トップ3
-    </div>
-    <div id="firmList" class="grid cols-2"></div>
   </section>
 
   <!-- ============ FRAMEWORKS ============ -->
   <section class="view" id="view-frameworks">
     <h2 class="view-title">フレームワーク集</h2>
-    <p class="lead">丸暗記ではなく「いつ使うか」をセットで覚える。実際のケースでは複数を組み合わせる。</p>
+    <p class="lead">模擬面接の「構造化」で使う型。丸暗記でなく「いつ使うか」をセットで。</p>
     <div id="fwList"></div>
-  </section>
-
-  <!-- ============ CASES ============ -->
-  <section class="view" id="view-cases">
-    <h2 class="view-title">練習ケース</h2>
-    <p class="lead">まず自分で5〜10分構造化してから「解説を見る」を押そう。タイプ別・ファーム別に8問。</p>
-    <div class="card" style="padding:12px 16px">
-      <span class="badge b-prof">収益性</span> <span class="badge b-entry">市場参入</span>
-      <span class="badge b-ma">M&A</span> <span class="badge b-price">価格設定</span>
-      <span class="badge b-cost">コスト</span> <span class="badge b-growth">成長</span>
-      <span class="badge b-size">市場規模</span>
-    </div>
-    <div id="caseList"></div>
-  </section>
-
-  <!-- ============ SIZING ============ -->
-  <section class="view" id="view-sizing">
-    <h2 class="view-title">フェルミ推定ドリル</h2>
-    <p class="lead">市場規模・個数の概算。<b>「分解 → 各要素を推定 → 掛け算 → 妥当性チェック」</b>の型で。まず自分で出してから答えを開こう。</p>
-    <div class="card" style="padding:14px 16px;margin-bottom:14px">
-      <b>📐 基本の数字（日本）</b>
-      <div class="kv" style="margin-top:6px">人口 約1.2億人 ／ 世帯数 約5,400万 ／ 1世帯2.2人 ／ 平均寿命 約84歳 ／ 労働人口 約6,900万 ／ 東京都 約1,400万人</div>
-    </div>
-    <div id="sizingList"></div>
   </section>
 
   <!-- ============ MATH ============ -->
   <section class="view" id="view-math">
     <h2 class="view-title">暗算トレーナー</h2>
-    <p class="lead">ケースの計算スピードは練習量で決まる。難易度を選んでスタート。電卓は使わない！</p>
+    <p class="lead">ケースの計算スピードは練習量で決まる。60秒チャレンジ、電卓は使わない！</p>
     <div class="card trainer">
       <div style="display:flex;justify-content:center;margin-bottom:6px">
         <div class="seg" id="mmLevel">
@@ -276,7 +259,7 @@
         </div>
         <div class="row" style="margin-top:14px">
           <button class="btn ghost" onclick="MM.skip()">スキップ</button>
-          <button class="btn warn" onclick="MM.stop()">やめる</button>
+          <button class="btn" style="background:var(--warn)" onclick="MM.stop()">やめる</button>
         </div>
       </div>
       <div id="mmResult" class="hidden">
@@ -296,29 +279,6 @@
     </div>
   </section>
 
-  <!-- ============ TIMER ============ -->
-  <section class="view" id="view-timer">
-    <h2 class="view-title">思考タイマー</h2>
-    <p class="lead">「構造化に何分かけられるか」を体に覚えさせる。沈黙OKと言われたら、まず黙って枠組みを作る練習を。</p>
-    <div class="card trainer">
-      <div style="display:flex;justify-content:center;margin-bottom:4px">
-        <div class="seg" id="tmPreset">
-          <button data-sec="60" class="active">構造化 60秒</button>
-          <button data-sec="90">90秒</button>
-          <button data-sec="300">分析 5分</button>
-          <button data-sec="1800">本番 30分</button>
-        </div>
-      </div>
-      <div class="timer-display" id="tmDisplay">01:00</div>
-      <div class="progress"><i id="tmBar"></i></div>
-      <div class="row">
-        <button class="btn" id="tmToggle" onclick="TM.toggle()">▶ スタート</button>
-        <button class="btn ghost" onclick="TM.reset()">リセット</button>
-      </div>
-      <p class="note" id="tmHint">構造化タイム：MECEに論点を分解。終わったら口頭で枠組みを宣言する練習を。</p>
-    </div>
-  </section>
-
   <!-- ============ GLOSSARY ============ -->
   <section class="view" id="view-glossary">
     <h2 class="view-title">用語集</h2>
@@ -329,217 +289,767 @@
 </main>
 
 <footer>
-  ケース面接ドリル ／ 学習用の自作アプリ。掲載内容は一般的な対策情報であり、各社の実際の選考を保証するものではありません。<br>
+  ケース面接ドリル ／ 学習用の自作アプリ。掲載内容は一般的な対策情報であり、各社の実際の選考内容を保証するものではありません。<br>
   <span style="opacity:.7">© 2026 Koki — Built for practice.</span>
 </footer>
 
 <div class="toast" id="toast"></div>
 
 <script>
-/* ================= データ ================= */
+/* ================================================================
+   データ：ファーム
+================================================================ */
 const FIRMS = [
-  {name:"McKinsey & Company", short:"McK", color:"#0b3d91", tags:["mbb","led"],
-   style:"面接官主導（インタビュアー・レッド）", focus:"論点を順に振られ、各設問で構造・計算・解釈を見られる。PEI（Personal Experience Interview）も必ずセット。",
-   tips:["設問ごとに『まず枠組み→数字→so what』を徹底","PEIでリーダーシップ/達成/対立の3エピソードを準備","結論ファースト、トップダウンで話す"]},
-  {name:"Boston Consulting Group", short:"BCG", color:"#177b57", tags:["mbb","cand"],
-   style:"候補者主導寄り（対話型）", focus:"自分でケースを前に進める。創造性とビジネス洞察、グラフ/図表の読み取りを重視。",
-   tips:["自分から次の論点を提案して主導する","定性的な示唆（so what）を厚めに","図表が出たら『軸→傾向→例外→示唆』で読む"]},
-  {name:"Bain & Company", short:"Bain", color:"#b3122b", tags:["mbb","cand"],
-   style:"候補者主導（結果志向）", focus:"実利・実装重視。『結局いくら儲かる/改善するのか』に強くこだわる。チームフィット（A Bainie）も重要。",
-   tips:["常に金額インパクトに落とす","80/20で重要論点から","明るく前のめりなコミュニケーション"]},
-  {name:"Strategy& (PwC)", short:"S&", color:"#e8511d", tags:["led"],
-   style:"面接官主導寄り", focus:"戦略×実行。業界知識と財務リテラシーをやや重視。",
-   tips:["バリュエーションや財務指標に慣れておく","業界トレンドを一つ語れるように"]},
-  {name:"Monitor Deloitte / Deloitte", short:"Del", color:"#86bc25", tags:["led"],
-   style:"面接官主導 ＋ グループ/ジョブもあり", focus:"総合系の戦略部門。デジタル・DXや実装まで含めた問いが出やすい。",
-   tips:["デジタル変革・テクノロジー文脈の引き出しを持つ","グループディスカッション対策も"]},
-  {name:"EY-Parthenon / EY", short:"EYP", color:"#ffe600", text:"#222", tags:["led"],
-   style:"面接官主導", focus:"PEファンドのデューデリ（商業DD）案件が多く、市場成長性・競争環境の分析を重視。",
-   tips:["市場の魅力度（規模×成長×競争）を素早く評価","投資判断（買う/買わない）に結論づける"]},
-  {name:"Kearney", short:"ATK", color:"#7a2fd6", tags:["led"],
-   style:"面接官主導", focus:"オペレーション/コスト/調達に強み。実務的で泥臭い改善ケースが出やすい。",
+  {id:"mck", name:"McKinsey & Company", short:"McK", color:"#0b3d91", tags:["mbb","led"],
+   style:"面接官主導（インタビュアー・レッド）",
+   focus:"論点を順番に振られ、設問ごとに構造化・計算・解釈を見られる。ケースに加えてPEI（人物面接）も必ずセットで実施。",
+   tips:["設問ごとに『枠組み→数字→so what』を徹底","PEI用に リーダーシップ/達成/対立 の3エピソードを準備","結論ファースト、トップダウンで話す"]},
+  {id:"bcg", name:"Boston Consulting Group", short:"BCG", color:"#177b57", tags:["mbb","cand"],
+   style:"候補者主導寄り（対話型）",
+   focus:"自分でケースを前に進める主体性が問われる。創造性・ビジネス洞察、グラフ/図表の読み取りを重視。",
+   tips:["自分から次の論点を提案して主導する","定性的な示唆（so what）を厚めに","図表は『軸→傾向→例外→示唆』で読む"]},
+  {id:"bain", name:"Bain & Company", short:"Bain", color:"#b3122b", tags:["mbb","cand"],
+   style:"候補者主導（結果志向）",
+   focus:"実利重視。『結局いくら儲かる/改善するのか』に強くこだわる。明るいチームフィット（A Bainie）も大事。",
+   tips:["常に金額インパクトに落とす","80/20で重要論点から攻める","前のめりで明るいコミュニケーション"]},
+  {id:"sand", name:"Strategy& (PwC)", short:"S&", color:"#e8511d", tags:["led"],
+   style:"面接官主導寄り",
+   focus:"戦略×実行。財務リテラシーと業界知識をやや重視。価格・事業性評価の問いが出やすい。",
+   tips:["財務指標・投資回収の計算に慣れておく","業界トレンドを一つ語れるように"]},
+  {id:"del", name:"Monitor Deloitte / Deloitte", short:"Del", color:"#86bc25", tags:["led"],
+   style:"面接官主導 ＋ グループ/ジョブもあり",
+   focus:"総合系の戦略部門。DX・デジタルを絡めた問いが出やすく、実装まで含めた現実的な提言を好む。",
+   tips:["デジタル変革の引き出しを持つ","グループディスカッション対策も並行で"]},
+  {id:"eyp", name:"EY-Parthenon / EY", short:"EYP", color:"#b8a200", tags:["led"],
+   style:"面接官主導",
+   focus:"PEファンド向け商業DD案件が多く、市場の成長性・競争環境の分析を重視。投資判断に落とす問いが頻出。",
+   tips:["市場の魅力度（規模×成長×競争）を素早く評価","『買う/買わない』まで結論づける"]},
+  {id:"atk", name:"Kearney", short:"ATK", color:"#7a2fd6", tags:["led"],
+   style:"面接官主導",
+   focus:"オペレーション・コスト・調達に強み。実務的で泥臭い改善ケースが出やすい。",
    tips:["バリューチェーン/コスト構造の分解を得意に","実装可能性とクイックウィンを意識"]},
-  {name:"Roland Berger", short:"RB", color:"#c8102e", tags:["led"],
-   style:"面接官主導", focus:"欧州系。製造業・自動車・産業財に強い。論理的厳密さを重視。",
-   tips:["製造業のコスト/サプライチェーン文脈を準備","論理の飛躍を作らない"]},
-  {name:"Oliver Wyman", short:"OW", color:"#1f3a93", tags:["cand"],
-   style:"候補者主導（やや難）", focus:"金融・保険・リスクに強み。定量的に重い、ひねったケースが出やすい。",
+  {id:"rb", name:"Roland Berger", short:"RB", color:"#c8102e", tags:["led"],
+   style:"面接官主導",
+   focus:"欧州系。製造業・自動車・産業財に強い。論理の厳密さを重視し、飛躍を嫌う。",
+   tips:["製造業・サプライチェーンの文脈を準備","一つひとつ論理を積み上げて話す"]},
+  {id:"ow", name:"Oliver Wyman", short:"OW", color:"#1f3a93", tags:["cand"],
+   style:"候補者主導（やや難）",
+   focus:"金融・保険・リスクに強み。定量的に重いケースが出やすく、計算力が直接効く。",
    tips:["重めの計算に動じない","前提を明示してから計算に入る"]},
-  {name:"L.E.K. Consulting", short:"LEK", color:"#005eb8", tags:["led"],
-   style:"面接官主導", focus:"商業DD・市場規模推定が頻出。マーケットサイジング力が直接効く。",
-   tips:["フェルミ推定を反復","市場成長率の前提を丁寧に置く"]},
-  {name:"Accenture (Strategy)", short:"ACN", color:"#a100ff", tags:["led"],
-   style:"面接官主導 ＋ グループワーク", focus:"戦略〜実装〜テクノロジーまで一気通貫。DX・デジタル文脈の問いが多い。",
+  {id:"lek", name:"L.E.K. Consulting", short:"LEK", color:"#005eb8", tags:["led"],
+   style:"面接官主導",
+   focus:"商業DD・市場規模推定が頻出。マーケットサイジングの精度とスピードが合否を分ける。",
+   tips:["フェルミ推定を反復練習","市場成長率の前提を丁寧に置く"]},
+  {id:"acn", name:"Accenture (Strategy)", short:"ACN", color:"#a100ff", tags:["led"],
+   style:"面接官主導 ＋ グループワーク",
+   focus:"戦略〜実装〜テクノロジーまで一気通貫。DX・デジタル文脈の問いが多い。",
    tips:["テクノロジー実装の現実性を語れるように","グループケース・プレゼン対策も"]},
-  {name:"総合系・日系（PwC/KPMG/ABeam 等）", short:"+α", color:"#475569", tags:["led"],
-   style:"面接官主導が中心", focus:"戦略色の濃さはチーム次第。志望動機・カルチャーフィットの比重がやや高い傾向。",
+  {id:"sogo", name:"総合系・日系（PwC/KPMG/ABeam 等）", short:"+α", color:"#475569", tags:["led"],
+   style:"面接官主導が中心",
+   focus:"戦略色の濃さはチーム次第。標準的なケースに加え、志望動機・カルチャーフィットの比重がやや高い。",
    tips:["なぜコンサル/なぜ当社を言語化","ケースは標準フレームで十分戦える"]},
 ];
 
-const FRAMEWORKS = [
-  {name:"収益性分析（利益が減っている）", badge:"b-prof", when:"『利益/売上が下がった』『黒字化したい』系で最初に使う王道。",
-   tree:["利益 = 売上 − 費用","売上 = 単価 × 数量（× 客数 × 客単価 にも分解可）","費用 = 固定費 + 変動費","→ どの要素が、いつから、なぜ変化したかを特定"],
-   note:"まず『売上側 or 費用側 どちらの問題か』を切り分け、外部（市場・競合）か内部（自社）かを問う。"},
-  {name:"市場参入（新規市場に入るべきか）", badge:"b-entry", when:"『この市場に参入すべき？』『海外展開すべき？』系。",
-   tree:["① 市場の魅力度：規模・成長率・収益性（5 Forces）","② 自社の勝てる力：競争優位・ケイパビリティ","③ 参入方法：自前 / M&A / 提携","④ 採算：投資・回収・リスク → GO/NO-GO"],
-   note:"結論は必ず『参入する/しない＋条件』まで。期待リターンとリスクを天秤に。"},
-  {name:"M&A（買収すべきか）", badge:"b-ma", when:"『この会社を買うべき？』系。投資判断ケース。",
-   tree:["① なぜ買う：戦略的合理性（成長/シナジー/防衛）","② 対象の評価：事業・財務・市場ポジション","③ シナジー：売上シナジー＋コストシナジー","④ 価格と条件：バリュエーション、のれん","⑤ リスク：統合(PMI)、文化、規制 → 買う/見送る"],
-   note:"『シナジー額 vs 支払うプレミアム』が判断の核。過大評価に注意。"},
-  {name:"価格設定（プライシング）", badge:"b-price", when:"『この新製品いくらで売る？』『値上げすべき？』系。",
-   tree:["① コストベース：原価＋目標マージン（下限）","② 競合ベース：競合価格・代替品との比較","③ 価値ベース：顧客が感じる価値（上限・理想）","→ 3つの幅の中で、戦略目的に合わせて決定"],
-   note:"価格弾力性（値上げで数量がどれだけ減るか）を必ず意識。価値ベースが王道。"},
-  {name:"コスト削減 / オペレーション", badge:"b-cost", when:"『コストを下げたい』『利益率を改善したい』系。",
-   tree:["① コスト構造を分解：固定/変動、バリューチェーン別","② 大きい費目から（80/20）","③ ベンチマーク：競合/業界平均と比較","④ 施策：内製/外注、自動化、調達、人員","⑤ 実現性 × インパクトで優先順位"],
-   note:"『売上を犠牲にしない』視点を忘れない。クイックウィンと構造改革を分ける。"},
-  {name:"成長戦略（売上を伸ばす）", badge:"b-growth", when:"『売上を2倍にしたい』『次の成長の柱は？』系。",
-   tree:["アンゾフの成長マトリクス：","① 市場浸透（既存×既存）","② 新製品開発（既存市場×新製品）","③ 新市場開拓（新市場×既存製品）","④ 多角化（新×新）"],
-   note:"既存顧客の客単価・頻度アップは見落としがち。リスクの低い順に検討。"},
-  {name:"市場規模推定（フェルミ）", badge:"b-size", when:"『この市場は何円？』単独でも、他ケースの一部としても頻出。",
-   tree:["トップダウン：全体（人口等）→ 絞り込み → 単価で掛ける","ボトムアップ：1店舗/1人あたり → 積み上げ","→ 必ず妥当性チェック（桁が常識的か）"],
-   note:"前提の数字を声に出して置く。エレガントさより『分解の論理』が評価される。"},
-  {name:"思考の土台ツール（3C/4P/5Forces 等）", badge:"b-prof", when:"上記の各ステップの中で『漏れなく見る』ために使う補助輪。",
-   tree:["3C：Customer / Competitor / Company","4P：Product / Price / Place / Promotion","5 Forces：競合/新規参入/代替品/買い手/売り手","バリューチェーン：購買→製造→物流→販売→サービス","MECE：モレなく・ダブりなく分解する原則"],
-   note:"フレームに当てはめるのが目的化しないこと。ケースに合わせて『カスタムの枝』を作るのが上級者。"},
-];
+/* ================================================================
+   データ：ケース問題
+   steps の kind: intro / clarify / structure / quant / insight / recommend
+================================================================ */
+const TYPE_LABEL = {profit:"収益性", entry:"市場参入", ma:"M&A", pricing:"価格設定", cost:"コスト削減", growth:"成長戦略", sizing:"市場規模", dx:"DX戦略", pei:"人物面接", dd:"事業DD"};
 
 const CASES = [
-  {title:"地方スーパーの利益が3年連続で減少", firm:"McKinsey型", badge:"b-prof", lvl:"基礎",
-   bg:"クライアントは地方で20店舗を展開する食品スーパー。売上は横ばいだが、営業利益がこの3年で40%減少。原因を特定し、改善策を提言してほしい。",
-   q:"なぜ利益が減っているのか？どう改善するか？",
-   structure:["利益 = 売上 − 費用 に分解。売上は横ばい → <b>費用側</b>が主因と仮説","費用 = 売上原価（仕入）＋ 人件費 ＋ 地代・光熱費 などに分解","各費目が『いつから・どれだけ』増えたかを確認","外部要因（仕入価格高騰・最低賃金上昇）と内部要因（オペ非効率）を切り分け"],
-   calc:["売上 100億円（横ばい）","営業利益率：3年前 5% → 現在 3%","利益額：5億 → 3億（▲2億, ▲40%） ✔ お題と一致","原価率が 65%→68% に悪化 = 売上の3% = <span class='res'>3億円</span>のコスト増が主犯"],
-   conc:"利益減の主因は<b>仕入原価率の3pt悪化</b>。①共同仕入・PB拡大で原価率を1.5pt改善（+1.5億）、②人件費はシフト最適化で対応。まず原価に切り込むのが最大インパクト。値上げは客離れリスクがあるため最後の手段。"},
+{id:"supermarket", title:"地方スーパーの利益が3年で40%減", type:"profit", lvl:"基礎", min:20,
+ firms:["mck","del","atk","sogo"],
+ steps:[
+  {kind:"intro", text:"クライアントは地方で20店舗を展開する食品スーパーです。売上はここ3年ほぼ横ばいの<b>100億円</b>ですが、営業利益はこの3年で<b>40%減少</b>しました。社長から「原因を特定し、改善策を提言してほしい」と依頼されています。<br><br>さて、<b>なぜ利益が減っているのか、どう改善すべきか</b>、一緒に考えていきましょう。"},
+  {kind:"clarify", prompt:"分析に入る前に、何か確認しておきたいことはありますか？（1〜3問が目安）",
+   qa:[["「利益」とは営業利益のことですか？","はい、営業利益です。3年前の5億円から現在3億円に減っています。"],
+       ["利益減は特定の店舗だけの現象ですか？","いいえ、ほぼ全店舗で同じ傾向です。"],
+       ["売上横ばいの中身は？客数と単価はどう動いていますか？","客数が微減、客単価が微増で、ほぼ相殺しています。"],
+       ["競争環境に変化はありますか？","近年、ドラッグストアが食品を安く売り始め、競争が激化しています。"]]},
+  {kind:"structure", prompt:"では、この問題をどう構造化しますか？<b>90秒</b>で枠組みを作って、口頭で説明するつもりで整理してください。", sec:90,
+   model:["利益 = 売上 − 費用。売上は横ばい → <b>費用側</b>が主因という仮説からスタート",
+          "費用 = 売上原価（仕入）＋ 人件費 ＋ 地代・光熱費 などに分解",
+          "各費目が『いつから・どれだけ』増えたかをデータで特定",
+          "外部要因（仕入価格高騰・競争激化）と内部要因（オペ非効率・ロス）を切り分け"]},
+  {kind:"quant", prompt:"いい枠組みですね。ではデータをお見せします。<b>原価率の悪化が年間の利益をいくら押し下げたか</b>、計算してください。",
+   data:["売上：100億円（3年間ほぼ一定）","売上原価率：3年前 65% → 現在 68%","販管費：30億円 → 31億円（+1億円）"],
+   unit:"億円", ans:3, lo:2.9, hi:3.1,
+   sol:["原価率の悪化幅 = 68% − 65% = 3pt","利益インパクト = 売上100億円 × 3% = <span class='res'>3億円/年</span>","検算：原価+3億、販管費+1億 → 利益 5億→3億…あれ、▲2億? → 売上構成の微変化等で残り1億は説明可能、と面接官に確認するのが◎"]},
+  {kind:"insight", prompt:"では、<b>なぜ原価率が3ptも上がったのか</b>。考えられる仮説をできるだけ挙げてください。",
+   model:["仕入価格の高騰（食品インフレ）を価格転嫁できていない","ドラッグストアとの競争で値引き・特売を増やした（実質単価の低下）","粗利の高いPB（プライベートブランド）比率の低下","廃棄ロス・万引きロスの増加","仕入先が分散し、ボリュームディスカウントが効いていない"]},
+  {kind:"recommend", prompt:"最後に、社長への提言を<b>30秒</b>でまとめてください。結論ファーストで。",
+   model:"利益減の主因は<b>仕入原価率の3pt悪化（年▲3億円）</b>です。第一に、共同仕入とPB拡大で原価率を1.5pt改善し年+1.5億円。第二に、値引きに頼らない販促（アプリ会員化）への切替え。第三に、人件費はシフト最適化で増加を抑制します。安易な値上げは客離れリスクがあるため、まず原価側から着手すべきです。"}]},
 
-  {title:"飲料メーカーが健康志向の新ジャンルに参入すべきか", firm:"BCG型", badge:"b-entry", lvl:"標準",
-   bg:"大手飲料メーカーが、急成長中の『無糖・機能性ドリンク』市場への参入を検討。参入すべきか判断してほしい。",
-   q:"この市場に参入すべきか？",
-   structure:["① 市場の魅力度：規模・成長率・収益性・競争環境(5 Forces)","② 自社の強み：既存ブランド・販路・製造能力を活かせるか","③ 参入方法：自社開発 / 既存ブランド拡張 / M&A","④ 採算と撤退基準 → GO/NO-GO"],
-   calc:["市場規模：2,000億円、年成長率 15%（魅力的）","必要投資：製造ライン＋マーケで 50億円","目標シェア 10% → 売上 200億円、営業利益率 10% = <span class='res'>20億円/年</span>","投資回収：50億 ÷ 20億 ≒ 2.5年（許容範囲）"],
-   conc:"<b>参入を推奨</b>。市場は高成長で、自社の全国販路とブランドが強力な参入優位になる。ただし既存ブランドのカニバリ（共食い）を避けるため<b>新ブランドで展開</b>。3年で回収見込み。撤退基準（2年後シェア5%未満なら縮小）を事前設定。"},
+{id:"beverage", title:"飲料メーカーは無糖・機能性市場に参入すべきか", type:"entry", lvl:"標準", min:25,
+ firms:["bcg","sand","rb"],
+ steps:[
+  {kind:"intro", text:"クライアントは大手飲料メーカーです。急成長中の<b>「無糖・機能性ドリンク」市場</b>への参入を検討しています。<b>参入すべきかどうか</b>、判断の根拠とともに提言してください。"},
+  {kind:"clarify", prompt:"前提を確認したいことはありますか？",
+   qa:[["参入の目的は何ですか？売上成長ですか？","はい。主力の加糖飲料が頭打ちで、新しい成長の柱を探しています。"],
+       ["市場の規模と成長率のデータはありますか？","市場規模は約2,000億円、年率15%で成長しています。"],
+       ["自社で使える資産は？","全国の自販機・小売網、製造ライン、強いコーポレートブランドがあります。"],
+       ["検討している参入方法は？","自社開発が基本線ですが、M&Aも排除していません。"]]},
+  {kind:"structure", prompt:"この参入判断、どんな枠組みで検討しますか？<b>90秒</b>でどうぞ。", sec:90,
+   model:["① 市場の魅力度：規模(2,000億)・成長率(15%)・収益性・競争環境(5 Forces)",
+          "② 自社が勝てるか：販路・製造・ブランドが活きるか、欠けるケイパビリティは何か",
+          "③ 参入方法：自社開発 / ブランド拡張 / M&A の比較",
+          "④ 採算：必要投資と回収期間、撤退基準 → GO/NO-GO"]},
+  {kind:"quant", prompt:"参入5年後に<b>シェア10%</b>を取れた場合、年間の営業利益はいくらになりますか？",
+   data:["現在の市場規模：2,000億円（計算簡略化のため成長は無視してよい）","目標シェア：10%","この市場の標準的な営業利益率：10%"],
+   unit:"億円", ans:20, lo:19, hi:21,
+   sol:["売上 = 2,000億円 × 10% = 200億円","営業利益 = 200億円 × 10% = <span class='res'>20億円/年</span>","必要投資が50億円なら、回収は約2.5年 → 許容範囲"]},
+  {kind:"insight", prompt:"参入する場合の<b>リスク</b>は何でしょう？特にこの会社ならではのものを挙げてください。",
+   model:["既存の加糖飲料との<b>カニバリゼーション</b>（自社製品同士の共食い）","先行する専業ブランドに対する後発の不利（棚の確保）","健康トレンドが一過性で終わる可能性","『加糖飲料の会社』というブランドイメージとの不整合 → 新ブランドで出す選択肢"]},
+  {kind:"recommend", prompt:"では、経営会議向けに<b>30秒</b>で結論を。",
+   model:"<b>参入を推奨します</b>。市場は2,000億円・年15%成長と魅力的で、当社の全国販路と製造力は強力な参入優位です。シェア10%で年20億円の利益が見込め、投資回収は約2.5年。ただし既存品とのカニバリを避けるため<b>新ブランドでの展開</b>とし、2年後シェア5%未満なら縮小という撤退基準をあらかじめ設定します。"}]},
 
-  {title:"製薬企業が中堅バイオベンチャーを買収すべきか", firm:"Bain型", badge:"b-ma", lvl:"応用",
-   bg:"大手製薬が、有望な新薬パイプラインを持つバイオベンチャーの買収を検討。提示価格は800億円。買うべきか。",
-   q:"この買収は妥当か？いくらまでなら払えるか？",
-   structure:["① 戦略合理性：自社の弱い領域を補完できるか","② パイプライン評価：成功確率×市場規模×残存特許","③ シナジー：販売網による売上シナジー、研究の重複削減","④ バリュエーション：価値 vs 800億円のプレミアム"],
-   calc:["主力候補薬：ピーク売上 500億円/年、確率調整後 ×40%","自社の世界販売網でピーク売上が 1.5倍に（売上シナジー）","想定価値：将来CFの現在価値 ≒ 1,000億円規模","支払額 800億 < 価値 1,000億 → <span class='res'>差引 +200億</span>の妙味"],
-   conc:"<b>買収妥当</b>。販売シナジーを織り込めば価値は約1,000億円で、提示額800億円を上回る。ただし臨床第3相の成否が価値の大半を左右するため、<b>マイルストーン型の条件付き価格（アーンアウト）</b>でリスクを分担する形を推奨。"},
+{id:"biotech", title:"製薬大手はバイオベンチャーを800億円で買うべきか", type:"ma", lvl:"応用", min:30,
+ firms:["bain","ow","eyp"],
+ steps:[
+  {kind:"intro", text:"クライアントは大手製薬会社です。有望な新薬候補（パイプライン）を持つバイオベンチャーの買収を検討しており、<b>提示価格は800億円</b>です。<b>この買収は妥当でしょうか？</b>"},
+  {kind:"clarify", prompt:"判断の前に確認したいことは？",
+   qa:[["買収の戦略的な狙いは何ですか？","自社が弱いがん領域のパイプラインを獲得することです。"],
+       ["対象会社の主力候補薬の状況は？","臨床第3相の手前です。承認されればピーク売上500億円/年と見込まれます。"],
+       ["承認の成功確率は？","この段階の薬の業界平均で約40%です。"],
+       ["自社とのシナジーは？","当社の世界的な販売網を使えば、ピーク売上は1.5倍にできる見込みです。"]]},
+  {kind:"structure", prompt:"この買収判断の枠組みを<b>90秒</b>で組んでください。", sec:90,
+   model:["① 戦略合理性：がん領域の補完という狙いは自社戦略と整合するか",
+          "② 対象の価値：候補薬の期待値（ピーク売上 × 成功確率 × 特許残存期間）",
+          "③ シナジー：販売網による売上シナジー＋研究重複のコスト削減",
+          "④ 価格妥当性：シナジー込みの価値 vs 800億円 ⑤ リスク：第3相失敗、PMI、人材流出"]},
+  {kind:"quant", prompt:"シナジーを織り込んだ場合の<b>確率調整後のピーク売上（期待値）</b>はいくらですか？",
+   data:["候補薬の単独ピーク売上見込み：500億円/年","自社販売網によるシナジー：ピーク売上が1.5倍に","承認の成功確率：40%"],
+   unit:"億円", ans:300, lo:295, hi:305,
+   sol:["シナジー込みピーク売上 = 500 × 1.5 = 750億円/年","期待値 = 750 × 40% = <span class='res'>300億円/年</span>","この期待売上が特許期間続くなら、将来CFの現在価値は約1,000億円規模 → 800億円の提示は妙味あり"]},
+  {kind:"insight", prompt:"価値の大半が「第3相の成否」に懸かっています。<b>このリスクに対して、取引の組み方で何かできることは？</b>",
+   model:["<b>アーンアウト</b>：承認などのマイルストーン達成時に追加で支払う条件付き価格にする","一部出資＋オプション（段階的買収）でリスクを刻む","共同開発契約から始めて関係を作る","キーサイエンティストのリテンション（残留インセンティブ）を契約に入れる"]},
+  {kind:"recommend", prompt:"取締役会向けに<b>30秒</b>で結論をどうぞ。",
+   model:"<b>買収は妥当、ただし条件付き価格を推奨します</b>。販売シナジー込みの価値は約1,000億円で提示額800億円を上回ります。ただし価値の大半は臨床第3相の成否に依存するため、一括800億円ではなく<b>マイルストーン型（アーンアウト）</b>で支払いを分け、失敗時の下振れを抑える設計にすべきです。"}]},
 
-  {title:"SaaSスタートアップの新プラン価格をいくらにするか", firm:"Strategy&型", badge:"b-price", lvl:"標準",
-   bg:"中小企業向け会計SaaSが、上位プラン（自動化機能付き）を新設。月額いくらに設定すべきか。現行プランは月3,000円。",
-   q:"新プランの価格をいくらにすべきか？",
-   structure:["① コスト下限：追加機能の限界費用はほぼゼロ（SaaS）","② 競合ベース：競合の上位プランは月5,000〜8,000円","③ 価値ベース：自動化で顧客は月『何時間』節約できるか","→ 価値を金額換算して上限を出す"],
-   calc:["自動化で経理作業を月20時間削減","人件費換算：時給2,000円 × 20h = <span class='res'>月4万円</span>の価値","顧客が払ってよい上限はこの一部 → 月8,000〜10,000円も正当化可","現行3,000円との差を考え、心理的な刻みで <span class='res'>月6,800円</span>を推奨"],
-   conc:"<b>月6,800円（現行の約2.3倍）</b>を推奨。コストはほぼゼロなので価値ベースで攻める。月4万円の価値提供に対し十分割安に見え、競合(5,000〜8,000円)とも整合。導入初月割引でアップセルを促進。"},
+{id:"saas", title:"会計SaaSの上位プラン、月額いくらにする？", type:"pricing", lvl:"標準", min:25,
+ firms:["sand","bcg","acn"],
+ steps:[
+  {kind:"intro", text:"クライアントは中小企業向け<b>会計SaaS</b>の会社です。経理作業を自動化する機能を載せた<b>上位プラン</b>を新設します。現行プランは月額3,000円。<b>新プランの価格をいくらに設定すべきか</b>提言してください。"},
+  {kind:"clarify", prompt:"価格を考える前に確認したいことは？",
+   qa:[["新機能で顧客は具体的に何が楽になりますか？","仕訳の自動化で、経理作業が月20時間ほど減る想定です。"],
+       ["競合の上位プランの価格帯は？","月5,000〜8,000円です。"],
+       ["追加機能の提供コストは？","SaaSなので限界費用はほぼゼロです。"],
+       ["価格の目的は利益最大化ですか？","はい、ただし既存顧客の離反は避けたいです。"]]},
+  {kind:"structure", prompt:"価格設定のアプローチを<b>60秒</b>で整理してください。", sec:60,
+   model:["① コストベース：限界費用ほぼゼロ → 下限はほぼ自由",
+          "② 競合ベース：5,000〜8,000円のレンジ",
+          "③ <b>価値ベース</b>：顧客が節約できる金額を算出（これが本命）",
+          "→ 3つの間で、戦略目的（利益 vs 普及）に合わせて決定"]},
+  {kind:"quant", prompt:"では価値ベースで考えましょう。自動化機能は<b>顧客に月いくらの価値</b>を生みますか？",
+   data:["削減できる経理作業：月20時間","経理担当者の人件費：時給2,000円とする"],
+   unit:"円", ans:40000, lo:39000, hi:41000,
+   sol:["月の節約額 = 20時間 × 2,000円 = <span class='res'>40,000円</span>","顧客が払ってよい上限はこの一部（2〜3割なら8,000〜12,000円）","競合レンジ(5,000〜8,000円)とも整合"]},
+  {kind:"insight", prompt:"価格を決めるとき、<b>数字以外に</b>考慮すべきポイントは？",
+   model:["現行3,000円からの値ごろ感（2倍超は心理的ハードル → 刻み方が重要）","アンカリング：高いプランを見せると中位が選ばれやすい（松竹梅）","導入障壁を下げる初月割引・無料トライアル","既存ユーザーのアップセル動線（機能の見せ方）"]},
+  {kind:"recommend", prompt:"<b>30秒</b>で価格の提言をどうぞ。",
+   model:"<b>月額6,800円を推奨します</b>。顧客への提供価値は月4万円相当であり、その2割以下という十分割安な水準。競合レンジ（5,000〜8,000円）の中でやや上に位置づけ、自動化の価値で差別化します。初月半額でアップセルを促し、解約率を見ながら12カ月後に価格を再検証します。"}]},
 
-  {title:"自動車部品工場のコストを15%削減せよ", firm:"Kearney型", badge:"b-cost", lvl:"応用",
-   bg:"自動車部品メーカーの主力工場。受注価格の下落圧力が強く、競争力維持のため製造コストを15%下げたい。",
-   q:"どこから、どうコストを削減するか？",
-   structure:["① コスト構造を分解：材料費・労務費・経費・減価償却","② 大きい費目から着手（80/20）","③ ベンチマーク：競合・他工場との差","④ 施策をインパクト×実現性でマッピング"],
-   calc:["総コスト 100：材料費 60／労務費 20／経費 15／償却 5","材料費が最大 → 1割改善で 全体の<span class='res'>6%</span>削減","集中購買・歩留改善・VA/VE で材料6%＋労務の自動化で4%＋経費5%","合計 ≒ <span class='res'>15%</span>を積み上げ達成"],
-   conc:"最大費目の<b>材料費（全体の60%）</b>を最優先。集中購買・歩留まり改善・設計見直し(VA/VE)で6%、工程自動化で労務4%、経費5%を積み上げて目標15%。品質を落とさないことを制約条件に、クイックウィン（購買）から着手。"},
+{id:"autoparts", title:"自動車部品工場のコストを15%削減せよ", type:"cost", lvl:"応用", min:25,
+ firms:["atk","rb"],
+ steps:[
+  {kind:"intro", text:"クライアントは自動車部品メーカー、対象はその主力工場です。完成車メーカーからの値下げ圧力が強く、競争力維持のため<b>製造コストを15%削減</b>したいと考えています。<b>どこから、どうやって削減するか</b>を提言してください。"},
+  {kind:"clarify", prompt:"分析の前に確認したいことは？",
+   qa:[["コスト削減の期限はありますか？","2年以内が目標です。"],
+       ["品質や納期は犠牲にできますか？","いいえ、品質・納期は絶対条件です。"],
+       ["工場のコスト構造のデータはありますか？","総コストを100とすると、材料費60・労務費20・経費15・減価償却5です。"],
+       ["過去に削減の取り組みは？","現場のカイゼンは継続中ですが、構造的な見直しは未着手です。"]]},
+  {kind:"structure", prompt:"コスト削減の検討アプローチを<b>90秒</b>で構造化してください。", sec:90,
+   model:["① コスト構造を分解：材料60/労務20/経費15/償却5 → <b>大きい費目から</b>（80/20）",
+          "② 各費目をベンチマーク：競合・他工場と比べて高い所はどこか",
+          "③ 施策出し：調達（集中購買）/ 設計（VA/VE）/ 工程（自動化・歩留まり）/ 間接費",
+          "④ インパクト × 実現性でマッピングし、ロードマップ化"]},
+  {kind:"quant", prompt:"最大費目の材料費から。<b>材料費を10%削減できた場合、総コストは何%下がりますか？</b>",
+   data:["総コスト構成：材料費60、労務費20、経費15、減価償却5（合計100）"],
+   unit:"%", ans:6, lo:5.9, hi:6.1,
+   sol:["材料費は総コストの60%","60% × 10% = <span class='res'>総コストの6%削減</span>","残り9%は：労務（自動化）で4%、経費で5%…と積み上げていく"]},
+  {kind:"insight", prompt:"材料費を10%下げる<b>具体的な打ち手</b>を挙げてください。",
+   model:["<b>集中購買</b>：他工場・グループと仕入をまとめてボリュームディスカウント","<b>VA/VE</b>：設計を見直し、過剰スペックの材料・部品を置き換え","<b>歩留まり改善</b>：不良率低減で材料のムダを削減","サプライヤーとの長期契約・指値交渉、競争入札の導入"]},
+  {kind:"recommend", prompt:"工場長と経営陣に向けて<b>30秒</b>で提言を。",
+   model:"目標15%は<b>材料費を軸に積み上げで達成可能です</b>。最大費目の材料費（60%）に対し集中購買・VA/VE・歩留まり改善で10%減＝全体の6%。加えて工程自動化で労務4%、間接費見直しで5%、合計15%。品質・納期を制約条件として、まず投資不要のクイックウィン（購買交渉）から着手し、自動化投資は1年目の成果で原資を作ります。"}]},
 
-  {title:"地域カフェチェーンが売上を2倍にする打ち手は", firm:"Accenture型", badge:"b-growth", lvl:"標準",
-   bg:"50店舗のカフェチェーン。3年で売上2倍を目指す。現実的な成長戦略を描いてほしい。",
-   q:"どうやって売上を2倍にするか？",
-   structure:["売上 = 店舗数 × 1店舗売上。1店舗売上 = 客数 × 客単価","アンゾフで整理：①既存店強化 ②新商品 ③新規出店 ④新事業","リスクが低く確実な順に組み合わせる"],
-   calc:["現在：50店 × 年4,000万 = 売上 100億円","施策A 新規出店 50→80店（+60%）","施策B 客単価 +15%（フード強化・モバイルオーダー）","施策C 法人向けデリバリー新事業（+10%）","複合効果：1.6 × 1.15 × 1.10 ≒ <span class='res'>約2.0倍</span>"],
-   conc:"単一施策では2倍は困難。<b>出店(+60%)×客単価(+15%)×新チャネル(+10%)</b>の複合で到達。最も確実な客単価向上（既存資産の活用）から着手し、出店は採算地に絞る。デジタル（アプリ・デリバリー）を横串に。"},
+{id:"cafe", title:"カフェチェーンの売上を3年で2倍にせよ", type:"growth", lvl:"標準", min:25,
+ firms:["acn","del","bain","sogo"],
+ steps:[
+  {kind:"intro", text:"クライアントは<b>50店舗を展開するカフェチェーン</b>です。現在の売上は年100億円。経営陣は<b>3年で売上2倍</b>を目指しています。現実的な成長戦略を描いてください。"},
+  {kind:"clarify", prompt:"戦略を考える前に確認したいことは？",
+   qa:[["1店舗あたりの売上は？","年4,000万円です（50店×4,000万=100億円）。"],
+       ["出店余地はありますか？","候補地はあります。ただ1店あたり5,000万円の出店投資が必要です。"],
+       ["客層と来店動機は？","20〜40代中心、平日はテイクアウトコーヒー、休日はカフェ利用です。"],
+       ["M&Aは選択肢に入りますか？","余力は小さいので、基本はオーガニック成長で考えてください。"]]},
+  {kind:"structure", prompt:"売上2倍への道筋を<b>90秒</b>で構造化してください。", sec:90,
+   model:["売上 = 店舗数 × 1店舗売上、1店舗売上 = 客数 × 客単価 × 回転",
+          "アンゾフで整理：①既存店強化（客単価・客数）②新商品 ③新規出店 ④新チャネル/新事業",
+          "リスクの低い順に積み上げ、複数施策の<b>掛け算</b>で2倍を狙う"]},
+  {kind:"quant", prompt:"施策を組み合わせます。<b>売上は現在の約何倍になりますか？</b>（小数1桁まで）",
+   data:["施策A：新規出店で 50店 → 80店（1.6倍）","施策B：フード強化・モバイルオーダーで客単価 +15%","施策C：法人向けコーヒーデリバリー新事業で全体 +10%"],
+   unit:"倍", ans:2.0, lo:1.9, hi:2.1,
+   sol:["1.6 × 1.15 = 1.84","1.84 × 1.10 = <span class='res'>約2.0倍</span>","単一施策では届かない目標も、複合なら現実的に"]},
+  {kind:"insight", prompt:"この成長計画の<b>ボトルネックやリスク</b>は何でしょう？",
+   model:["30店の新規出店投資 = 約15億円 → 資金調達と出店ペースの現実性","店長・バリスタの採用と育成が追いつくか（人がボトルネックになりがち）","新店が既存店の商圏を食う（カニバリ）リスク → 出店基準の設定","客単価+15%による客離れ → 値上げでなく『買い足し』で上げる設計に"]},
+  {kind:"recommend", prompt:"経営陣に<b>30秒</b>で成長戦略を提言してください。",
+   model:"<b>「出店×客単価×新チャネル」の複合で2倍は達成可能です</b>。出店1.6倍、客単価+15%、法人デリバリー+10%の掛け算で約2.0倍。まず投資の要らない客単価向上（フードセット・モバイルオーダー）から着手し、その収益で出店を加速します。最大のリスクは人材なので、店長育成プログラムを成長計画と同時に立ち上げます。"}]},
 
-  {title:"日本のコンビニおにぎりの年間市場規模は？", firm:"L.E.K.型", badge:"b-size", lvl:"基礎",
-   bg:"クライアントがおにぎり関連事業を検討中。日本のコンビニおにぎりの年間市場規模（円）を推定してほしい。",
-   q:"年間で何個・何円売れているか？",
-   structure:["人口ベースのトップダウンで推定","『食べる人 × 頻度 × 単価』に分解","コンビニ利用に絞り込む","最後に桁の妥当性をチェック"],
-   calc:["人口 1.2億人 × おにぎりを買う層 60% = 7,200万人","1人あたり週1個 = 年52個","年間個数：7,200万 × 52 ≒ <span class='res'>37億個</span>","単価 130円 → 37億 × 130 ≒ <span class='res'>約4,800億円</span>"],
-   conc:"年間<b>約37億個・市場規模 約5,000億円</b>と推定。実際のコンビニおにぎり市場は数千億円規模とされ、桁は妥当。感度が高いのは『購入頻度』なので、ここの前提を面接官と握るのが重要。"},
+{id:"onigiri", title:"コンビニおにぎりの年間市場規模を推定せよ", type:"sizing", lvl:"基礎", min:15,
+ firms:["mck","lek"],
+ steps:[
+  {kind:"intro", text:"ウォームアップとして推定問題です。<b>日本のコンビニで1年間に売れるおにぎりの市場規模（金額）</b>を推定してください。電卓は使わず、考え方を声に出しながらどうぞ。"},
+  {kind:"clarify", prompt:"推定の前提として確認したいことは？",
+   qa:[["コンビニで売られるおにぎりに限定ですか？","はい。スーパーや手作りは除いてください。"],
+       ["金額は小売価格ベースでよいですか？","はい、消費者が払う金額ベースで。"],
+       ["使ってよい基礎数字は？","日本の人口1.2億人など、常識的な数字はご自由に。"]]},
+  {kind:"structure", prompt:"どう分解して推定しますか？<b>60秒</b>で枠組みを。", sec:60,
+   model:["需要側（人口ベース）で分解：<b>人口 × 買う人の割合 × 頻度 × 単価</b>",
+          "（別解）供給側：店舗数 × 1店舗の1日販売数 × 365 × 単価 → 検算に使える",
+          "最後に桁の妥当性チェックを宣言する"]},
+  {kind:"quant", prompt:"次の前提で計算すると、<b>年間販売個数は約何億個</b>になりますか？",
+   data:["人口：1.2億人","コンビニおにぎりを買う層：人口の60%","購入頻度：週1個（年52個）とする"],
+   unit:"億個", ans:37, lo:35, hi:40,
+   sol:["買う人 = 1.2億 × 60% = 7,200万人","年間個数 = 7,200万 × 52 ≒ <span class='res'>約37億個</span>","金額 = 37億個 × 130円 ≒ <span class='res'>約4,800億円</span>"]},
+  {kind:"insight", prompt:"この推定で<b>一番ブレやすい前提</b>はどれですか？検算方法もあれば。",
+   model:["最も感度が高いのは<b>購入頻度（週1）</b>。週0.5なら市場は半分、週2なら2倍","検算：コンビニ約5.6万店 × 1日200個 × 365日 ≒ 41億個 → 需要側の37億個とほぼ一致 ✔","『買う層60%』も議論の余地 → 面接官と前提を握るのが大事"]},
+  {kind:"recommend", prompt:"推定結果を<b>20秒</b>でサマリーしてください。",
+   model:"日本のコンビニおにぎり市場は<b>年間約37億個・約5,000億円規模</b>と推定します。人口×購入層60%×週1個×単価130円の需要積み上げで、供給側（店舗数×販売数）からの検算とも一致します。最も感度が高い前提は購入頻度であり、実務ではここをデータで検証します。"}]},
 
-  {title:"航空会社が機内Wi-Fiを有料化すべきか", firm:"Oliver Wyman型", badge:"b-price", lvl:"応用",
-   bg:"中堅航空会社が、現在無料の機内Wi-Fiを有料化（または逆に全便無料化）するか検討。収益と顧客満足のバランスをどう取るか。",
-   q:"Wi-Fiを有料にすべきか、無料を維持すべきか？",
-   structure:["① 直接収益：有料化した場合の課金収入","② 間接効果：満足度・リピート・ブランドへの影響","③ コスト：通信インフラの固定費","④ 競合の動き → 戦略的に判断"],
-   calc:["年間搭乗者 1,000万人、Wi-Fi利用率 30% = 300万人","有料化で利用は半減 → 150万人 × 1,000円 = <span class='res'>15億円</span>の直接収入","一方、顧客満足低下でリピート 1%減 → 売上 1,000億 × 1% = <span class='res'>▲10億円</span>"],
-   conc:"<b>基本無料を維持し、ハイスピード版のみ有料</b>のフリーミアムを推奨。完全有料化は直接収入15億に対しブランド毀損▲10億で正味メリットが薄い。差別化要素として『全便無料』を打ち出しつつ、ヘビーユーザーからは上位プランで回収する二段構え。"},
+{id:"wifi", title:"航空会社は機内Wi-Fiを有料化すべきか", type:"pricing", lvl:"応用", min:25,
+ firms:["ow","bcg"],
+ steps:[
+  {kind:"intro", text:"クライアントは中堅航空会社です。現在<b>無料で提供している機内Wi-Fi</b>について、有料化すべきか、それとも無料を維持して差別化に使うべきか、判断を求められています。<b>収益とブランドのバランス</b>をどう取るか、提言してください。"},
+  {kind:"clarify", prompt:"検討の前に確認したいことは？",
+   qa:[["年間の搭乗者数は？","約1,000万人です。"],
+       ["現在のWi-Fi利用率は？","搭乗者の約30%が利用しています。"],
+       ["Wi-Fi提供のコストは？","通信インフラの固定費が中心で、利用者数にはあまり比例しません。"],
+       ["競合の動向は？","大手は無料、LCCは有料が主流です。"]]},
+  {kind:"structure", prompt:"この意思決定をどう構造化しますか？<b>90秒</b>で。", sec:90,
+   model:["① 直接収益：有料化した場合の課金収入（利用率の低下も織り込む）",
+          "② 間接効果：顧客満足 → リピート・ブランドへの影響を金額換算",
+          "③ コスト：固定費中心なので有料化してもコストはほぼ不変",
+          "④ 競合ポジション：大手無料/LCC有料の中で自社はどちらに寄せるか"]},
+  {kind:"quant", prompt:"有料化シナリオの<b>直接収入</b>を計算してください。",
+   data:["年間搭乗者：1,000万人","現在の利用率：30%","有料化（1フライト1,000円）すると利用者は半減すると仮定"],
+   unit:"億円", ans:15, lo:14.5, hi:15.5,
+   sol:["現利用者 = 1,000万 × 30% = 300万人","有料後 = 300万 × 50% = 150万人","収入 = 150万 × 1,000円 = <span class='res'>15億円/年</span>"]},
+  {kind:"insight", prompt:"一方で有料化の<b>見えないコスト</b>は？ 数字でどう評価しますか？",
+   model:["顧客満足の低下 → リピート率の悪化。例：リピート1%減なら売上1,000億×1% = <b>▲10億円</b>","『大手は無料なのに』という比較によるブランド毀損","SNS等での否定的な口コミ","正味メリット = 15億 − 10億 = +5億どまり → リスクの割に小さい"]},
+  {kind:"recommend", prompt:"経営会議に<b>30秒</b>で提言を。",
+   model:"<b>基本無料を維持し、高速版のみ有料化する二段構え（フリーミアム）を推奨します</b>。完全有料化の直接収入15億円に対し、リピート低下で▲10億円が見込まれ、正味の旨みが薄いためです。『Wi-Fi全便無料』は大手と並ぶ差別化として残しつつ、動画も見られる高速プランを1,000円で提供し、ヘビーユーザーから収益化します。"}]},
+
+{id:"pei", title:"人物面接（PEI）：あなた自身を聞かせてください", type:"pei", lvl:"標準", min:20,
+ firms:["mck","bain"],
+ steps:[
+  {kind:"intro", text:"ここからはケースではなく、<b>あなた自身の経験</b>について伺います。マッキンゼーのPEI（Personal Experience Interview）形式です。1つのエピソードを<b>深く</b>掘り下げますので、表面的な紹介ではなく、状況・あなたの思考・行動を具体的に話してください。"},
+  {kind:"insight", prompt:"<b>Q1. 周囲を巻き込んで何かを成し遂げた経験</b>を教えてください。あなたはどんな役割で、何をしましたか？",
+   model:["<b>STAR-Lで構成</b>：Situation（状況）→ Task（課題）→ Action（自分の行動）→ Result（結果）→ Learning（学び）","面接官が見るのは『肩書き』でなく<b>影響力の出し方</b>：反対者をどう説得した？無関心な人をどう動かした？","『私たちは』でなく<b>『私は』</b>で語る。自分の貢献を具体的に","深掘りに備える：『そのとき相手は何と言いましたか？』に答えられる解像度で"]},
+  {kind:"insight", prompt:"<b>Q2. 大きな困難や failure（失敗・挫折）を乗り越えた経験</b>は？そのときどう考え、どう行動しましたか？",
+   model:["失敗を<b>隠さない</b>。完璧な話よりも、苦しさと向き合った過程が評価される","転機を具体的に：何がきっかけで考え方や行動を変えたのか","Learningを今にどう活かしているかで締める","NG例：『チームメンバーが悪かった』等の他責、『気合いで乗り切った』等の抽象論"]},
+  {kind:"insight", prompt:"<b>Q3. 意見の対立を解消した経験</b>を教えてください。立場や考えの違う相手と、どう折り合いをつけましたか？",
+   model:["相手の立場・利害を<b>どれだけ理解しようとしたか</b>が見られる","『論破した』はNG。共通のゴールを見つけて合意形成した過程を語る","感情と論点を切り分けたエピソードは高評価","結果だけでなく、関係性がその後どうなったかまで話せると◎"]},
+  {kind:"recommend", prompt:"最後に。PEI全体を通して、<b>準備のポイント</b>を自分なりに整理してみてください。",
+   model:"PEIは<b>「リーダーシップ」「達成・困難の克服」「意見対立の解消」の3テーマ×各2エピソード</b>を事前に用意するのが定石です。各エピソードはSTAR-Lで90秒版と3分版を作り、『そのとき何を考えた？』『相手はどう反応した？』という深掘りに答えられる解像度まで思い出しておきます。ケースと同様、結論ファーストで簡潔に。"}]},
+
+{id:"bank", title:"地方銀行の店舗網をどう再編するか", type:"dx", lvl:"標準", min:25,
+ firms:["acn","del","sogo"],
+ steps:[
+  {kind:"intro", text:"クライアントは<b>100店舗を持つ地方銀行</b>です。来店客はこの10年で半減し、低金利で収益も悪化。頭取は<b>「店舗網の再編とデジタル化」</b>の方針を検討しています。どう進めるべきか提言してください。"},
+  {kind:"clarify", prompt:"検討の前に確認したいことは？",
+   qa:[["店舗の主な機能と来店目的は？","振込・住所変更などの事務手続きが大半で、相談業務は2割程度です。"],
+       ["1店舗あたりの運営コストは？","平均で年1.5億円です。"],
+       ["顧客層は？","高齢のお客様の比率が高く、アプリ利用率はまだ3割です。"],
+       ["労組や地域との関係で制約は？","強引な閉鎖は地域の反発を招くため、丁寧に進める必要があります。"]]},
+  {kind:"structure", prompt:"店舗網再編とデジタル化、どう構造化して検討しますか？<b>90秒</b>で。", sec:90,
+   model:["① 店舗の現状把握：店舗ごとの収支・来店数・商圏の重なりを分析",
+          "② 機能の仕分け：事務手続き → デジタル/ATMへ、相談業務 → 拠点に集約",
+          "③ 再編シナリオ：統廃合の規模 × デジタル移行のスピードでシナリオ設計",
+          "④ 移行リスク：高齢顧客の取り残し、人員再配置、地域の反発への手当て"]},
+  {kind:"quant", prompt:"統廃合のインパクトを試算しましょう。<b>年間いくらのコスト削減</b>になりますか？",
+   data:["統廃合対象：100店舗のうち30店舗","1店舗の運営コスト：年1.5億円","統廃合しても近隣店への移管等で、コストの80%が削減できると仮定"],
+   unit:"億円", ans:36, lo:35, hi:37,
+   sol:["対象コスト = 30店 × 1.5億円 = 45億円","削減額 = 45億円 × 80% = <span class='res'>36億円/年</span>","削減の一部をアプリ・相談拠点への投資に回す"]},
+  {kind:"insight", prompt:"コスト削減だけでは片手落ちです。<b>顧客を失わないための施策</b>は？",
+   model:["高齢顧客向け：店舗廃止地域への<b>移動店舗（バン）</b>・郵送/電話サポート","アプリ移行支援：店頭での使い方講座、家族を巻き込んだ設定サポート","相談業務の強化：資産運用・相続など、人にしかできない業務へ人員をシフト","コンビニATM・郵便局との提携で物理タッチポイントを補完"]},
+  {kind:"recommend", prompt:"頭取に<b>30秒</b>で提言してください。",
+   model:"<b>「30店舗の統廃合 × 相談特化型への転換」を3年で進めることを提言します</b>。事務手続きはアプリとATMに移行し、年36億円のコストを削減。その一部を移動店舗や高齢者サポートに再投資し、顧客の取り残しを防ぎます。残す店舗は資産運用・相続相談の拠点に転換し、行員は事務から相談業務へ再配置。コスト構造と収益構造を同時に変える再編です。"}]},
+
+{id:"ev", title:"エンジン部品メーカー、EV化の荒波をどう生きるか", type:"entry", lvl:"応用", min:30,
+ firms:["rb","atk"],
+ steps:[
+  {kind:"intro", text:"クライアントは<b>エンジン部品の専業メーカー</b>（売上800億円）です。自動車のEV化により、主力のエンジン部品市場は今後縮小が確実です。<b>会社をどう変えていくべきか</b>、中期戦略を提言してください。"},
+  {kind:"clarify", prompt:"戦略の前に確認したいことは？",
+   qa:[["売上の構成は？","エンジン部品が7割（560億円）、その他部品が3割（240億円）です。"],
+       ["エンジン部品市場の縮小ペースは？","年率8%程度の縮小が見込まれています。"],
+       ["自社の技術的な強みは？","金属の精密加工と熱処理の技術です。"],
+       ["財務余力は？","自己資本は厚く、年50億円規模の投資余力があります。"]]},
+  {kind:"structure", prompt:"この事業転換をどう構造化しますか？<b>90秒</b>で。", sec:90,
+   model:["① 現有事業の寿命を見立てる：縮小ペース×シェア → キャッシュをいつまで生めるか",
+          "② 強みの棚卸し：精密加工・熱処理は<b>何に転用できるか</b>（EV部品/他産業）",
+          "③ 新領域の選定：市場成長性 × 技術の活かしやすさ でマッピング",
+          "④ 移行計画：既存事業のキャッシュで新領域へ投資する時間軸の設計"]},
+  {kind:"quant", prompt:"危機感を数字にしましょう。市場と同じペースで縮むと、<b>5年後のエンジン部品売上</b>は約いくらですか？",
+   data:["現在のエンジン部品売上：560億円","市場の縮小ペース：年率8%（5年で 0.92⁵ ≒ 0.66 とする）"],
+   unit:"億円", ans:370, lo:360, hi:380,
+   sol:["5年後 = 560億円 × 0.66 ≒ <span class='res'>約370億円</span>","つまり5年で<b>約190億円の売上が消える</b>","この穴を新事業で埋める必要がある、と課題を定量化できた"]},
+  {kind:"insight", prompt:"精密加工・熱処理の技術を活かせる<b>新領域の候補</b>を挙げてください。",
+   model:["<b>EV向け部品</b>：モーターコア、減速機ギア、バッテリーケース（加工技術が直結）","EVで増える<b>熱マネジメント部品</b>（冷却系）","自動車以外への展開：半導体製造装置・医療機器・航空機の精密部品","完成車メーカーとの共同開発で、図面をもらう側から提案する側へ"]},
+  {kind:"recommend", prompt:"社長に<b>30秒</b>で中期戦略を提言してください。",
+   model:"<b>「エンジンで稼げる残り時間で、EV・非自動車へ軸足を移す」二正面戦略を提言します</b>。エンジン部品は5年で約190億円縮小するため、撤退ではなく効率化で利益率を守りキャッシュを確保。その投資余力（年50億円）をモーターコア等のEV部品と半導体装置部品に集中投下し、5年後に新領域で200億円の売上を作ります。鍵は技術の転用先を絞り込むことと、転換期の人材リスキリングです。"}]},
+
+{id:"insurance", title:"ネット自動車保険、解約率をどう下げる？", type:"profit", lvl:"応用", min:25,
+ firms:["ow","lek"],
+ steps:[
+  {kind:"intro", text:"クライアントは<b>ダイレクト型（ネット）自動車保険</b>の会社です。保有契約は100万件ありますが、<b>年間解約率が15%</b>と業界平均より高く、成長の足かせになっています。<b>解約率を下げる施策</b>を提言してください。"},
+  {kind:"clarify", prompt:"分析の前に確認したいことは？",
+   qa:[["解約のタイミングに偏りはありますか？","更新時期（年1回）の解約が大半です。"],
+       ["解約理由のデータは？","『他社の方が安い』が6割、『事故対応への不満』が2割です。"],
+       ["1契約あたりの年間利益は？","約5,000円です。"],
+       ["新規獲得のコストは？","1件あたり約15,000円かかっています。"]]},
+  {kind:"structure", prompt:"解約問題をどう構造化しますか？<b>90秒</b>で。", sec:90,
+   model:["解約 = 誰が（セグメント）× いつ（更新時）× なぜ（価格6割/対応2割）",
+          "① 価格起因：本当に他社が安いのか、価格以外の価値が伝わっていないのか",
+          "② 体験起因：事故対応の不満を特定（初動スピード？連絡頻度？）",
+          "③ 構造理解：解約1件の損失 vs 引き留めコスト → 投資対効果で施策を選ぶ"]},
+  {kind:"quant", prompt:"改善インパクトを試算しましょう。<b>解約率を15%→10%に下げると、年間利益はいくら改善しますか？</b>（残存契約の利益増分のみでよい）",
+   data:["保有契約：100万件","解約率：15% → 10%（5pt改善）","1契約あたり年間利益：5,000円"],
+   unit:"億円", ans:2.5, lo:2.4, hi:2.6,
+   sol:["残存する契約 = 100万件 × 5% = 5万件","利益改善 = 5万件 × 5,000円 = <span class='res'>2.5億円/年</span>","さらに：解約分を新規で埋める獲得コスト（5万件×1.5万円=7.5億円）も不要に → 実質効果は約10億円"]},
+  {kind:"insight", prompt:"『他社の方が安い』が6割。<b>値下げ以外で</b>この層を引き留める打ち手は？",
+   model:["<b>継続割引・無事故割引</b>の見せ方強化（更新時に『あなたは○円おトク』と可視化）","更新前のタイミングで先回りコンタクト（解約検討前に接触）","使っていない特約の整理を提案して実質保険料を下げる（誠実さで信頼を獲得）","事故対応の初動改善とアプリでの進捗可視化 → 残り2割の不満にも効く"]},
+  {kind:"recommend", prompt:"経営陣に<b>30秒</b>で提言を。",
+   model:"<b>更新時の先回りリテンションに投資すべきです</b>。解約率を15%→10%にできれば、残存利益で年2.5億円、新規獲得コストの節約も含め実質約10億円の改善です。価格起因の6割には継続割引の可視化と更新前の先回り接触、対応起因の2割には事故対応の初動改善とアプリでの進捗可視化で応えます。引き留めコストは獲得コスト1.5万円より遥かに安く、投資対効果は明確です。"}]},
+
+{id:"gym", title:"日本のフィットネスジム市場規模を推定せよ", type:"sizing", lvl:"標準", min:20,
+ firms:["lek","eyp"],
+ steps:[
+  {kind:"intro", text:"クライアントはPEファンドで、<b>フィットネスジムチェーンの買収</b>を検討中です。まず投資仮説の土台として、<b>日本のフィットネスジム市場規模（年間・金額）</b>を推定してください。"},
+  {kind:"clarify", prompt:"推定の前提を確認したいことは？",
+   qa:[["対象は会費制ジムだけですか？","はい、月会費制のジム（総合ジム・24hジム・ヨガ等含む）に絞ってください。"],
+       ["パーソナルジムの単発利用などは？","小さいので無視して構いません。"],
+       ["精度はどの程度求められますか？","桁が合っていて、ロジックが明確なら十分です。"]]},
+  {kind:"structure", prompt:"どう分解して推定しますか？<b>60秒</b>で。", sec:60,
+   model:["需要側：<b>人口 × ジム会員率 × 月会費 × 12ヶ月</b>",
+          "会員率の置き方：体感+日本は欧米(15-20%)より低い → 3〜5%と置く",
+          "（検算）供給側：店舗数 × 1店舗会員数 × 会費 でクロスチェック"]},
+  {kind:"quant", prompt:"次の前提で、<b>年間市場規模</b>を計算してください。",
+   data:["人口：1.2億人","ジム会員率：4%","平均月会費：8,000円"],
+   unit:"億円", ans:4600, lo:4400, hi:4800,
+   sol:["会員数 = 1.2億 × 4% = 480万人","年会費 = 8,000円 × 12 = 9.6万円","市場 = 480万 × 9.6万円 ≒ <span class='res'>約4,600億円</span>（実際の統計も5,000億円前後 ✔）"]},
+  {kind:"insight", prompt:"PEファンドの投資判断として、規模の次に<b>何を見るべき</b>ですか？",
+   model:["<b>成長性</b>：健康志向・高齢化で会員率は上がる余地（欧米比でまだ1/4）","<b>セグメント</b>：低価格24hジムが伸び、総合ジムは苦戦 → どちらを買うかで全く別物","<b>ユニットエコノミクス</b>：1店舗の会員数×ARPU×退会率","競争：コンビニジム乱立による飽和リスク、立地の取り合い"]},
+  {kind:"recommend", prompt:"ファンドのパートナーに<b>30秒</b>でサマリーを。",
+   model:"日本のジム市場は<b>年間約4,600億円</b>（人口×会員率4%×月会費8,000円）と推定します。会員率は欧米の1/4で構造的な成長余地があり、特に低価格24hジムが成長ドライバーです。投資判断には市場規模より<b>セグメント選択と退会率</b>が効くため、次のステップでは対象企業のユニットエコノミクスと商圏の飽和度を検証すべきです。"}]},
+
+{id:"hotel", title:"ビジネスホテル、稼働率は戻ったのに利益が出ない", type:"profit", lvl:"標準", min:25,
+ firms:["mck","bain","sand"],
+ steps:[
+  {kind:"intro", text:"クライアントは<b>全国に10,000室を持つビジネスホテルチェーン</b>です。客足は戻り稼働率は80%まで回復しましたが、<b>利益がコロナ前の半分</b>しかありません。原因と打ち手を提言してください。"},
+  {kind:"clarify", prompt:"分析の前に確認したいことは？",
+   qa:[["客室単価はコロナ前と比べてどうですか？","ほぼ同水準の平均8,000円です。"],
+       ["コスト側で大きく変わったものは？","人件費が採用難で15%上昇、光熱費も大きく上がりました。"],
+       ["料飲（レストラン・宴会）部門は？","稼働が戻りきらず、赤字が続いています。"],
+       ["価格は柔軟に変えられますか？","現状はほぼ固定価格で販売しています。"]]},
+  {kind:"structure", prompt:"「稼働率は戻ったのに利益が出ない」をどう構造化しますか？<b>90秒</b>で。", sec:90,
+   model:["利益 = 売上（客室＋料飲）− 費用（人件費・光熱費・他）",
+          "売上側：稼働80%×単価8,000円 → <b>量は戻った、では単価は最適か？</b>",
+          "費用側：人件費+15%・光熱費増 → 構造的なコスト増を特定",
+          "部門別：客室は黒字でも料飲が利益を食っていないか切り分け"]},
+  {kind:"quant", prompt:"まず売上のベースを押さえましょう。<b>年間の客室売上</b>はいくらですか？",
+   data:["客室数：10,000室","平均客室単価：8,000円","稼働率：80%","365日営業"],
+   unit:"億円", ans:234, lo:228, hi:240,
+   sol:["1日の売上 = 10,000室 × 80% × 8,000円 = 6,400万円","年間 = 6,400万 × 365 ≒ <span class='res'>約234億円</span>","このベースに対し、費用増（人件費+15%等）がどれだけ利益を圧迫したかを次に見る"]},
+  {kind:"insight", prompt:"単価が「コロナ前と同水準」というのは、実は問題かもしれません。<b>なぜでしょう？</b>",
+   model:["観光需要の回復で<b>市場の相場は上がっている</b>のに、固定価格のままでは取りこぼし","曜日・季節で需要が大きく変動 → <b>ダイナミックプライシング</b>で繁忙日は+30%も可能","インバウンド客は価格感度が低い → 販売チャネル・言語対応で単価の高い客層を取れる","つまり『量は戻したが、価格で稼ぐ機会を逃している』のが隠れた本丸"]},
+  {kind:"recommend", prompt:"経営陣に<b>30秒</b>で提言してください。",
+   model:"<b>利益半減の正体は「コスト構造の悪化」と「価格の取りこぼし」の複合です</b>。打ち手は3つ。第一にダイナミックプライシング導入で繁忙日単価を引き上げ、客室売上を5〜10%改善。第二に赤字の料飲部門は朝食特化に縮小し外部テナント化。第三にチェックイン自動化等の省人化で人件費増を吸収します。最も効果が速いのは価格で、システム導入だけで今期から効きます。"}]},
+
+{id:"fitness_dd", title:"PEファンドはこのジムチェーンを買うべきか", type:"dd", lvl:"応用", min:30,
+ firms:["eyp","lek","bain"],
+ steps:[
+  {kind:"intro", text:"クライアントはPEファンドです。<b>地方中心に展開する24時間ジムチェーン（EBITDA 40億円）</b>の買収機会があり、<b>EBITDAの8倍＝320億円</b>での取得を検討しています。商業デューデリジェンス（DD）の観点で、<b>買うべきかどうか</b>評価してください。"},
+  {kind:"clarify", prompt:"DDの前に確認したいことは？",
+   qa:[["ファンドの投資期間とリターン目標は？","5年保有で、投資額の1.5〜2倍のリターンが目標です。"],
+       ["対象会社の成長計画は？","5年でEBITDAを40億→60億円に伸ばす計画です。"],
+       ["売却時の想定は？","同じEBITDA8倍のマルチプルで売却できると仮定してください。"],
+       ["気になっている論点は？","低価格24hジムの乱立で、市場が飽和しないかが心配です。"]]},
+  {kind:"structure", prompt:"商業DDとして何を検証しますか？<b>90秒</b>で構造化してください。", sec:90,
+   model:["① 市場：ジム市場の成長性とセグメント（24h低価格は伸びるか、飽和はいつか）",
+          "② 競争：商圏ごとの競合密度、新規参入のしやすさ（参入障壁は低い）",
+          "③ 対象会社：退会率・1店舗あたり収益・出店余地（=成長計画の実現性）",
+          "④ バリュエーション：計画達成時のリターン試算と、下振れシナリオ"]},
+  {kind:"quant", prompt:"計画通りに行った場合の<b>投資リターン（倍率）</b>を計算してください。",
+   data:["取得価格：EBITDA 40億円 × 8倍 = 320億円","5年後EBITDA：60億円（計画）","売却マルチプル：8倍（取得時と同じと仮定）"],
+   unit:"倍", ans:1.5, lo:1.45, hi:1.55,
+   sol:["売却額 = 60億円 × 8倍 = 480億円","リターン = 480 ÷ 320 = <span class='res'>1.5倍</span>","目標レンジ（1.5〜2倍）の<b>下限ぎりぎり</b> → 計画未達なら目標割れ。安全余裕が薄い"]},
+  {kind:"insight", prompt:"リターンは目標下限ぎりぎりでした。<b>この案件の判断を分けるポイント</b>は何ですか？",
+   model:["<b>EBITDA 40→60億円の成長計画の確からしさ</b>が全て：出店パイプラインと既存店の退会率を実数で検証","市場飽和リスク：商圏分析で『あと何店舗出せるか』を定量化","マルチプル下振れリスク：5年後に8倍で売れるか（市場が冷めれば6倍も）→ 感応度分析","価格交渉余地：8倍→7倍（280億円）で買えればリターンは1.7倍に改善"]},
+  {kind:"recommend", prompt:"投資委員会に<b>30秒</b>で意見を述べてください。",
+   model:"<b>現条件では「条件付きで見送り寄り」です</b>。計画通りでもリターンは目標下限の1.5倍にとどまり、成長計画と売却マルチプルの両方に下振れ余地があります。買うなら①取得マルチプルを7倍へ交渉、②出店余地と退会率のDDで成長計画の確度を確認、の2条件が前提です。条件が揃えばリターン1.7倍超が見え、投資妙味が出てきます。"}]},
 ];
 
-const SIZING = [
-  {q:"日本にあるピアノの調律師の数は？", approach:["世帯ベースで保有台数を推定 → 必要な調律回数 → 1人の年間処理数で割る"],
-   ans:["世帯 5,400万 × ピアノ保有率 3% ≒ 162万台","年1回調律として 年162万回の需要","調律師1人 = 1日3台 × 250日 = 年750台","162万 ÷ 750 ≒ <span class='res'>約2,000人</span>"]},
-  {q:"東京都内を走るタクシーの台数は？", approach:["需要側（1日の利用回数）から逆算、または供給側（営業所×台数）"],
-   ans:["都内人口 1,400万 × 1日にタクシー利用 2% = 28万回/日","1台が1日に運ぶ回数 = 30回","28万 ÷ 30 ≒ <span class='res'>約9,000〜1万台</span>（実数は約3万台規模＝法人含む。前提の利用率で桁が動く点を明示）"]},
-  {q:"日本のスターバックスの年間売上は？", approach:["店舗数 × 1店舗あたり売上 で積み上げ"],
-   ans:["店舗数 約1,800店","1店1日 客数 500人 × 客単価 600円 = 30万円/日","年商：30万 × 350日 = 約1.05億円/店","1,800 × 1.05億 ≒ <span class='res'>約1,900億円</span>（実際 約2,000億円規模 ✔）"]},
-  {q:"日本で1年間に消費されるペットボトル飲料の本数は？", approach:["人口 × 1人あたり消費頻度 で推定"],
-   ans:["人口 1.2億人 × 飲む層 80% = 9,600万人","1人 週3本 = 年156本","9,600万 × 156 ≒ <span class='res'>約150億本/年</span>"]},
-  {q:"羽田空港で1日に離発着する飛行機の便数は？", approach:["滑走路の処理能力（時間×本数）から供給側で推定"],
-   ans:["滑走路4本、稼働 約18時間/日","1本あたり 1時間に 約15回（4分に1回）処理","4本 × 15 × 18 ≒ 1,080 → 余裕率を見て <span class='res'>約1,000便/日（離着陸計）</span>"]},
-  {q:"日本のオフィスにあるコピー機（複合機）の台数は？", approach:["働く人数 ÷ 1台あたり利用人数 で推定"],
-   ans:["オフィスワーカー 約4,000万人のうち オフィス勤務 60% = 2,400万人","複合機1台 = 約20人で共有","2,400万 ÷ 20 ≒ <span class='res'>約120万台</span>"]},
+/* ================================================================
+   データ：フレームワーク・用語集
+================================================================ */
+const FRAMEWORKS = [
+  {name:"収益性分析（利益が減っている）", when:"『利益/売上が下がった』『黒字化したい』系で最初に使う王道。",
+   tree:["利益 = 売上 − 費用","売上 = 単価 × 数量（客数 × 客単価 にも分解可）","費用 = 固定費 + 変動費","→ どの要素が、いつから、なぜ変化したかを特定"],
+   note:"まず『売上側 or 費用側』を切り分け、外部（市場・競合）か内部（自社）かを問う。"},
+  {name:"市場参入（新規市場に入るべきか）", when:"『この市場に参入すべき？』『海外展開すべき？』系。",
+   tree:["① 市場の魅力度：規模・成長率・収益性（5 Forces）","② 自社の勝てる力：競争優位・ケイパビリティ","③ 参入方法：自前 / M&A / 提携","④ 採算：投資・回収・リスク → GO/NO-GO"],
+   note:"結論は必ず『参入する/しない＋条件』まで。撤退基準もセットで。"},
+  {name:"M&A・投資判断（買うべきか）", when:"『この会社を買うべき？』系。PE案件の商業DDも同型。",
+   tree:["① なぜ買う：戦略的合理性（成長/シナジー/防衛）","② 対象の評価：事業・財務・市場ポジション","③ シナジー：売上シナジー＋コストシナジー","④ 価格と条件：バリュエーション、リターン試算","⑤ リスク：統合(PMI)、下振れシナリオ → 買う/見送る"],
+   note:"『シナジー額 vs 支払うプレミアム』が判断の核。過大評価に注意。"},
+  {name:"価格設定（プライシング）", when:"『いくらで売る？』『値上げ/有料化すべき？』系。",
+   tree:["① コストベース：原価＋目標マージン（下限）","② 競合ベース：競合価格・代替品との比較","③ 価値ベース：顧客が感じる価値（上限・理想）","→ 3つの幅の中で、戦略目的に合わせて決定"],
+   note:"価格弾力性（値上げで数量がどれだけ減るか）と間接効果（ブランド・リピート）を忘れずに。"},
+  {name:"コスト削減 / オペレーション", when:"『コストを下げたい』『利益率を改善したい』系。",
+   tree:["① コスト構造を分解：固定/変動、バリューチェーン別","② 大きい費目から（80/20）","③ ベンチマーク：競合/業界平均と比較","④ 施策：調達、自動化、設計見直し(VA/VE)、人員","⑤ 実現性 × インパクトで優先順位"],
+   note:"『品質・売上を犠牲にしない』を制約条件に。クイックウィンと構造改革を分ける。"},
+  {name:"成長戦略（売上を伸ばす）", when:"『売上を2倍にしたい』『次の柱は？』系。",
+   tree:["アンゾフの成長マトリクス：","① 市場浸透（既存×既存）","② 新製品開発（既存市場×新製品）","③ 新市場開拓（新市場×既存製品）","④ 多角化（新×新）"],
+   note:"複数施策の掛け算で目標に届かせる。既存顧客の客単価アップは見落としがち。"},
+  {name:"市場規模推定（フェルミ）", when:"『この市場は何円？』単独でも他ケースの一部でも頻出。",
+   tree:["需要側：全体（人口等）→ 絞り込み → 単価で掛ける","供給側：1店舗/1人あたり → 積み上げ（検算に有効）","→ 必ず妥当性チェック（桁が常識的か）と感度の高い前提の宣言"],
+   note:"前提の数字を声に出して置く。『分解の論理』が評価される。"},
+  {name:"思考の土台ツール（3C/4P/5Forces 等）", when:"各ステップの中で『漏れなく見る』ための補助輪。",
+   tree:["3C：Customer / Competitor / Company","4P：Product / Price / Place / Promotion","5 Forces：競合/新規参入/代替品/買い手/売り手","バリューチェーン：購買→製造→物流→販売→サービス","MECE：モレなく・ダブりなく"],
+   note:"フレームの当てはめが目的化しないこと。ケースに合わせた『カスタムの枝』が上級者。"},
 ];
 
 const GLOSSARY = [
   ["MECE","Mutually Exclusive, Collectively Exhaustive","モレなく・ダブりなく。論点を分解する際の基本原則。"],
-  ["イシューツリー","Issue Tree","大きな問いを、MECEな小さな問いに枝分かれさせた図。構造化の道具。"],
-  ["仮説思考","Hypothesis-driven","先に答えの仮説を立て、それを検証する形で分析を進める進め方。"],
-  ["So What? / Why So?","—","『だから何が言えるか（示唆）』『なぜそう言えるか（根拠）』。分析を提言に変える問い。"],
+  ["イシューツリー","Issue Tree","大きな問いをMECEな小さな問いに枝分かれさせた図。"],
+  ["仮説思考","Hypothesis-driven","先に答えの仮説を立て、検証する形で分析を進める進め方。"],
+  ["So What? / Why So?","—","『だから何が言えるか』『なぜそう言えるか』。分析を提言に変える問い。"],
   ["ドライバー","Driver","結果を大きく左右する要因。『利益のドライバーは数量だ』のように使う。"],
-  ["損益分岐点","Break-even Point","利益がゼロになる売上/数量。固定費 ÷（単価−変動費）で求まる。"],
-  ["固定費 / 変動費","Fixed / Variable Cost","固定費は数量に関係なく一定、変動費は数量に比例して増える費用。"],
+  ["損益分岐点","Break-even Point","利益がゼロになる売上/数量。固定費 ÷（単価−変動費）。"],
+  ["固定費 / 変動費","Fixed / Variable Cost","固定費は数量に関係なく一定、変動費は数量に比例。"],
   ["限界利益","Contribution Margin","売上 − 変動費。固定費の回収と利益に貢献する額。"],
-  ["シナジー","Synergy","統合により1+1が2より大きくなる効果。売上シナジーとコストシナジーがある。"],
-  ["カニバリゼーション","Cannibalization","自社の新製品が自社の既存製品の売上を食ってしまうこと（共食い）。"],
-  ["価格弾力性","Price Elasticity","価格を変えたとき需要(数量)がどれだけ動くか。弾力的＝価格に敏感。"],
-  ["バリューチェーン","Value Chain","購買→製造→物流→販売→サービスといった価値creation の連鎖。コスト分析に有効。"],
-  ["5フォース","Porter's Five Forces","業界の収益性を5つの力（競合・新規参入・代替品・買い手・売り手）で分析。"],
-  ["3C","Customer/Competitor/Company","市場・競合・自社の3視点。状況整理の基本フレーム。"],
-  ["アンゾフ・マトリクス","Ansoff Matrix","製品(既存/新)×市場(既存/新)で成長戦略を4分類する枠組み。"],
-  ["80/20の法則","Pareto Principle","結果の8割は2割の要因から。重要論点に絞り込む発想。"],
-  ["クイックウィン","Quick Win","短期間・低リスクで効果が出る施策。提言の実装で重宝。"],
+  ["シナジー","Synergy","統合で1+1が2超になる効果。売上シナジーとコストシナジー。"],
+  ["カニバリゼーション","Cannibalization","自社の新製品が既存製品の売上を食うこと（共食い）。"],
+  ["価格弾力性","Price Elasticity","価格変更に対して需要がどれだけ動くか。"],
+  ["バリューチェーン","Value Chain","購買→製造→物流→販売→サービスの価値の連鎖。"],
+  ["5フォース","Porter's Five Forces","業界収益性を5つの力で分析（競合・新規参入・代替品・買い手・売り手）。"],
+  ["3C","Customer/Competitor/Company","市場・競合・自社の3視点。状況整理の基本。"],
+  ["アンゾフ・マトリクス","Ansoff Matrix","製品(既存/新)×市場(既存/新)で成長戦略を4分類。"],
+  ["80/20の法則","Pareto Principle","結果の8割は2割の要因から。重要論点への絞り込み。"],
+  ["クイックウィン","Quick Win","短期間・低リスクで効果が出る施策。"],
   ["PMI","Post Merger Integration","M&A後の統合プロセス。買収の成否を分ける難所。"],
-  ["DD（デューデリ）","Due Diligence","投資/買収前の精査。商業DDは市場・競争環境の調査を指す。"],
-  ["ボトムアップ / トップダウン","Bottom-up / Top-down","積み上げで推定するか、全体から絞り込むか。市場規模推定の2方向。"],
-  ["PEI","Personal Experience Interview","マッキンゼー等の人物面接。リーダーシップ等の過去経験を深掘りされる。"],
-  ["案件（エンゲージメント）","Engagement","コンサルが請け負うプロジェクト1件のこと。"],
+  ["DD（デューデリ）","Due Diligence","投資/買収前の精査。商業DDは市場・競争環境の調査。"],
+  ["EBITDA","—","利払い・税・償却前利益。M&Aの値付け（○倍）の基準によく使う。"],
+  ["マルチプル","Multiple","EBITDAなどの何倍で企業を評価するかという倍率。"],
+  ["アーンアウト","Earn-out","買収後の目標達成に応じて追加で支払う条件付き対価。"],
+  ["ユニットエコノミクス","Unit Economics","顧客1人・店舗1つあたりの採算性。"],
+  ["ARPU","Average Revenue Per User","1ユーザーあたり平均収益。"],
+  ["リテンション / チャーン","Retention / Churn","顧客維持 / 解約。サブスク型事業の生命線。"],
+  ["ダイナミックプライシング","Dynamic Pricing","需要に応じて価格を変動させる手法。ホテル・航空券など。"],
+  ["トップダウン / ボトムアップ","Top-down / Bottom-up","全体から絞るか、積み上げるか。市場規模推定の2方向。"],
+  ["PEI","Personal Experience Interview","マッキンゼー等の人物面接。過去経験を深掘りされる。"],
+  ["STAR(-L)","Situation/Task/Action/Result(/Learning)","経験を構造的に語る型。人物面接の基本。"],
+  ["ダイベスト","Divest","事業や資産の売却・切り離し。"],
 ];
 
-/* ================= 描画 ================= */
+/* ================================================================
+   描画ユーティリティ
+================================================================ */
 function el(html){const t=document.createElement('template');t.innerHTML=html.trim();return t.content.firstChild;}
+function badge(type){return `<span class="badge b-${type}">${TYPE_LABEL[type]}</span>`;}
+/* hexカラーを暗くする（ロゴ風グラデーション用） */
+function shade(hex,pct){
+  const n=parseInt(hex.slice(1),16);
+  const f=c=>Math.max(0,Math.min(255,Math.round(c*(100+pct)/100)));
+  const r=f(n>>16), g=f((n>>8)&255), b=f(n&255);
+  return '#'+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1);
+}
+function logoStyle(color){
+  return `background:linear-gradient(135deg,${shade(color,18)},${color} 45%,${shade(color,-28)})`;
+}
+function firmById(id){return FIRMS.find(f=>f.id===id);}
+function casesForFirm(id){return CASES.filter(c=>c.firms.includes(id));}
+function tagPills(tags){return tags.map(t=>t==='mbb'?'<span class="pill mbb">MBB</span>':t==='led'?'<span class="pill led">面接官主導</span>':'<span class="pill cand">候補者主導</span>').join('');}
 
-function renderFirms(){
-  const c=document.getElementById('firmList');
-  c.innerHTML='';
+/* ================================================================
+   画面1：会社選択
+================================================================ */
+function renderFirmGrid(){
+  const g=document.getElementById('firmGrid');
+  g.innerHTML='';
   FIRMS.forEach(f=>{
-    const tagPills=f.tags.map(t=>{
-      if(t==='mbb')return '<span class="pill mbb">MBB</span>';
-      if(t==='led')return '<span class="pill led">面接官主導</span>';
-      if(t==='cand')return '<span class="pill cand">候補者主導</span>';
-      return '';
-    }).join('');
-    const txt = f.text||'#fff';
-    c.appendChild(el(`
-      <div class="card">
-        <div class="firm-h">
-          <div class="logo-dot" style="background:${f.color};color:${txt}">${f.short}</div>
-          <h3>${f.name}</h3>
+    const n=casesForFirm(f.id).length;
+    g.appendChild(el(`
+      <div class="firm-card" style="--c:${f.color}" onclick="openFirm('${f.id}')">
+        <div class="logo-dot" style="${logoStyle(f.color)}">${f.short}</div>
+        <div>
+          <div class="fc-name">${f.name}</div>
+          <div class="fc-sub">${f.style}</div>
+          <div class="fc-n">📝 模擬ケース ${n}問</div>
         </div>
-        <div>${tagPills}</div>
-        <p class="kv" style="margin:8px 0 4px"><b>進め方：</b>${f.style}</p>
-        <p class="kv" style="margin:0 0 6px">${f.focus}</p>
-        <b style="font-size:13px">対策のポイント</b>
-        <ul class="tight">${f.tips.map(t=>`<li>${t}</li>`).join('')}</ul>
       </div>`));
   });
 }
 
+/* ================================================================
+   画面2：ファーム詳細
+================================================================ */
+function openFirm(id){
+  const f=firmById(id);
+  const list=casesForFirm(id);
+  const sub=document.getElementById('subFirm');
+  sub.innerHTML=`
+    <div class="crumb"><a onclick="backToSelect()">← 会社選択に戻る</a></div>
+    <div class="card">
+      <div class="firm-head">
+        <div class="logo-dot lg" style="${logoStyle(f.color)}">${f.short}</div>
+        <div>
+          <div class="eyebrow">MOCK CASE INTERVIEW</div>
+          <h2>${f.name}</h2>
+          <div>${tagPills(f.tags)}</div>
+        </div>
+      </div>
+      <p class="kv" style="margin:6px 0 4px"><b>面接の特徴：</b>${f.focus}</p>
+      <b style="font-size:13px">この会社の対策ポイント</b>
+      <ul class="tight">${f.tips.map(t=>`<li>${t}</li>`).join('')}</ul>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin:16px 0 10px">
+      <h3 style="margin:0;font-size:16px">出題リスト（${list.length}問）</h3>
+      <button class="btn gold sm" onclick="startRandom('${id}')">🎲 ランダムに出題</button>
+    </div>
+    <div id="firmCases"></div>`;
+  const fc=sub.querySelector('#firmCases');
+  list.forEach(c=>{
+    fc.appendChild(el(`
+      <div class="case-row">
+        <div>
+          <div class="ttl">${badge(c.type)}&nbsp; ${c.title}</div>
+          <div class="meta">難易度：${c.lvl} ／ 目安 ${c.min}分 ／ ステップ ${c.steps.length}</div>
+        </div>
+        <button class="btn sm" onclick="startCase('${id}','${c.id}')">▶ この問題で面接</button>
+      </div>`));
+  });
+  show('subFirm');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function backToSelect(){show('subSelect');}
+function show(sub){
+  ['subSelect','subFirm','subSession'].forEach(s=>document.getElementById(s).classList.toggle('hidden',s!==sub));
+}
+
+/* ================================================================
+   画面3：面接セッション
+================================================================ */
+let S={firm:null, cs:null, step:0, quants:{}};
+
+function startRandom(firmId){
+  const list=casesForFirm(firmId);
+  const c=list[Math.floor(Math.random()*list.length)];
+  startCase(firmId,c.id);
+}
+function startCase(firmId,caseId){
+  S={firm:firmById(firmId), cs:CASES.find(c=>c.id===caseId), step:0, quants:{}};
+  document.getElementById('sessLog').innerHTML='';
+  document.getElementById('sessTitle').textContent=`${S.firm.short}模擬面接：${S.cs.title}`;
+  show('subSession');
+  // 面接官の導入あいさつ
+  addBubble(`本日は面接にお越しいただきありがとうございます。${S.firm.name} の面接官です。これからケース面接を始めます。メモを取りながら、<b>考えていることは声に出して</b>進めてくださいね。`);
+  renderStep();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function quitSession(){
+  if(confirm('面接を中断して問題選択に戻りますか？')) openFirm(S.firm.id);
+}
+function addBubble(html){
+  const c=S.firm?S.firm.color:'#0b1f3a';
+  document.getElementById('sessLog').appendChild(el(`
+    <div class="bubble">
+      <div class="avatar" style="${logoStyle(c)}">🤵</div>
+      <div>
+        <div class="who">面接官</div>
+        <div class="msg">${html}</div>
+      </div>
+    </div>`));
+}
+function addBlock(html){
+  document.getElementById('sessLog').appendChild(el(html));
+}
+function updateProg(){
+  const n=S.cs.steps.length;
+  const done=Math.min(S.step+1,n);
+  document.getElementById('sessProg').textContent=`ステップ ${done} / ${n}（目安 ${S.cs.min}分）`;
+  document.getElementById('sessBar').style.width=(done/n*100)+'%';
+}
+function nextLabel(){
+  const cur=S.cs.steps[S.step];
+  const lab={intro:'状況は理解した、次へ', clarify:'確認OK、次へ進む', structure:'構造化できた、次へ', quant:'計算できた、次へ', insight:'考えた、次へ', recommend:'提言した、次へ'};
+  return lab[cur.kind]||'次へ';
+}
+function renderStep(){
+  const st=S.cs.steps[S.step];
+  updateProg();
+  const i=S.step;
+  if(st.kind==='intro'){
+    addBubble(st.text);
+  }
+  if(st.kind==='clarify'){
+    addBubble(st.prompt);
+    addBlock(`
+      <div class="you-zone">
+        <div class="yz-t">🧑‍💼 あなたの番：確認の質問を考えて、声に出してみよう</div>
+        <textarea placeholder="例）利益の定義は？ 期間は？ 競合の動きは？"></textarea>
+        <div class="qa-row">
+          <button class="reveal-btn" onclick="toggleAns('cl${i}',this)">面接官との想定Q&Aを見る ▾</button>
+        </div>
+        <div class="hidden" id="cl${i}">
+          <div class="answer">${st.qa.map(q=>`<p style="margin:6px 0"><b>あなた：</b>${q[0]}<br><b>面接官：</b>${q[1]}</p>`).join('')}</div>
+        </div>
+      </div>`);
+  }
+  if(st.kind==='structure'){
+    addBubble(st.prompt);
+    addBlock(`
+      <div class="you-zone">
+        <div class="yz-t">🧑‍💼 あなたの番：タイマーを押して、紙 or 下のメモに構造化してみよう</div>
+        <div class="qa-row" style="margin-bottom:8px">
+          <button class="timer-chip" id="tm${i}" onclick="stepTimer('tm${i}',${st.sec})">⏱ ${st.sec}秒 スタート</button>
+        </div>
+        <textarea placeholder="ここに枠組みをメモ（売上＝…×…、費用＝…＋… など）"></textarea>
+        <div class="qa-row">
+          <button class="reveal-btn" onclick="toggleAns('stx${i}',this)">模範の枠組みを見る ▾</button>
+        </div>
+        <div class="hidden" id="stx${i}">
+          <div class="answer"><b>🧭 模範の枠組み（一例）</b><ul class="tight">${st.model.map(m=>`<li>${m}</li>`).join('')}</ul>
+          <div class="note">これは一例。自分の枠組みがMECEで、ケースの固有性を捉えていれば形は違ってOK。</div></div>
+        </div>
+      </div>`);
+  }
+  if(st.kind==='quant'){
+    S.quants[i]=st;
+    addBubble(st.prompt+`<div class="data-list">${st.data.map(d=>`📄 ${d}`).join('<br>')}</div>`);
+    addBlock(`
+      <div class="you-zone">
+        <div class="yz-t">🧑‍💼 あなたの番：暗算（または手計算）で答えを出して入力 → 判定</div>
+        <div class="qa-row">
+          <input class="num-in" id="qi${i}" inputmode="decimal" placeholder="答え" />
+          <span class="unit">${st.unit}</span>
+          <button class="btn sm" onclick="checkQuant(${i})">判定する</button>
+          <span class="judge" id="qj${i}"></span>
+        </div>
+        <div class="qa-row">
+          <button class="reveal-btn" onclick="toggleAns('sol${i}',this)">解法を見る ▾</button>
+        </div>
+        <div class="hidden" id="sol${i}">
+          <div class="calc">${st.sol.join('<br>')}</div>
+        </div>
+      </div>`);
+  }
+  if(st.kind==='insight'){
+    addBubble(st.prompt);
+    addBlock(`
+      <div class="you-zone">
+        <div class="yz-t">🧑‍💼 あなたの番：思いつく限り挙げてから、模範例と見比べよう</div>
+        <textarea placeholder="仮説・アイデアをここにメモ"></textarea>
+        <div class="qa-row">
+          <button class="reveal-btn" onclick="toggleAns('ins${i}',this)">模範例を見る ▾</button>
+        </div>
+        <div class="hidden" id="ins${i}">
+          <div class="answer"><ul class="tight">${st.model.map(m=>`<li>${m}</li>`).join('')}</ul></div>
+        </div>
+      </div>`);
+  }
+  if(st.kind==='recommend'){
+    addBubble(st.prompt);
+    addBlock(`
+      <div class="you-zone">
+        <div class="yz-t">🧑‍💼 あなたの番：「結論 → 根拠 → リスクと次の一手」の順で声に出して言ってみよう</div>
+        <textarea placeholder="結論ファーストで書いてみる"></textarea>
+        <div class="qa-row">
+          <button class="reveal-btn" onclick="toggleAns('rec${i}',this)">模範解答を見る ▾</button>
+        </div>
+        <div class="hidden" id="rec${i}">
+          <div class="answer green"><b>✅ 模範解答（一例）</b><br>${st.model}</div>
+        </div>
+      </div>`);
+  }
+  // 次へボタン
+  const nw=document.getElementById('sessNext');
+  if(S.step < S.cs.steps.length-1){
+    nw.innerHTML=`<button class="btn" onclick="advance()">${nextLabel()} →</button>`;
+  }else{
+    nw.innerHTML=`<button class="btn gold" onclick="finishSession()">🏁 面接を終える（振り返りへ）</button>`;
+  }
+}
+function advance(){
+  S.step++;
+  renderStep();
+  const log=document.getElementById('sessLog');
+  log.lastElementChild.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function stepTimer(id,sec){
+  const btn=document.getElementById(id);
+  if(btn.dataset.run)return;
+  btn.dataset.run='1';
+  let left=sec;
+  btn.textContent='⏳ '+left+'秒';
+  const t=setInterval(()=>{
+    left--;
+    if(left<=0){clearInterval(t);btn.textContent='⏰ 時間です！口頭で説明を';try{navigator.vibrate&&navigator.vibrate([200,100,200]);}catch(e){}}
+    else btn.textContent='⏳ '+left+'秒';
+  },1000);
+}
+function checkQuant(i){
+  const st=S.quants[i];
+  const v=parseFloat((document.getElementById('qi'+i).value||'').replace(/[,，\s]/g,''));
+  const j=document.getElementById('qj'+i);
+  if(isNaN(v)){j.textContent='数字を入力してね';j.className='judge';return;}
+  if(v>=st.lo && v<=st.hi){j.textContent='⭕ 正解！';j.className='judge ok';}
+  else{j.textContent='❌ もう一度';j.className='judge ng';}
+}
+function toggleAns(id,btn){
+  const d=document.getElementById(id);
+  const open=d.classList.toggle('hidden')===false;
+  const base=btn.textContent.replace(/ [▾▴]$/,'');
+  btn.textContent=base+(open?' ▴':' ▾');
+}
+function finishSession(){
+  const checks=[
+    "前提・ゴールを<b>確認してから</b>分析に入れた",
+    "構造化が<b>MECE</b>で、ケースの固有性を捉えていた",
+    "計算は<b>桁を間違えず</b>、過程を声に出せた",
+    "数字から<b>so what（示唆）</b>を引き出せた",
+    "最後の提言を<b>結論ファースト</b>で30秒にまとめられた",
+  ];
+  addBubble(`お疲れさまでした、以上で面接は終了です。最後にセルフチェックをして、できなかった項目を次回の課題にしましょう。`);
+  addBlock(`
+    <div class="card" style="margin-top:10px">
+      <h3 style="margin-top:0">🪞 振り返りチェック</h3>
+      ${checks.map((c,n)=>`<label class="check-item"><input type="checkbox" onchange="scoreCheck()" class="dbck"><span>${c}</span></label>`).join('')}
+      <p id="dbScore" class="kv" style="margin-top:10px">チェックして自己採点 →</p>
+      <div class="row" style="justify-content:flex-start;margin-top:10px">
+        <button class="btn sm" onclick="startRandom('${S.firm.id}')">🎲 同じ会社で別の問題</button>
+        <button class="btn ghost sm" onclick="openFirm('${S.firm.id}')">問題リストへ</button>
+        <button class="btn ghost sm" onclick="backToSelect()">会社を変える</button>
+      </div>
+    </div>`);
+  document.getElementById('sessNext').innerHTML='';
+  document.getElementById('sessLog').lastElementChild.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function scoreCheck(){
+  const n=document.querySelectorAll('.dbck:checked').length;
+  const msg=n>=5?'💯 完璧！次は難易度を上げよう':n>=3?'👍 いい感じ。未チェック項目を意識してもう1問':'🌱 まずは構造化と結論ファーストから固めよう';
+  document.getElementById('dbScore').innerHTML=`<b>${n} / 5</b> — ${msg}`;
+}
+
+/* ================================================================
+   フレームワーク・用語集
+================================================================ */
 function renderFrameworks(){
   const c=document.getElementById('fwList');
   c.innerHTML='';
   FRAMEWORKS.forEach((f,i)=>{
     c.appendChild(el(`
       <details class="acc" ${i===0?'open':''}>
-        <summary>
-          <span><span class="badge ${f.badge}">FW</span>&nbsp; ${f.name}</span>
-          <span class="chev">▸</span>
-        </summary>
+        <summary><span>${f.name}</span><span class="chev">▸</span></summary>
         <div class="body">
           <p class="kv" style="margin:10px 0 6px"><b>使う場面：</b>${f.when}</p>
           <b style="font-size:13px">分解の型</b>
@@ -549,62 +1059,6 @@ function renderFrameworks(){
       </details>`));
   });
 }
-
-function renderCases(){
-  const c=document.getElementById('caseList');
-  c.innerHTML='';
-  CASES.forEach((cs,i)=>{
-    const id='ans'+i;
-    c.appendChild(el(`
-      <details class="acc">
-        <summary>
-          <span><span class="badge ${cs.badge}">${cs.firm}</span>&nbsp; ${cs.title}</span>
-          <span class="meta">${cs.lvl}&nbsp;<span class="chev">▸</span></span>
-        </summary>
-        <div class="body">
-          <p class="kv" style="margin:12px 0 4px"><b>背景：</b>${cs.bg}</p>
-          <p style="margin:4px 0 10px"><b>❓ 問い：</b>${cs.q}</p>
-          <button class="reveal-btn" onclick="toggleAns('${id}',this)">解説を見る ▾</button>
-          <div class="hidden" id="${id}">
-            <div class="answer">
-              <b>🧭 構造化の流れ</b>
-              <ul class="tight">${cs.structure.map(s=>`<li>${s}</li>`).join('')}</ul>
-            </div>
-            <div class="calc"><b>🔢 計算例</b><br>${cs.calc.join('<br>')}</div>
-            <div class="answer" style="background:#f0fff5;border-color:#bff0cf">
-              <b>✅ 結論・提言</b><br>${cs.conc}
-            </div>
-          </div>
-        </div>
-      </details>`));
-  });
-}
-
-function toggleAns(id,btn){
-  const d=document.getElementById(id);
-  const open=d.classList.toggle('hidden')===false;
-  btn.textContent = open ? '解説を隠す ▴' : '解説を見る ▾';
-}
-
-function renderSizing(){
-  const c=document.getElementById('sizingList');
-  c.innerHTML='';
-  SIZING.forEach((s,i)=>{
-    const id='siz'+i;
-    c.appendChild(el(`
-      <details class="acc">
-        <summary><span><span class="badge b-size">フェルミ</span>&nbsp; ${s.q}</span><span class="chev">▸</span></summary>
-        <div class="body">
-          <p class="kv" style="margin:12px 0 8px"><b>アプローチ：</b>${s.approach[0]}</p>
-          <button class="reveal-btn" onclick="toggleAns('${id}',this)">推定例を見る ▾</button>
-          <div class="hidden" id="${id}">
-            <div class="calc">${s.ans.join('<br>')}</div>
-          </div>
-        </div>
-      </details>`));
-  });
-}
-
 function renderGlossary(filter){
   const c=document.getElementById('glossList');
   c.innerHTML='';
@@ -614,28 +1068,31 @@ function renderGlossary(filter){
     const hay=(g[0]+g[1]+g[2]).toLowerCase();
     if(f && !hay.includes(f))return;
     n++;
-    c.appendChild(el(`<dt>${g[0]} <span class="en">${g[1]}</span></dt><dd>${g[2]}</dd>`));
+    c.appendChild(el(`<dt>${g[0]} <span class="en">${g[1]}</span></dt>`));
+    c.appendChild(el(`<dd>${g[2]}</dd>`));
   });
   if(n===0)c.appendChild(el(`<dd class="kv">「${filter}」に一致する用語はありません。</dd>`));
 }
 
-/* ================= ナビ ================= */
+/* ================================================================
+   タブ切替
+================================================================ */
 function go(view){
   document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.toggle('active',b.dataset.view===view));
   document.querySelectorAll('section.view').forEach(s=>s.classList.remove('active'));
   document.getElementById('view-'+view).classList.add('active');
   window.scrollTo({top:0,behavior:'smooth'});
-  if(location.hash.slice(1)!==view) history.replaceState(null,'','#'+view);
 }
 document.getElementById('tabs').addEventListener('click',e=>{
   const b=e.target.closest('button'); if(b) go(b.dataset.view);
 });
 
-/* ================= 暗算トレーナー ================= */
+/* ================================================================
+   暗算トレーナー
+================================================================ */
 const MM = (function(){
   let level='easy', cur=null, score=0, streak=0, timeLeft=60, timer=null, running=false;
   const rnd=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
-
   function gen(){
     if(level==='easy'){const a=rnd(11,99),b=rnd(2,9);return{q:`${a} × ${b}`,a:a*b};}
     if(level==='medium'){
@@ -648,9 +1105,8 @@ const MM = (function(){
       if(r<0.7){const p=[10,20,25,30,40,50][rnd(0,5)];const base=rnd(20,400)*5;return{q:`${base} の ${p}%`,a:Math.round(base*p/100)};}
       const a=rnd(2000,9000),b=rnd(1000,4000);return{q:`${a} + ${b}`,a:a+b};
     }
-    // biz
     const t=rnd(0,3);
-    if(t===0){const u=rnd(200,900),q=rnd(30,90)*100;return{q:`単価${u}円 × ${q}個 の売上は？(円)`,a:u*q};}
+    if(t===0){const u=rnd(200,900),q2=rnd(30,90)*100;return{q:`単価${u}円 × ${q2}個 の売上は？(円)`,a:u*q2};}
     if(t===1){const rev=rnd(50,400)*10,m=[5,10,15,20,25][rnd(0,4)];return{q:`売上${rev}億 × 利益率${m}% の利益は？(億)`,a:Math.round(rev*m/100)};}
     if(t===2){const a=rnd(80,300),g=[10,20,25,50][rnd(0,3)];return{q:`${a}億が ${g}%成長 したら？(億)`,a:Math.round(a*(100+g)/100)};}
     const total=rnd(200,900),share=[5,10,20,25][rnd(0,3)];return{q:`市場${total}億 でシェア${share}% なら売上は？(億)`,a:Math.round(total*share/100)};
@@ -683,7 +1139,7 @@ const MM = (function(){
       next();
     }else{
       streak=0;document.getElementById('mmStreak').textContent=0;
-      fb.textContent='❌ もう一度（答えは見えるよ）';fb.className='mm-feedback ng';
+      fb.textContent='❌ もう一度';fb.className='mm-feedback ng';
     }
   }
   function skip(){if(!running)return;streak=0;document.getElementById('mmStreak').textContent=0;
@@ -709,58 +1165,22 @@ const MM = (function(){
   return {start,skip,stop};
 })();
 
-/* ================= 思考タイマー ================= */
-const TM = (function(){
-  let total=60, left=60, timer=null, running=false;
-  const hints={
-    60:"構造化タイム：MECEに論点を分解。終わったら口頭で枠組みを宣言する練習を。",
-    90:"少し長めの構造化。複雑なケースで枝を深く作る練習に。",
-    300:"分析タイム：1つの論点を仮説→計算→示唆まで掘る練習。",
-    1800:"本番想定の30分。問題提示→構造化→分析→結論まで一周通す。"
-  };
-  function fmt(s){const m=Math.floor(s/60),x=s%60;return String(m).padStart(2,'0')+':'+String(x).padStart(2,'0');}
-  function paint(){
-    const d=document.getElementById('tmDisplay');d.textContent=fmt(left);
-    document.getElementById('tmBar').style.width=(left/total*100)+'%';
-    d.className='timer-display'+(running?' run':'')+(left<=10&&left>0?' warn':'');
-  }
-  function tick(){left--;paint();if(left<=0){clearInterval(timer);running=false;
-    document.getElementById('tmToggle').textContent='▶ スタート';
-    try{navigator.vibrate&&navigator.vibrate([200,100,200]);}catch(e){}
-    document.getElementById('tmDisplay').textContent='時間です';
-  }}
-  function toggle(){
-    if(running){clearInterval(timer);running=false;document.getElementById('tmToggle').textContent='▶ 再開';paint();}
-    else{if(left<=0)left=total;running=true;document.getElementById('tmToggle').textContent='⏸ 一時停止';clearInterval(timer);timer=setInterval(tick,1000);paint();}
-  }
-  function reset(){clearInterval(timer);running=false;left=total;document.getElementById('tmToggle').textContent='▶ スタート';paint();}
-  function setPreset(sec){total=sec;left=sec;reset();document.getElementById('tmHint').textContent=hints[sec]||'';}
-  document.getElementById('tmPreset').addEventListener('click',e=>{
-    const b=e.target.closest('button');if(!b)return;
-    document.querySelectorAll('#tmPreset button').forEach(x=>x.classList.remove('active'));
-    b.classList.add('active');setPreset(Number(b.dataset.sec));
-  });
-  paint();
-  return {toggle,reset};
-})();
-
-/* ================= 共有 ================= */
+/* ================================================================
+   共有・初期化
+================================================================ */
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000);}
 async function shareApp(){
   const url=location.href.split('#')[0];
-  const data={title:'ケース面接ドリル｜全コンサル対応',text:'コンサルのケース面接対策アプリ作った。一緒に練習しよ！',url};
+  const data={title:'ケース面接ドリル｜会社を選んで模擬面接',text:'志望ファームを選ぶと模擬ケース面接ができるアプリ。一緒に練習しよ！',url};
   if(navigator.share){try{await navigator.share(data);return;}catch(e){}}
   try{await navigator.clipboard.writeText(url);showToast('🔗 URLをコピーしました！友達に送ってね');}
   catch(e){showToast('URL: '+url);}
 }
-
-/* ================= 用語検索 ================= */
 document.getElementById('glossSearch').addEventListener('input',e=>renderGlossary(e.target.value));
 
-/* ================= 初期化 ================= */
-renderFirms();renderFrameworks();renderCases();renderSizing();renderGlossary('');
-const initial=location.hash.slice(1);
-if(initial && document.getElementById('view-'+initial))go(initial);
+renderFirmGrid();
+renderFrameworks();
+renderGlossary('');
 </script>
 </body>
 </html>
