@@ -73,12 +73,21 @@ def add(s): SLIDES.append(s); return s
 # 1 — TITLE
 s=add(slide(NAVY))
 rect(s,0,0,SW_IN,0.16,ACCENT); rect(s,0,SH_IN-0.16,SW_IN,0.16,ACCENT)
+image(s,(SW_IN-1.0)/2,0.95,1.0,1.0,"globe")   # crest, centred at top
 text(s,1.0,2.5,11.3,"TRANSNATIONAL CRIME & THE LIMITS OF INTERNATIONAL JUSTICE",16,ACCENT,bold=True,align="c")
 text(s,1.0,3.0,11.3,"What the Epstein Case Reveals",40,WHITE,bold=True,align="c",h=1.1)
 rect(s,(SW_IN-3)/2,4.12,3,0.06,ACCENT)
 text(s,1.0,4.4,11.3,"A case study in cross-border exploitation, jurisdiction, and accountability",18,LIGHT,italic=True,align="c")
-image(s,(SW_IN-1.25)/2,4.95,1.25,1.25,"globe")
-text(s,1.0,6.55,11.3,"Group Presentation  •  May 2026",13,DARKFOOT,align="c")
+# presenters
+text(s,1.0,5.28,11.3,"PRESENTED BY",12,ACCENT,bold=True,align="c",h=0.35)
+PRESENTERS=[("Yusuke Muteki","1120240018"),("Kai Robinson","1120240025"),
+            ("Naoki Hayashi","1120240007"),("Koki Kato","1120230009")]
+_cw=11.3/len(PRESENTERS)
+for _i,(_nm,_no) in enumerate(PRESENTERS):
+    _cl=1.0+_i*_cw
+    text(s,_cl,5.72,_cw,_nm,14,WHITE,bold=True,align="c",h=0.38)
+    text(s,_cl,6.12,_cw,_no,11,ACCENT,align="c",h=0.32)
+text(s,1.0,6.72,11.3,"Group Presentation  •  May 2026",13,DARKFOOT,align="c")
 
 # 2 — AGENDA
 s=add(slide()); header(s,"OVERVIEW","Our Central Question & Roadmap","globe")
@@ -97,16 +106,16 @@ add(divider(1,"Framing & the\nInternational Scope","Who Epstein was — and why 
 
 # 4 — WHO WAS EPSTEIN
 s=add(slide()); header(s,"PART 1  •  BACKGROUND","Who Was Jeffrey Epstein?")
-bullets(s,0.7,1.95,7.4,[
- "A US financier who built extraordinary wealth and a network of powerful international contacts.",
+bullets(s,0.7,1.85,7.4,[
+ "A US financier who built vast wealth and a network of powerful international contacts.",
  "2005–06: A Palm Beach (Florida) police investigation into abuse of minors.",
  "2008: A controversial state plea deal; he registered as a sex offender.",
  "2019: Arrested on federal sex-trafficking charges in New York.",
- "Died in custody in August 2019 (ruled a suicide) — ending the criminal case against him.",
-],18,gap=26,bold_lead=True)
+ "Died in custody in August 2019 (ruled a suicide), ending the criminal case.",
+],18,gap=14,bold_lead=True)
 rect(s,8.45,1.75,4.28,4.35,LIGHT); rect(s,8.45,1.75,0.14,4.35,ACCENT)
 text(s,8.75,2.0,3.8,"WHY HE MATTERS HERE",14,ACCENT,bold=True)
-text(s,8.75,2.55,3.8,"His death meant accountability had to be pursued through others — and across borders. The case became a test of how legal systems cooperate.",16,SLATE,italic=True,ls=1.2,h=3.3)
+text(s,8.75,2.55,3.8,"His 2019 death in custody ended any criminal trial of Epstein himself. Accountability could then be pursued only through others — and across borders — making the case a test of how well national legal systems cooperate.",16,SLATE,italic=True,ls=1.2,h=3.3)
 keyband(s,"The crime was global; the criminal case ended at one nation's border.")
 
 # 5 — TIMELINE
@@ -278,9 +287,9 @@ for num,head_,sub in items:
     text(s,1.65,y+0.06,10.9,head_,18,NAVY,bold=True)
     text(s,1.65,y+0.46,10.9,sub,14,SLATE,italic=True)
     y+=1.02
-rect(s,0.6,5.95,12.13,0.95,LIGHT); rect(s,0.6,5.95,0.14,0.95,ACCENT)
-text(s,0.85,6.08,11.6,"SELECTED SOURCES & INSTRUMENTS",11,ACCENT,bold=True)
-text(s,0.85,6.4,11.7,"Palermo Protocol (2000) · UN Convention against Transnational Organized Crime · US DOJ filings (US v. Epstein 2019; US v. Maxwell 2021) · US State Dept. Trafficking in Persons Reports · contemporary reporting on 2025 disclosures.",11,SLATE,ls=1.15,h=0.55)
+rect(s,0.6,5.86,12.13,1.07,LIGHT); rect(s,0.6,5.86,0.14,1.07,ACCENT)
+text(s,0.85,5.99,11.6,"SELECTED SOURCES & INSTRUMENTS",11,ACCENT,bold=True)
+text(s,0.85,6.33,11.7,"Palermo Protocol (2000) · UN Convention against Transnational Organized Crime (UNTOC) · US DOJ filings (US v. Epstein, 2019; US v. Maxwell, 2021) · US State Dept. TIP Reports · contemporary reporting on the 2025 disclosures.",10.5,SLATE,ls=1.12,h=0.6)
 
 # ---- footers / page numbers on every slide except the title ----
 for i,sp in enumerate(SLIDES):
@@ -466,14 +475,15 @@ def generate_icons():
     ICON_IMG["doc"]=im; im.save(ICON["doc"])
 
 if __name__=="__main__":
+    OUT=os.path.dirname(os.path.abspath(__file__))
     generate_icons()
-    n=build_pptx("/home/user/Koki/Epstein_Transnational_Justice.pptx")
-    imgs=[render_png(s,f"/home/user/Koki/preview_slide_{i+1}.png") for i,s in enumerate(SLIDES)]
+    n=build_pptx(os.path.join(OUT,"Epstein_Transnational_Justice.pptx"))
+    imgs=[render_png(s,os.path.join(OUT,f"preview_slide_{i+1}.png")) for i,s in enumerate(SLIDES)]
     cols,rows=4,5; tw,th=308,173; pad=12
     sheet=Image.new("RGB",(cols*tw+pad*(cols+1),rows*th+pad*(rows+1)),(210,214,219))
     for idx,im in enumerate(imgs):
         r,c=divmod(idx,cols)
         sheet.paste(im.resize((tw,th)),(pad+c*(tw+pad),pad+r*(th+pad)))
-    sheet.save("/home/user/Koki/preview_all.png")
-    build_pdf("/home/user/Koki/Epstein_Transnational_Justice.pdf")
+    sheet.save(os.path.join(OUT,"preview_all.png"))
+    build_pdf(os.path.join(OUT,"Epstein_Transnational_Justice.pdf"))
     print(f"built {n} slides + previews + contact sheet + PDF")
