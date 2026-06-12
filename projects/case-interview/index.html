@@ -76,17 +76,11 @@
     transform:rotate(18deg);
   }
   .logo-dot.lg{width:56px;height:56px;font-size:18px;border-radius:14px}
-  /* 実ロゴ（Web取得・白タイル）：失敗時はJSで .logo-dot にフォールバック */
-  .logo-tile{
-    width:46px;height:46px;border-radius:12px;background:#fff;flex:0 0 auto;
-    display:flex;align-items:center;justify-content:center;position:relative;
-    border:1px solid var(--line);box-shadow:0 3px 9px rgba(11,31,58,.10);
-  }
-  .logo-tile::after{content:"";position:absolute;inset:0;border-radius:12px;pointer-events:none;
-    box-shadow:inset 0 0 0 2px color-mix(in srgb, var(--c,#2f6df6) 16%, transparent)}
-  .logo-tile img{width:32px;height:32px;object-fit:contain;border-radius:6px}
-  .logo-tile.lg{width:56px;height:56px;border-radius:14px}
-  .logo-tile.lg img{width:40px;height:40px}
+  /* 実ロゴ（Wikimedia公式・横長ワードマーク）：失敗時はJSで .logo-dot にフォールバック */
+  .logo-wrap{min-height:36px;display:flex;align-items:center;max-width:180px}
+  .logo-wrap img{max-height:30px;max-width:100%;object-fit:contain}
+  .logo-wrap.lg{min-height:50px;max-width:250px}
+  .logo-wrap.lg img{max-height:44px}
   ul.tight{margin:8px 0 0;padding-left:20px}
   ul.tight li{margin:3px 0}
   .kv{font-size:13px;color:var(--muted)}
@@ -124,6 +118,7 @@
   .quick-bar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 12px}
   .total-line{font-size:12px;color:var(--muted)}
   .total-line b{color:var(--navy)}
+  .fc-logo-row{min-height:40px;display:flex;align-items:center;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid #f0f3f8}
   .fc-done{font-size:11px;color:#15803d;font-weight:700;margin-top:4px}
   .done-pill{display:inline-block;font-size:10.5px;font-weight:800;padding:2px 8px;border-radius:999px;background:#dcfce7;color:#15803d;margin-left:6px;vertical-align:1px}
   .firm-card .fc-name{font-weight:800;font-size:14px;line-height:1.35;color:var(--navy)}
@@ -341,47 +336,47 @@
    データ：ファーム
 ================================================================ */
 const FIRMS = [
-  {id:"mck", name:"McKinsey & Company", short:"McK", color:"#0b3d91", domain:"mckinsey.com", cat:"mbb", tags:["mbb","led"],
+  {id:"mck", name:"McKinsey & Company", short:"McK", color:"#0b3d91", domain:"mckinsey.com", logo:"https://commons.wikimedia.org/wiki/Special:FilePath/Mckinsey-logo.svg?width=400", cat:"mbb", tags:["mbb","led"],
    style:"面接官主導（インタビュアー・レッド）",
    focus:"論点を順番に振られ、設問ごとに構造化・計算・解釈を見られる。ケースに加えてPEI（人物面接）も必ずセットで実施。",
    tips:["設問ごとに『枠組み→数字→so what』を徹底","PEI用に リーダーシップ/達成/対立 の3エピソードを準備","結論ファースト、トップダウンで話す"]},
-  {id:"bcg", name:"Boston Consulting Group", short:"BCG", color:"#177b57", domain:"bcg.com", cat:"mbb", tags:["mbb","cand"],
+  {id:"bcg", name:"Boston Consulting Group", short:"BCG", color:"#177b57", domain:"bcg.com", logo:"https://commons.wikimedia.org/wiki/Special:FilePath/Boston_Consulting_Group_2020_logo.svg?width=400", cat:"mbb", tags:["mbb","cand"],
    style:"候補者主導寄り（対話型）",
    focus:"自分でケースを前に進める主体性が問われる。創造性・ビジネス洞察、グラフ/図表の読み取りを重視。",
    tips:["自分から次の論点を提案して主導する","定性的な示唆（so what）を厚めに","図表は『軸→傾向→例外→示唆』で読む"]},
-  {id:"bain", name:"Bain & Company", short:"Bain", color:"#b3122b", domain:"bain.com", cat:"mbb", tags:["mbb","cand"],
+  {id:"bain", name:"Bain & Company", short:"Bain", color:"#b3122b", domain:"bain.com", logo:"https://commons.wikimedia.org/wiki/Special:FilePath/Bain_%26_Company_logo.svg?width=400", cat:"mbb", tags:["mbb","cand"],
    style:"候補者主導（結果志向）",
    focus:"実利重視。『結局いくら儲かる/改善するのか』に強くこだわる。明るいチームフィット（A Bainie）も大事。",
    tips:["常に金額インパクトに落とす","80/20で重要論点から攻める","前のめりで明るいコミュニケーション"]},
-  {id:"sand", name:"Strategy& (PwC)", short:"S&", color:"#e8511d", domain:"strategyand.pwc.com", cat:"strat", tags:["led"],
+  {id:"sand", name:"Strategy& (PwC)", short:"S&", color:"#e8511d", domain:"strategyand.pwc.com", logo:"https://commons.wikimedia.org/wiki/Special:FilePath/Strategy%26_logo.svg?width=400", cat:"strat", tags:["led"],
    style:"面接官主導寄り",
    focus:"戦略×実行。財務リテラシーと業界知識をやや重視。価格・事業性評価の問いが出やすい。",
    tips:["財務指標・投資回収の計算に慣れておく","業界トレンドを一つ語れるように"]},
-  {id:"del", name:"Monitor Deloitte / Deloitte", short:"Del", color:"#86bc25", domain:"deloitte.com", cat:"sogo", tags:["led"],
+  {id:"del", name:"Monitor Deloitte / Deloitte", short:"Del", color:"#86bc25", domain:"deloitte.com", logo:"https://commons.wikimedia.org/wiki/Special:FilePath/Logo_of_Deloitte.svg?width=400", cat:"sogo", tags:["led"],
    style:"面接官主導 ＋ グループ/ジョブもあり",
    focus:"総合系の戦略部門。DX・デジタルを絡めた問いが出やすく、実装まで含めた現実的な提言を好む。",
    tips:["デジタル変革の引き出しを持つ","グループディスカッション対策も並行で"]},
-  {id:"eyp", name:"EY-Parthenon / EY", short:"EYP", color:"#b8a200", domain:"ey.com", cat:"strat", tags:["led"],
+  {id:"eyp", name:"EY-Parthenon / EY", short:"EYP", color:"#b8a200", domain:"ey.com", logo:"https://commons.wikimedia.org/wiki/Special:FilePath/EY_Parthenon_logo.svg?width=400", cat:"strat", tags:["led"],
    style:"面接官主導",
    focus:"PEファンド向け商業DD案件が多く、市場の成長性・競争環境の分析を重視。投資判断に落とす問いが頻出。",
    tips:["市場の魅力度（規模×成長×競争）を素早く評価","『買う/買わない』まで結論づける"]},
-  {id:"atk", name:"Kearney", short:"ATK", color:"#7a2fd6", domain:"kearney.com", cat:"strat", tags:["led"],
+  {id:"atk", name:"Kearney", short:"ATK", color:"#7a2fd6", domain:"kearney.com", logo:"https://commons.wikimedia.org/wiki/Special:FilePath/Kearney_Logo.svg?width=400", cat:"strat", tags:["led"],
    style:"面接官主導",
    focus:"オペレーション・コスト・調達に強み。実務的で泥臭い改善ケースが出やすい。",
    tips:["バリューチェーン/コスト構造の分解を得意に","実装可能性とクイックウィンを意識"]},
-  {id:"rb", name:"Roland Berger", short:"RB", color:"#c8102e", domain:"rolandberger.com", cat:"strat", tags:["led"],
+  {id:"rb", name:"Roland Berger", short:"RB", color:"#c8102e", domain:"rolandberger.com", logo:"https://commons.wikimedia.org/wiki/Special:FilePath/Roland_Berger_Strategy_Consultants_logo.svg?width=400", cat:"strat", tags:["led"],
    style:"面接官主導",
    focus:"欧州系。製造業・自動車・産業財に強い。論理の厳密さを重視し、飛躍を嫌う。",
    tips:["製造業・サプライチェーンの文脈を準備","一つひとつ論理を積み上げて話す"]},
-  {id:"ow", name:"Oliver Wyman", short:"OW", color:"#1f3a93", domain:"oliverwyman.com", cat:"strat", tags:["cand"],
+  {id:"ow", name:"Oliver Wyman", short:"OW", color:"#1f3a93", domain:"oliverwyman.com", logo:"https://commons.wikimedia.org/wiki/Special:FilePath/Oliver_Wyman_Logo.svg?width=400", cat:"strat", tags:["cand"],
    style:"候補者主導（やや難）",
    focus:"金融・保険・リスクに強み。定量的に重いケースが出やすく、計算力が直接効く。",
    tips:["重めの計算に動じない","前提を明示してから計算に入る"]},
-  {id:"lek", name:"L.E.K. Consulting", short:"LEK", color:"#005eb8", domain:"lek.com", cat:"strat", tags:["led"],
+  {id:"lek", name:"L.E.K. Consulting", short:"LEK", color:"#005eb8", domain:"lek.com", logo:"https://commons.wikimedia.org/wiki/Special:FilePath/L.E.K._Consulting_logo.svg?width=300", cat:"strat", tags:["led"],
    style:"面接官主導",
    focus:"商業DD・市場規模推定が頻出。マーケットサイジングの精度とスピードが合否を分ける。",
    tips:["フェルミ推定を反復練習","市場成長率の前提を丁寧に置く"]},
-  {id:"acn", name:"Accenture (Strategy)", short:"ACN", color:"#a100ff", domain:"accenture.com", cat:"sogo", tags:["led"],
+  {id:"acn", name:"Accenture (Strategy)", short:"ACN", color:"#a100ff", domain:"accenture.com", logo:"https://commons.wikimedia.org/wiki/Special:FilePath/Accenture.svg?width=400", cat:"sogo", tags:["led"],
    style:"面接官主導 ＋ グループワーク",
    focus:"戦略〜実装〜テクノロジーまで一気通貫。DX・デジタル文脈の問いが多い。",
    tips:["テクノロジー実装の現実性を語れるように","グループケース・プレゼン対策も"]},
@@ -807,23 +802,28 @@ function shade(hex,pct){
 function logoStyle(color){
   return `background:linear-gradient(135deg,${shade(color,18)},${color} 45%,${shade(color,-28)})`;
 }
-/* 実ロゴをWebから取得（unavatar.io → Googleファビコン → モノグラムの3段フォールバック） */
+/* 実ロゴ（Wikimedia公式ロゴ → unavatar.io → Googleファビコン → モノグラムの4段フォールバック） */
 function logoImg(f,lg){
   const dotCls='logo-dot'+(lg?' lg':'');
-  if(!f.domain) return `<div class="${dotCls}" style="${logoStyle(f.color)}">${f.short}</div>`;
-  return `<div class="logo-tile${lg?' lg':''}" style="--c:${f.color}">
-    <img src="https://unavatar.io/${f.domain}?fallback=false" alt="${f.short} logo" loading="lazy"
-         data-stage="0" data-domain="${f.domain}" data-short="${f.short}" data-color="${f.color}"
+  if(!f.logo && !f.domain) return `<div class="${dotCls}" style="${logoStyle(f.color)}">${f.short}</div>`;
+  const first=f.logo || ('https://unavatar.io/'+f.domain+'?fallback=false');
+  return `<div class="logo-wrap${lg?' lg':''}">
+    <img src="${first}" alt="${f.name} ロゴ"
+         data-stage="${f.logo?0:1}" data-domain="${f.domain}" data-short="${f.short}" data-color="${f.color}"
          onerror="logoErr(this)">
   </div>`;
 }
 function logoErr(img){
-  if(img.dataset.stage==='0'){
+  const st=+img.dataset.stage;
+  if(st===0 && img.dataset.domain){
     img.dataset.stage='1';
+    img.src='https://unavatar.io/'+img.dataset.domain+'?fallback=false';
+  }else if(st<=1 && img.dataset.domain){
+    img.dataset.stage='2';
     img.src='https://www.google.com/s2/favicons?domain='+img.dataset.domain+'&sz=128';
   }else{
-    const tile=img.parentElement, lg=tile.classList.contains('lg');
-    tile.outerHTML=`<div class="logo-dot${lg?' lg':''}" style="${logoStyle(img.dataset.color)}">${img.dataset.short}</div>`;
+    const w=img.parentElement, lg=w.classList.contains('lg');
+    w.outerHTML=`<div class="logo-dot${lg?' lg':''}" style="${logoStyle(img.dataset.color)}">${img.dataset.short}</div>`;
   }
 }
 /* 進捗の保存（localStorage） */
@@ -863,8 +863,8 @@ function renderFirmGrid(){
       : `<div class="fc-n">📝 模擬ケース ${n}問</div>`;
     g.appendChild(el(`
       <div class="firm-card" style="--c:${f.color}" onclick="openFirm('${f.id}')">
-        ${logoImg(f,false)}
-        <div>
+        <div style="width:100%">
+          <div class="fc-logo-row">${logoImg(f,false)}</div>
           <div class="fc-name">${f.name}</div>
           <div class="fc-sub">${f.style}</div>
           ${progress}
