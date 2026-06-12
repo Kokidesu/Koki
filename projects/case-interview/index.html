@@ -14,6 +14,9 @@
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="ケース面接ドリル｜会社を選んで模擬面接" />
 <meta name="twitter:description" content="志望ファームを選ぶと、その会社らしいケース問題が面接形式で出題される対策アプリ。" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Shippori+Mincho:wght@600;800&display=swap" rel="stylesheet">
 <style>
   :root{
     --navy:#0b1f3a; --navy2:#13294b; --blue:#2f6df6; --blue-soft:#e8f0ff;
@@ -24,8 +27,8 @@
   *{box-sizing:border-box}
   html,body{margin:0;padding:0}
   body{
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Kaku Gothic ProN","Noto Sans JP",Meiryo,sans-serif;
-    color:var(--ink); background:var(--bg); line-height:1.7; -webkit-text-size-adjust:100%;
+    font-family:"Noto Sans JP",-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Kaku Gothic ProN",Meiryo,sans-serif;
+    color:var(--ink); background:linear-gradient(180deg,#f7f9fd 0%,#edf1f8 100%) fixed; line-height:1.7; -webkit-text-size-adjust:100%;
   }
   a{color:var(--blue);text-decoration:none}
   header.site{
@@ -36,7 +39,7 @@
   }
   .head-inner{max-width:1040px;margin:0 auto}
   .brand{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-  .brand h1{font-size:19px;margin:0;font-weight:800;letter-spacing:.02em}
+  .brand h1{font-size:20px;margin:0;font-weight:800;letter-spacing:.06em;font-family:"Shippori Mincho",Georgia,serif}
   .brand .tag{font-size:11px;background:var(--gold);color:#1c1300;padding:2px 8px;border-radius:999px;font-weight:700}
   .sub{font-size:12px;color:#b9c6dd;margin-top:2px}
   nav.tabs{max-width:1040px;margin:10px auto 0;display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;-webkit-overflow-scrolling:touch}
@@ -73,6 +76,17 @@
     transform:rotate(18deg);
   }
   .logo-dot.lg{width:56px;height:56px;font-size:18px;border-radius:14px}
+  /* 実ロゴ（Web取得・白タイル）：失敗時はJSで .logo-dot にフォールバック */
+  .logo-tile{
+    width:46px;height:46px;border-radius:12px;background:#fff;flex:0 0 auto;
+    display:flex;align-items:center;justify-content:center;position:relative;
+    border:1px solid var(--line);box-shadow:0 3px 9px rgba(11,31,58,.10);
+  }
+  .logo-tile::after{content:"";position:absolute;inset:0;border-radius:12px;pointer-events:none;
+    box-shadow:inset 0 0 0 2px color-mix(in srgb, var(--c,#2f6df6) 16%, transparent)}
+  .logo-tile img{width:32px;height:32px;object-fit:contain;border-radius:6px}
+  .logo-tile.lg{width:56px;height:56px;border-radius:14px}
+  .logo-tile.lg img{width:40px;height:40px}
   ul.tight{margin:8px 0 0;padding-left:20px}
   ul.tight li{margin:3px 0}
   .kv{font-size:13px;color:var(--muted)}
@@ -101,7 +115,17 @@
   .firm-card::before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--c,#2f6df6),transparent 85%)}
   .firm-card:hover{border-color:var(--c,var(--blue));box-shadow:0 6px 18px rgba(47,109,246,.13);transform:translateY(-2px)}
   .firm-card:hover{box-shadow:0 8px 22px color-mix(in srgb, var(--c, #2f6df6) 28%, transparent)}
-  .eyebrow{font-size:11px;letter-spacing:.22em;font-weight:800;color:var(--gold);margin-bottom:2px}
+  .eyebrow{font-size:11px;letter-spacing:.22em;font-weight:800;color:var(--gold);margin-bottom:2px;font-family:Georgia,serif}
+  /* カテゴリフィルタ */
+  .chips{display:flex;gap:7px;flex-wrap:wrap;margin:0 0 14px}
+  .chips button{border:1.5px solid var(--line);background:#fff;color:var(--muted);padding:7px 15px;border-radius:999px;font-size:13px;font-weight:700;cursor:pointer;transition:.15s}
+  .chips button.active{background:var(--navy);color:#ffd766;border-color:var(--navy)}
+  .chips button:hover{border-color:var(--navy)}
+  .quick-bar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 12px}
+  .total-line{font-size:12px;color:var(--muted)}
+  .total-line b{color:var(--navy)}
+  .fc-done{font-size:11px;color:#15803d;font-weight:700;margin-top:4px}
+  .done-pill{display:inline-block;font-size:10.5px;font-weight:800;padding:2px 8px;border-radius:999px;background:#dcfce7;color:#15803d;margin-left:6px;vertical-align:1px}
   .firm-card .fc-name{font-weight:800;font-size:14px;line-height:1.35;color:var(--navy)}
   .firm-card .fc-sub{font-size:11px;color:var(--muted);margin-top:2px}
   .firm-card .fc-n{font-size:11px;color:var(--blue);font-weight:700;margin-top:4px}
@@ -134,7 +158,14 @@
   .judge{font-weight:800;font-size:14px;min-width:90px}
   .judge.ok{color:var(--good)}.judge.ng{color:var(--bad)}
   .timer-chip{background:var(--navy);color:#ffd766;border:none;border-radius:999px;padding:7px 15px;font-weight:800;font-size:14px;cursor:pointer;font-variant-numeric:tabular-nums}
-  .next-wrap{text-align:center;margin:18px 0 6px}
+  .next-wrap{position:sticky;bottom:12px;z-index:20;text-align:center;margin:20px 0 6px}
+  .next-wrap .btn{padding:13px 28px;border-radius:999px;font-size:15px;box-shadow:0 8px 22px rgba(47,109,246,.38)}
+  .next-wrap .btn.gold{box-shadow:0 8px 22px rgba(201,162,39,.45)}
+  /* ステップ進行（ラベル付き） */
+  .stepper{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px}
+  .stepper span{font-size:10.5px;font-weight:700;padding:2px 9px;border-radius:999px;background:#eef2f8;color:var(--muted);transition:.2s}
+  .stepper span.cur{background:var(--blue);color:#fff;box-shadow:0 2px 6px rgba(47,109,246,.35)}
+  .stepper span.done{background:#dcfce7;color:#15803d}
   .data-list{margin-top:8px;background:#fbfcfe;border:1px solid var(--line);border-radius:10px;padding:10px 14px;font-size:13.5px}
   .data-list b{color:var(--navy)}
   /* debrief */
@@ -200,8 +231,18 @@
       <div class="eyebrow">SELECT YOUR TARGET FIRM</div>
       <h2 class="view-title">どの会社の面接を受けますか？</h2>
       <p class="lead">会社を選ぶと、その会社の出題傾向・面接スタイルに合わせた模擬面接が始まります。</p>
+      <div class="quick-bar">
+        <div class="chips" id="firmChips" style="margin:0">
+          <button class="active" onclick="setFirmFilter('all',this)">すべて</button>
+          <button onclick="setFirmFilter('mbb',this)">MBB</button>
+          <button onclick="setFirmFilter('strat',this)">戦略系</button>
+          <button onclick="setFirmFilter('sogo',this)">総合系</button>
+        </div>
+        <button class="btn gold sm" onclick="startRandomAll()">🎲 全社からランダムに1問</button>
+      </div>
       <div class="firm-grid" id="firmGrid"></div>
-      <p style="text-align:center;margin-top:18px">
+      <p class="total-line" id="totalLine" style="text-align:center;margin-top:14px"></p>
+      <p style="text-align:center;margin-top:8px">
         <button class="share" onclick="shareApp()">🔗 このアプリを友達に送る</button>
       </p>
     </div>
@@ -300,51 +341,51 @@
    データ：ファーム
 ================================================================ */
 const FIRMS = [
-  {id:"mck", name:"McKinsey & Company", short:"McK", color:"#0b3d91", tags:["mbb","led"],
+  {id:"mck", name:"McKinsey & Company", short:"McK", color:"#0b3d91", domain:"mckinsey.com", cat:"mbb", tags:["mbb","led"],
    style:"面接官主導（インタビュアー・レッド）",
    focus:"論点を順番に振られ、設問ごとに構造化・計算・解釈を見られる。ケースに加えてPEI（人物面接）も必ずセットで実施。",
    tips:["設問ごとに『枠組み→数字→so what』を徹底","PEI用に リーダーシップ/達成/対立 の3エピソードを準備","結論ファースト、トップダウンで話す"]},
-  {id:"bcg", name:"Boston Consulting Group", short:"BCG", color:"#177b57", tags:["mbb","cand"],
+  {id:"bcg", name:"Boston Consulting Group", short:"BCG", color:"#177b57", domain:"bcg.com", cat:"mbb", tags:["mbb","cand"],
    style:"候補者主導寄り（対話型）",
    focus:"自分でケースを前に進める主体性が問われる。創造性・ビジネス洞察、グラフ/図表の読み取りを重視。",
    tips:["自分から次の論点を提案して主導する","定性的な示唆（so what）を厚めに","図表は『軸→傾向→例外→示唆』で読む"]},
-  {id:"bain", name:"Bain & Company", short:"Bain", color:"#b3122b", tags:["mbb","cand"],
+  {id:"bain", name:"Bain & Company", short:"Bain", color:"#b3122b", domain:"bain.com", cat:"mbb", tags:["mbb","cand"],
    style:"候補者主導（結果志向）",
    focus:"実利重視。『結局いくら儲かる/改善するのか』に強くこだわる。明るいチームフィット（A Bainie）も大事。",
    tips:["常に金額インパクトに落とす","80/20で重要論点から攻める","前のめりで明るいコミュニケーション"]},
-  {id:"sand", name:"Strategy& (PwC)", short:"S&", color:"#e8511d", tags:["led"],
+  {id:"sand", name:"Strategy& (PwC)", short:"S&", color:"#e8511d", domain:"strategyand.pwc.com", cat:"strat", tags:["led"],
    style:"面接官主導寄り",
    focus:"戦略×実行。財務リテラシーと業界知識をやや重視。価格・事業性評価の問いが出やすい。",
    tips:["財務指標・投資回収の計算に慣れておく","業界トレンドを一つ語れるように"]},
-  {id:"del", name:"Monitor Deloitte / Deloitte", short:"Del", color:"#86bc25", tags:["led"],
+  {id:"del", name:"Monitor Deloitte / Deloitte", short:"Del", color:"#86bc25", domain:"deloitte.com", cat:"sogo", tags:["led"],
    style:"面接官主導 ＋ グループ/ジョブもあり",
    focus:"総合系の戦略部門。DX・デジタルを絡めた問いが出やすく、実装まで含めた現実的な提言を好む。",
    tips:["デジタル変革の引き出しを持つ","グループディスカッション対策も並行で"]},
-  {id:"eyp", name:"EY-Parthenon / EY", short:"EYP", color:"#b8a200", tags:["led"],
+  {id:"eyp", name:"EY-Parthenon / EY", short:"EYP", color:"#b8a200", domain:"ey.com", cat:"strat", tags:["led"],
    style:"面接官主導",
    focus:"PEファンド向け商業DD案件が多く、市場の成長性・競争環境の分析を重視。投資判断に落とす問いが頻出。",
    tips:["市場の魅力度（規模×成長×競争）を素早く評価","『買う/買わない』まで結論づける"]},
-  {id:"atk", name:"Kearney", short:"ATK", color:"#7a2fd6", tags:["led"],
+  {id:"atk", name:"Kearney", short:"ATK", color:"#7a2fd6", domain:"kearney.com", cat:"strat", tags:["led"],
    style:"面接官主導",
    focus:"オペレーション・コスト・調達に強み。実務的で泥臭い改善ケースが出やすい。",
    tips:["バリューチェーン/コスト構造の分解を得意に","実装可能性とクイックウィンを意識"]},
-  {id:"rb", name:"Roland Berger", short:"RB", color:"#c8102e", tags:["led"],
+  {id:"rb", name:"Roland Berger", short:"RB", color:"#c8102e", domain:"rolandberger.com", cat:"strat", tags:["led"],
    style:"面接官主導",
    focus:"欧州系。製造業・自動車・産業財に強い。論理の厳密さを重視し、飛躍を嫌う。",
    tips:["製造業・サプライチェーンの文脈を準備","一つひとつ論理を積み上げて話す"]},
-  {id:"ow", name:"Oliver Wyman", short:"OW", color:"#1f3a93", tags:["cand"],
+  {id:"ow", name:"Oliver Wyman", short:"OW", color:"#1f3a93", domain:"oliverwyman.com", cat:"strat", tags:["cand"],
    style:"候補者主導（やや難）",
    focus:"金融・保険・リスクに強み。定量的に重いケースが出やすく、計算力が直接効く。",
    tips:["重めの計算に動じない","前提を明示してから計算に入る"]},
-  {id:"lek", name:"L.E.K. Consulting", short:"LEK", color:"#005eb8", tags:["led"],
+  {id:"lek", name:"L.E.K. Consulting", short:"LEK", color:"#005eb8", domain:"lek.com", cat:"strat", tags:["led"],
    style:"面接官主導",
    focus:"商業DD・市場規模推定が頻出。マーケットサイジングの精度とスピードが合否を分ける。",
    tips:["フェルミ推定を反復練習","市場成長率の前提を丁寧に置く"]},
-  {id:"acn", name:"Accenture (Strategy)", short:"ACN", color:"#a100ff", tags:["led"],
+  {id:"acn", name:"Accenture (Strategy)", short:"ACN", color:"#a100ff", domain:"accenture.com", cat:"sogo", tags:["led"],
    style:"面接官主導 ＋ グループワーク",
    focus:"戦略〜実装〜テクノロジーまで一気通貫。DX・デジタル文脈の問いが多い。",
    tips:["テクノロジー実装の現実性を語れるように","グループケース・プレゼン対策も"]},
-  {id:"sogo", name:"総合系・日系（PwC/KPMG/ABeam 等）", short:"+α", color:"#475569", tags:["led"],
+  {id:"sogo", name:"総合系・日系（PwC/KPMG/ABeam 等）", short:"+α", color:"#475569", domain:"", cat:"sogo", tags:["led"],
    style:"面接官主導が中心",
    focus:"戦略色の濃さはチーム次第。標準的なケースに加え、志望動機・カルチャーフィットの比重がやや高い。",
    tips:["なぜコンサル/なぜ当社を言語化","ケースは標準フレームで十分戦える"]},
@@ -766,6 +807,36 @@ function shade(hex,pct){
 function logoStyle(color){
   return `background:linear-gradient(135deg,${shade(color,18)},${color} 45%,${shade(color,-28)})`;
 }
+/* 実ロゴをWebから取得（unavatar.io → Googleファビコン → モノグラムの3段フォールバック） */
+function logoImg(f,lg){
+  const dotCls='logo-dot'+(lg?' lg':'');
+  if(!f.domain) return `<div class="${dotCls}" style="${logoStyle(f.color)}">${f.short}</div>`;
+  return `<div class="logo-tile${lg?' lg':''}" style="--c:${f.color}">
+    <img src="https://unavatar.io/${f.domain}?fallback=false" alt="${f.short} logo" loading="lazy"
+         data-stage="0" data-domain="${f.domain}" data-short="${f.short}" data-color="${f.color}"
+         onerror="logoErr(this)">
+  </div>`;
+}
+function logoErr(img){
+  if(img.dataset.stage==='0'){
+    img.dataset.stage='1';
+    img.src='https://www.google.com/s2/favicons?domain='+img.dataset.domain+'&sz=128';
+  }else{
+    const tile=img.parentElement, lg=tile.classList.contains('lg');
+    tile.outerHTML=`<div class="logo-dot${lg?' lg':''}" style="${logoStyle(img.dataset.color)}">${img.dataset.short}</div>`;
+  }
+}
+/* 進捗の保存（localStorage） */
+function doneMap(){try{return JSON.parse(localStorage.getItem('cid_done')||'{}')}catch(e){return{}}}
+function isDone(firmId,caseId){return !!doneMap()[firmId+'/'+caseId];}
+function markDone(firmId,caseId){
+  try{
+    const m=doneMap(); m[firmId+'/'+caseId]=1;
+    localStorage.setItem('cid_done',JSON.stringify(m));
+    localStorage.setItem('cid_n', String((+localStorage.getItem('cid_n')||0)+1));
+  }catch(e){}
+}
+function totalSessions(){return +localStorage.getItem('cid_n')||0;}
 function firmById(id){return FIRMS.find(f=>f.id===id);}
 function casesForFirm(id){return CASES.filter(c=>c.firms.includes(id));}
 function tagPills(tags){return tags.map(t=>t==='mbb'?'<span class="pill mbb">MBB</span>':t==='led'?'<span class="pill led">面接官主導</span>':'<span class="pill cand">候補者主導</span>').join('');}
@@ -773,21 +844,42 @@ function tagPills(tags){return tags.map(t=>t==='mbb'?'<span class="pill mbb">MBB
 /* ================================================================
    画面1：会社選択
 ================================================================ */
+let firmFilter='all';
+function setFirmFilter(cat,btn){
+  firmFilter=cat;
+  document.querySelectorAll('#firmChips button').forEach(b=>b.classList.toggle('active',b===btn));
+  renderFirmGrid();
+}
 function renderFirmGrid(){
   const g=document.getElementById('firmGrid');
   g.innerHTML='';
-  FIRMS.forEach(f=>{
-    const n=casesForFirm(f.id).length;
+  const dm=doneMap();
+  FIRMS.filter(f=>firmFilter==='all'||f.cat===firmFilter).forEach(f=>{
+    const list=casesForFirm(f.id);
+    const n=list.length;
+    const d=list.filter(c=>dm[f.id+'/'+c.id]).length;
+    const progress = d>0
+      ? `<div class="fc-done">✅ ${d} / ${n} 問クリア</div>`
+      : `<div class="fc-n">📝 模擬ケース ${n}問</div>`;
     g.appendChild(el(`
       <div class="firm-card" style="--c:${f.color}" onclick="openFirm('${f.id}')">
-        <div class="logo-dot" style="${logoStyle(f.color)}">${f.short}</div>
+        ${logoImg(f,false)}
         <div>
           <div class="fc-name">${f.name}</div>
           <div class="fc-sub">${f.style}</div>
-          <div class="fc-n">📝 模擬ケース ${n}問</div>
+          ${progress}
         </div>
       </div>`));
   });
+  const t=document.getElementById('totalLine');
+  if(t){
+    const n=totalSessions();
+    t.innerHTML = n>0 ? `これまでの練習：<b>${n}回</b> — 継続は力 💪` : 'まずは志望度の高い1社から始めよう';
+  }
+}
+function startRandomAll(){
+  const f=FIRMS[Math.floor(Math.random()*FIRMS.length)];
+  startRandom(f.id);
 }
 
 /* ================================================================
@@ -801,7 +893,7 @@ function openFirm(id){
     <div class="crumb"><a onclick="backToSelect()">← 会社選択に戻る</a></div>
     <div class="card">
       <div class="firm-head">
-        <div class="logo-dot lg" style="${logoStyle(f.color)}">${f.short}</div>
+        ${logoImg(f,true)}
         <div>
           <div class="eyebrow">MOCK CASE INTERVIEW</div>
           <h2>${f.name}</h2>
@@ -819,19 +911,20 @@ function openFirm(id){
     <div id="firmCases"></div>`;
   const fc=sub.querySelector('#firmCases');
   list.forEach(c=>{
+    const done=isDone(id,c.id);
     fc.appendChild(el(`
       <div class="case-row">
         <div>
-          <div class="ttl">${badge(c.type)}&nbsp; ${c.title}</div>
+          <div class="ttl">${badge(c.type)}&nbsp; ${c.title}${done?'<span class="done-pill">✓ クリア済み</span>':''}</div>
           <div class="meta">難易度：${c.lvl} ／ 目安 ${c.min}分 ／ ステップ ${c.steps.length}</div>
         </div>
-        <button class="btn sm" onclick="startCase('${id}','${c.id}')">▶ この問題で面接</button>
+        <button class="btn sm${done?' ghost':''}" onclick="startCase('${id}','${c.id}')">${done?'もう一度':'▶ この問題で面接'}</button>
       </div>`));
   });
   show('subFirm');
   window.scrollTo({top:0,behavior:'smooth'});
 }
-function backToSelect(){show('subSelect');}
+function backToSelect(){renderFirmGrid();show('subSelect');}
 function show(sub){
   ['subSelect','subFirm','subSession'].forEach(s=>document.getElementById(s).classList.toggle('hidden',s!==sub));
 }
@@ -873,10 +966,17 @@ function addBubble(html){
 function addBlock(html){
   document.getElementById('sessLog').appendChild(el(html));
 }
+const STEP_LABEL={intro:'問題', clarify:'確認', structure:'構造化', quant:'計算', insight:'仮説', recommend:'提言'};
 function updateProg(){
   const n=S.cs.steps.length;
   const done=Math.min(S.step+1,n);
-  document.getElementById('sessProg').textContent=`ステップ ${done} / ${n}（目安 ${S.cs.min}分）`;
+  document.getElementById('sessProg').innerHTML =
+    `<span class="stepper">`+
+    S.cs.steps.map((s,k)=>{
+      const cls = k<S.step?'done':(k===S.step?'cur':'');
+      return `<span class="${cls}">${k<S.step?'✓ ':''}${STEP_LABEL[s.kind]||''}</span>`;
+    }).join('')+
+    `</span>`;
   document.getElementById('sessBar').style.width=(done/n*100)+'%';
 }
 function nextLabel(){
@@ -930,7 +1030,7 @@ function renderStep(){
       <div class="you-zone">
         <div class="yz-t">🧑‍💼 あなたの番：暗算（または手計算）で答えを出して入力 → 判定</div>
         <div class="qa-row">
-          <input class="num-in" id="qi${i}" inputmode="decimal" placeholder="答え" />
+          <input class="num-in" id="qi${i}" inputmode="decimal" placeholder="答え" onkeydown="if(event.key==='Enter')checkQuant(${i})" />
           <span class="unit">${st.unit}</span>
           <button class="btn sm" onclick="checkQuant(${i})">判定する</button>
           <span class="judge" id="qj${i}"></span>
@@ -1019,12 +1119,14 @@ function finishSession(){
     "数字から<b>so what（示唆）</b>を引き出せた",
     "最後の提言を<b>結論ファースト</b>で30秒にまとめられた",
   ];
+  markDone(S.firm.id, S.cs.id);
   addBubble(`お疲れさまでした、以上で面接は終了です。最後にセルフチェックをして、できなかった項目を次回の課題にしましょう。`);
   addBlock(`
     <div class="card" style="margin-top:10px">
       <h3 style="margin-top:0">🪞 振り返りチェック</h3>
       ${checks.map((c,n)=>`<label class="check-item"><input type="checkbox" onchange="scoreCheck()" class="dbck"><span>${c}</span></label>`).join('')}
       <p id="dbScore" class="kv" style="margin-top:10px">チェックして自己採点 →</p>
+      <p class="kv">🎉 この問題をクリアとして記録しました（通算 ${totalSessions()} 回目の練習）</p>
       <div class="row" style="justify-content:flex-start;margin-top:10px">
         <button class="btn sm" onclick="startRandom('${S.firm.id}')">🎲 同じ会社で別の問題</button>
         <button class="btn ghost sm" onclick="openFirm('${S.firm.id}')">問題リストへ</button>
