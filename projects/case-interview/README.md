@@ -30,6 +30,6 @@ cd projects/case-interview && python3 -m http.server 8000   # → http://localho
 リポジトリの GitHub Pages で公開する。`.github/workflows/deploy-case-interview.yml` が
 `main` への push 時に `projects/case-interview/` を自動デプロイする。
 
-公開URL: **https://kokidesu.github.io/koki/**
+公開URL: **https://kokidesu.github.io/Koki/**
 
 > 内容は一般的なケース面接対策の学習用。各社の実際の選考内容を保証するものではありません。
