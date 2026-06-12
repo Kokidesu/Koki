@@ -40,6 +40,23 @@ def load_photos():
             im=ImageOps.fit(im,(nw,nh))
         ICON_IMG[name]=im
 
+def load_figures():
+    """Load every infographic / flag PNG (made by make_figures.py) by stem name."""
+    figdir=os.path.join(ASSET,"figures")
+    for fn in sorted(os.listdir(figdir)):
+        if fn.endswith(".png"):
+            ICON_IMG[fn[:-4]]=Image.open(os.path.join(figdir,fn)).convert("RGBA")
+
+def ensure_assets():
+    """Regenerate maps/figures if they are missing so `python3 deck.py` is self-contained."""
+    import subprocess,sys
+    here=os.path.dirname(os.path.abspath(__file__))
+    if not os.path.exists(os.path.join(ASSET,"photos","case_map.png")):
+        subprocess.run([sys.executable,os.path.join(here,"make_map.py")],check=True)
+    figdir=os.path.join(ASSET,"figures")
+    if (not os.path.isdir(figdir)) or len([f for f in os.listdir(figdir) if f.endswith(".png")])<10:
+        subprocess.run([sys.executable,os.path.join(here,"make_figures.py")],check=True)
+
 # ================= SPEC BUILDERS =================
 def slide(bg=WHITE): return {"bg":bg, "el":[]}
 def rect(s,x,y,w,h,c): s["el"].append(("rect",x,y,w,h,c))
@@ -52,6 +69,16 @@ def photo(s,x,y,w,h,name,frame=ACCENT,pad=0.03):
     """Framed photograph/figure."""
     if frame: rect(s,x-pad,y-pad,w+2*pad,h+2*pad,frame)
     image(s,x,y,w,h,name)
+
+def figpanel(s,name,heading=None,px=8.45,py=1.75,pw=4.28,ph=4.35,fw=3.85):
+    """Standard right-hand side panel containing a centred infographic."""
+    rect(s,px,py,pw,ph,LIGHT); rect(s,px,py,0.14,ph,ACCENT)
+    top=py
+    if heading:
+        text(s,px+0.32,py+0.16,pw-0.5,heading,13,ACCENT,bold=True,h=0.3); top=py+0.5
+    fx=px+0.14+((pw-0.14)-fw)/2
+    fy=top+((py+ph)-top-fw)/2
+    image(s,fx,fy,fw,fw,name)
 
 def header(s,kicker,title,icon=None):
     rect(s,0,0,SW_IN,1.25,NAVY); rect(s,0,1.25,SW_IN,0.06,ACCENT)
@@ -112,12 +139,17 @@ text(s,1.0,6.72,11.3,"Group Presentation  •  May 2026",13,DARKFOOT,align="c")
 s=add(slide()); header(s,"OVERVIEW","Our Central Question & Roadmap","globe")
 rect(s,0.6,1.65,12.13,1.2,LIGHT); rect(s,0.6,1.65,0.14,1.2,ACCENT)
 text(s,0.85,1.85,11.6,"Why is transnational sexual exploitation so hard to prosecute — and what do international law and cross-border cooperation need in order to work?",19,NAVY,bold=True,italic=True,ls=1.1,h=1.0)
-bullets(s,0.8,3.35,11.8,[
- "Part 1 — Framing & the international scope of the case",
- "Part 2 — The international legal framework (Palermo Protocol, UNTOC, jurisdiction & extradition)",
- "Part 3 — Wealth, mobility, and the problem of \"elite impunity\"",
- "Part 4 — Accountability, transparency & lessons (incl. a Japan comparison)",
-],19,SLATE,gap=20)
+roadmap=[("globe","PART 1","Framing & the international scope of the case"),
+ ("scales","PART 2","The legal framework — Palermo Protocol, UNTOC, jurisdiction & extradition"),
+ ("coins","PART 3","Wealth, mobility, and the problem of \"elite impunity\""),
+ ("doc","PART 4","Accountability, transparency & lessons (incl. a Japan comparison)")]
+ry=3.16
+for ic,pno,desc in roadmap:
+    rect(s,0.6,ry,12.13,0.64,LIGHT); rect(s,0.6,ry,0.12,0.64,ACCENT)
+    image(s,0.85,ry+0.09,0.46,0.46,ic)
+    text(s,1.52,ry+0.18,1.05,pno,14,ACCENT,bold=True,h=0.3)
+    text(s,2.62,ry+0.17,9.9,desc,15,NAVY,bold=True,h=0.32)
+    ry+=0.755
 keyband(s,"This presentation centres victims and legal systems — not sensational detail.")
 
 # 3 — DIVIDER P1
@@ -174,55 +206,68 @@ add(divider(2,"The International\nLegal Framework","How international law addres
 
 # 8 — TRANSNATIONAL CRIME DEFINED
 s=add(slide()); header(s,"PART 2  •  CONCEPTS","What Makes a Crime \"Transnational\"?")
-bullets(s,0.7,2.1,11.9,[
- "Committed in more than one state — or in one state but planned, directed or with effects in another.",
- "Trafficking in persons is a paradigm case: it inherently moves people, money and evidence across borders.",
- "Prosecuting it therefore requires more than one country's police, courts and laws to act together.",
- "This is exactly where domestic systems, built for domestic crime, come under strain.",
-],19,gap=30)
+bullets(s,0.7,2.0,7.4,[
+ "Committed in more than one state — or planned, directed or felt across borders.",
+ "Trafficking is the paradigm case: it moves people, money and evidence between countries.",
+ "Prosecuting it needs several countries' police, courts and laws to act together.",
+ "Domestic systems, built for domestic crime, come under strain.",
+],17,gap=18)
+figpanel(s,"fig_transnational")
 keyband(s,"The question is institutional, not just moral: can sovereign systems coordinate fast enough?")
 
 # 9 — PALERMO
 s=add(slide()); header(s,"PART 2  •  INSTRUMENTS","The Palermo Protocol (2000)")
-bullets(s,0.7,2.05,11.9,[
- "Full name: UN Protocol to Prevent, Suppress and Punish Trafficking in Persons.",
- "First globally agreed definition of human trafficking.",
- "Three elements: the act, the means, and the purpose of exploitation.",
- "For children, the \"means\" element is not required — any recruitment for exploitation qualifies.",
- "Obliges states parties to criminalise trafficking in their domestic law.",
-],19,gap=28,bold_lead=True)
+bullets(s,0.7,2.05,7.4,[
+ "The first globally agreed definition of human trafficking (UN, 2000).",
+ "Built from three elements: act + means + purpose of exploitation.",
+ "For children, the \"means\" element is not required.",
+ "Obliges 190+ states parties to criminalise trafficking at home.",
+],17,gap=20)
+figpanel(s,"fig_palermo")
 keyband(s,"It gives 190+ states a shared vocabulary — a precondition for cooperation.")
 
 # 10 — UNTOC
 s=add(slide()); header(s,"PART 2  •  INSTRUMENTS","UNTOC & Cross-Border Cooperation")
-bullets(s,0.7,2.05,11.9,[
+bullets(s,0.7,2.05,7.4,[
  "Parent treaty: the UN Convention against Transnational Organized Crime.",
  "The Palermo Protocol supplements it; the two operate together.",
- "Provides a framework for extradition, mutual legal assistance and joint investigations.",
- "Can serve as a legal basis for cooperation even where no bilateral treaty exists.",
- "Encourages asset confiscation and protection of victims and witnesses.",
-],19,gap=28,bold_lead=True)
+ "A framework for extradition, mutual legal assistance and joint investigations.",
+ "Can be the legal basis for cooperation even with no bilateral treaty.",
+],17,gap=20)
+figpanel(s,"fig_untoc")
 keyband(s,"In short: the machinery for international cooperation already exists on paper.")
 
 # 11 — JURISDICTION / EXTRADITION
 s=add(slide()); header(s,"PART 2  •  ENFORCEMENT","Jurisdiction, Extradition & MLATs")
-bullets(s,0.7,2.05,11.9,[
- "Jurisdiction: states may claim it by territory or by nationality of offender/victim.",
- "Concurrent claims: several states may have a right to prosecute the same conduct.",
- "Extradition: typically needs a treaty plus \"dual criminality\" (an offence in both states).",
- "MLATs: Mutual Legal Assistance Treaties move evidence, testimony and records across borders.",
- "The friction: requests are slow, can be refused, and stall when suspects are wealthy or well-connected.",
-],19,gap=28,bold_lead=True)
+bullets(s,0.7,2.05,7.4,[
+ "Jurisdiction: claimed by territory, or by nationality of offender/victim.",
+ "Several states may have a concurrent right to prosecute.",
+ "Extradition needs a treaty plus \"dual criminality.\"",
+ "MLATs move evidence and testimony across borders — but slowly.",
+],17,gap=20)
+figpanel(s,"fig_enforcement")
 keyband(s,"The tools exist — but speed and political will decide whether they work.")
 
 # 12 — FOREIGN NATIONALS
 s=add(slide()); header(s,"PART 2  •  ACTORS","Foreign Nationals & Quasi-Diplomatic Figures")
-bullets(s,0.7,2.1,11.9,[
- "Ghislaine Maxwell (UK): convicted in 2021 of sex-trafficking conspiracy in a US court.",
- "Prince Andrew: settled a US civil claim in 2022 and later stepped back from royal titles.",
- "High status confers no criminal immunity — but it can create practical and diplomatic hurdles.",
- "Foreign nationality complicates arrest, extradition and the gathering of evidence abroad.",
-],19,gap=30,bold_lead=True)
+bullets(s,0.7,2.05,7.4,[
+ "Ghislaine Maxwell (UK): convicted in 2021 in a US court.",
+ "Prince Andrew (UK): settled a US civil claim in 2022; later stepped back from royal titles.",
+ "High status is no immunity — but it adds practical and diplomatic hurdles.",
+ "Foreign nationality complicates arrest, extradition and gathering evidence abroad.",
+],17,gap=20,bold_lead=True)
+# panel: key figures with UK flags + adjudicated status
+rect(s,8.45,1.75,4.28,4.35,LIGHT); rect(s,8.45,1.75,0.14,4.35,ACCENT)
+text(s,8.77,1.96,3.8,"KEY FIGURES  ·  WHAT IS ADJUDICATED",12,ACCENT,bold=True,h=0.3)
+def figure_card(y,name,status):
+    image(s,8.82,y,0.84,0.42,"flag_uk")
+    text(s,9.82,y-0.07,2.8,name,16,NAVY,bold=True,h=0.3)
+    text(s,9.82,y+0.25,2.8,"United Kingdom",12,GREY,italic=True,h=0.25)
+    text(s,8.82,y+0.6,3.7,status,13,ACCENT,bold=True,ls=1.1,h=0.6)
+figure_card(2.55,"Ghislaine Maxwell","Convicted of sex-trafficking conspiracy · 2021")
+rect(s,8.82,3.95,3.6,0.015,GREY)
+figure_card(4.15,"Prince Andrew","Settled a US civil claim · 2022")
+text(s,8.77,5.55,3.85,"Charges, a conviction, a settled case — not speculation.",13,NAVY,italic=True,h=0.5)
 keyband(s,"Stick to what is adjudicated: charges, a conviction, a settled civil case — not speculation.")
 
 # 13 — DIVIDER P3
@@ -230,13 +275,13 @@ add(divider(3,"Wealth, Mobility\n& Impunity","How resources can delay — though
 
 # 14 — OFFSHORE WEALTH
 s=add(slide()); header(s,"PART 3  •  MECHANICS","Offshore Wealth & Global Mobility")
-bullets(s,0.7,2.05,11.9,[
- "Offshore structures and trusts can obscure who really owns assets.",
- "Property in several jurisdictions provides places to live, store value and move between.",
- "Private travel reduces the friction and scrutiny of ordinary border crossings.",
- "Multiple identity documents — including the false-name passport — illustrate evasion capacity.",
- "Together these convert wealth into mobility, and mobility into delay.",
-],19,gap=28)
+bullets(s,0.7,2.05,7.4,[
+ "Offshore structures and trusts can hide who really owns assets.",
+ "Property in several countries: places to live, store value and move between.",
+ "Private travel reduces the scrutiny of ordinary border crossings.",
+ "Wealth becomes mobility; mobility becomes delay.",
+],17,gap=20)
+figpanel(s,"fig_layering")
 keyband(s,"None of this is unique to one man — it is how illicit elite wealth tends to behave.")
 
 # 15 — ELITE IMPUNITY (compare)
@@ -261,12 +306,24 @@ keyband(s,"The same conduct, two very different responses — a decade apart.")
 
 # 16 — COMPARATIVE LAW
 s=add(slide()); header(s,"PART 3  •  COMPARATIVE LAW","Would Other Systems Have Acted Differently?")
-bullets(s,0.7,2.1,11.9,[
- "Adversarial vs inquisitorial: France's investigating magistrates can drive cases differently from US prosecutors.",
- "Victim participation: some systems give victims a formal role earlier in proceedings.",
- "Limitation periods: how long after the abuse can charges still be brought?",
- "Plea bargaining: less central in many civil-law systems, changing the incentive to settle quietly.",
-],19,gap=30,bold_lead=True)
+bullets(s,0.7,2.05,7.4,[
+ "Adversarial vs inquisitorial: France's investigating magistrates can drive cases differently.",
+ "Victim participation: some systems give victims a formal role earlier.",
+ "Limitation periods: how long after the abuse can charges be brought?",
+ "Plea bargaining is less central in many civil-law systems.",
+],17,gap=20,bold_lead=True)
+# panel: four legal systems
+rect(s,8.45,1.75,4.28,4.35,LIGHT); rect(s,8.45,1.75,0.14,4.35,ACCENT)
+text(s,8.77,1.96,3.8,"FOUR SYSTEMS COMPARED",13,ACCENT,bold=True,h=0.3)
+grid=[("flag_us","United States","adversarial"),("flag_uk","United Kingdom","adversarial"),
+      ("flag_fr","France","inquisitorial"),("flag_jp","Japan","civil-law")]
+for i,(fl,nm,ty) in enumerate(grid):
+    r,c=divmod(i,2)
+    cx=8.95+c*1.92; cy=2.55+r*1.45
+    image(s,cx,cy,1.2,0.6,fl)
+    text(s,cx-0.2,cy+0.66,1.6,nm,12,NAVY,bold=True,align="c",h=0.26)
+    text(s,cx-0.2,cy+0.9,1.6,ty,11,GREY,italic=True,align="c",h=0.24)
+text(s,8.77,5.62,3.85,"Same facts — would they act faster, or slower?",13,NAVY,italic=True,bold=True,align="c",h=0.3)
 keyband(s,"Central question: would the UK, France or Japan have acted faster — or slower?")
 
 # 17 — DIVIDER P4
@@ -274,12 +331,13 @@ add(divider(4,"Accountability,\nTransparency & Lessons","Designing cross-border 
 
 # 18 — 2025 TRANSPARENCY
 s=add(slide()); header(s,"PART 4  •  TRANSPARENCY","The 2025 Document-Release Wave")
-bullets(s,0.7,2.1,11.9,[
- "US transparency legislation drove a large release of case-related documents.",
- "Intended to answer public demand for accountability and openness.",
- "Survivors' concern: the disclosures made it easy to identify those abused — but not those who may have been involved.",
- "A real tension emerges between public transparency and the privacy and safety of victims.",
-],19,gap=30,bold_lead=True)
+bullets(s,0.7,2.05,7.4,[
+ "US transparency legislation drove a large release of case documents.",
+ "Meant to answer public demand for accountability and openness.",
+ "But disclosures made victims easy to identify — enablers less so.",
+ "A real tension: public transparency vs victim privacy and safety.",
+],17,gap=20)
+figpanel(s,"fig_redaction")
 keyband(s,"Transparency is not automatically just — its design determines who it protects.")
 
 # 19 — REFORM + JAPAN
@@ -292,7 +350,8 @@ bullets(s,0.7,1.95,7.4,[
 ],18,gap=26,bold_lead=False)
 rect(s,8.45,1.75,4.28,4.35,LIGHT); rect(s,8.45,1.75,0.14,4.35,ACCENT)
 text(s,8.75,2.0,3.8,"JAPAN ANGLE",14,ACCENT,bold=True)
-text(s,8.75,2.55,3.8,"Japan has an anti-trafficking action framework and is assessed annually in the US State Department's TIP Report — a useful benchmark for how a non-Western system measures up on cross-border cooperation.",15,SLATE,italic=True,ls=1.22,h=4.0)
+image(s,8.78,2.5,1.3,0.65,"flag_jp")
+text(s,8.78,3.4,3.75,"Japan has an anti-trafficking action framework and is assessed annually in the US State Department's TIP Report — a useful benchmark for how a non-Western system measures up on cross-border cooperation.",15,SLATE,italic=True,ls=1.2,h=2.7)
 keyband(s,"Better justice across borders is mostly an engineering problem, not a gap in principle.")
 
 # 20 — CONCLUSION + sources
@@ -301,12 +360,15 @@ items=[("01","Crime crosses borders — justice often doesn't.","Networks are gl
  ("02","The legal tools already exist.","Palermo & UNTOC provide the framework; coordination is the gap."),
  ("03","Wealth buys time, not immunity.","Mobility delayed — but did not finally prevent — accountability."),
  ("04","Transparency must protect victims.","Disclosure should expose enablers, not endanger survivors.")]
+icons=["globe","scales","coins","doc"]
 y=1.6
-for num,head_,sub in items:
+for (num,head_,sub),ic in zip(items,icons):
     rect(s,0.7,y,0.8,0.9,ACCENT)
     text(s,0.7,y+0.18,0.8,num,24,WHITE,bold=True,align="c")
-    text(s,1.65,y+0.06,10.9,head_,18,NAVY,bold=True)
-    text(s,1.65,y+0.46,10.9,sub,14,SLATE,italic=True)
+    rect(s,1.62,y,0.9,0.9,NAVY)
+    image(s,1.74,y+0.12,0.66,0.66,ic)
+    text(s,2.72,y+0.06,9.9,head_,18,NAVY,bold=True)
+    text(s,2.72,y+0.46,9.9,sub,14,SLATE,italic=True)
     y+=1.02
 rect(s,0.6,5.86,12.13,1.07,LIGHT); rect(s,0.6,5.86,0.14,1.07,ACCENT)
 text(s,0.85,5.99,11.6,"SELECTED SOURCES & INSTRUMENTS",11,ACCENT,bold=True)
@@ -502,7 +564,9 @@ def generate_icons():
 if __name__=="__main__":
     OUT=os.path.dirname(os.path.abspath(__file__))
     generate_icons()
+    ensure_assets()
     load_photos()
+    load_figures()
     n=build_pptx(os.path.join(OUT,"Epstein_Transnational_Justice.pptx"))
     imgs=[render_png(s,os.path.join(OUT,f"preview_slide_{i+1}.png")) for i,s in enumerate(SLIDES)]
     cols,rows=4,5; tw,th=308,173; pad=12
