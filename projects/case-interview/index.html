@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="全コンサルのケース面接対策アプリ。MBB・戦略系・総合系ファーム別ガイド、フレームワーク、練習ケース、フェルミ推定、暗算トレーナー、思考タイマー。" />
+<title>ケース面接ドリル | 全コンサル対応</title>
+<style>
+  :root{
+    --navy:#0b1f3a; --navy2:#13294b; --blue:#2f6df6; --blue-soft:#e8f0ff;
+    --ink:#1c2430; --muted:#5b6878; --line:#e4e9f0; --bg:#f5f7fb;
+    --card:#ffffff; --good:#16a34a; --warn:#d97706; --bad:#dc2626;
+    --gold:#c9a227;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Kaku Gothic ProN","Noto Sans JP",Meiryo,sans-serif;
+    color:var(--ink); background:var(--bg); line-height:1.7; -webkit-text-size-adjust:100%;
+  }
+  a{color:var(--blue);text-decoration:none}
+  header.site{
+    background:linear-gradient(135deg,var(--navy),var(--navy2));
+    color:#fff; padding:22px 16px 14px; position:sticky; top:0; z-index:50;
+    box-shadow:0 2px 12px rgba(11,31,58,.18);
+  }
+  .head-inner{max-width:1040px;margin:0 auto}
+  .brand{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .brand h1{font-size:20px;margin:0;font-weight:800;letter-spacing:.02em}
+  .brand .tag{font-size:11px;background:var(--gold);color:#1c1300;padding:2px 8px;border-radius:999px;font-weight:700}
+  .sub{font-size:12.5px;color:#b9c6dd;margin-top:3px}
+  nav.tabs{max-width:1040px;margin:12px auto 0;display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;-webkit-overflow-scrolling:touch}
+  nav.tabs button{
+    flex:0 0 auto;background:rgba(255,255,255,.08);color:#dce6f7;border:1px solid rgba(255,255,255,.14);
+    padding:7px 13px;border-radius:999px;font-size:13px;cursor:pointer;white-space:nowrap;font-weight:600;transition:.15s
+  }
+  nav.tabs button:hover{background:rgba(255,255,255,.18)}
+  nav.tabs button.active{background:#fff;color:var(--navy);border-color:#fff}
+  main{max-width:1040px;margin:0 auto;padding:20px 16px 80px}
+  section.view{display:none;animation:fade .25s ease}
+  section.view.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  h2.view-title{font-size:22px;margin:4px 0 2px;font-weight:800;color:var(--navy)}
+  .lead{color:var(--muted);margin:0 0 18px;font-size:14px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin:0 0 14px;box-shadow:0 1px 3px rgba(16,31,58,.05)}
+  .grid{display:grid;gap:14px}
+  @media(min-width:680px){.grid.cols-2{grid-template-columns:1fr 1fr}.grid.cols-3{grid-template-columns:1fr 1fr 1fr}}
+  .pill{display:inline-block;font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;background:var(--blue-soft);color:var(--blue);margin:0 5px 5px 0}
+  .pill.led{background:#fff3e0;color:#b45309}
+  .pill.cand{background:#e7f7ee;color:#15803d}
+  .pill.mbb{background:#0b1f3a;color:#ffd766}
+  .firm-h{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+  .firm-h h3{margin:0;font-size:17px;font-weight:800}
+  .logo-dot{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:14px;flex:0 0 auto}
+  ul.tight{margin:8px 0 0;padding-left:20px}
+  ul.tight li{margin:3px 0}
+  .kv{font-size:13px;color:var(--muted)}
+  .kv b{color:var(--ink)}
+  details.acc{border:1px solid var(--line);border-radius:12px;margin:0 0 12px;background:#fff;overflow:hidden}
+  details.acc>summary{cursor:pointer;padding:14px 16px;font-weight:700;list-style:none;display:flex;align-items:center;gap:10px;justify-content:space-between}
+  details.acc>summary::-webkit-details-marker{display:none}
+  details.acc>summary .meta{font-size:11px;color:var(--muted);font-weight:600}
+  details.acc>summary .chev{transition:.2s;color:var(--blue)}
+  details.acc[open]>summary .chev{transform:rotate(90deg)}
+  details.acc .body{padding:0 16px 16px;border-top:1px solid var(--line)}
+  .badge{display:inline-block;font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:6px;color:#fff}
+  .b-prof{background:#2563eb}.b-entry{background:#0891b2}.b-ma{background:#7c3aed}
+  .b-price{background:#db2777}.b-cost{background:#ea580c}.b-growth{background:#16a34a}.b-size{background:#475569}
+  .step{border-left:3px solid var(--blue);padding:2px 0 2px 14px;margin:10px 0}
+  .step h5{margin:0 0 2px;font-size:14px;color:var(--navy)}
+  .reveal-btn{background:var(--blue);color:#fff;border:none;padding:8px 14px;border-radius:8px;font-weight:700;cursor:pointer;font-size:13px}
+  .reveal-btn:hover{background:#1d5be0}
+  .hidden{display:none}
+  .answer{background:#f0f6ff;border:1px solid #cfe0ff;border-radius:10px;padding:12px 14px;margin-top:10px}
+  .calc{background:#0b1f3a;color:#dce6f7;border-radius:10px;padding:12px 14px;font-family:"SF Mono",ui-monospace,Menlo,Consolas,monospace;font-size:13px;margin-top:8px;overflow-x:auto}
+  .calc .res{color:#ffd766;font-weight:700}
+  /* trainer */
+  .trainer{text-align:center}
+  .mm-problem{font-size:40px;font-weight:800;color:var(--navy);margin:14px 0;letter-spacing:.02em}
+  .mm-input{font-size:26px;text-align:center;width:200px;max-width:70%;padding:10px;border:2px solid var(--line);border-radius:12px;outline:none}
+  .mm-input:focus{border-color:var(--blue)}
+  .mm-stats{display:flex;justify-content:center;gap:22px;margin-top:14px;flex-wrap:wrap}
+  .mm-stat{text-align:center}
+  .mm-stat .n{font-size:24px;font-weight:800;color:var(--navy)}
+  .mm-stat .l{font-size:11px;color:var(--muted)}
+  .btn{background:var(--blue);color:#fff;border:none;padding:10px 18px;border-radius:10px;font-weight:700;cursor:pointer;font-size:14px}
+  .btn:hover{filter:brightness(1.05)}
+  .btn.ghost{background:#fff;color:var(--blue);border:1.5px solid var(--blue)}
+  .btn.warn{background:var(--warn)}
+  .seg{display:inline-flex;background:#eef2f8;border-radius:10px;padding:3px;gap:3px;flex-wrap:wrap}
+  .seg button{border:none;background:transparent;padding:7px 13px;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;color:var(--muted)}
+  .seg button.active{background:#fff;color:var(--navy);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+  .mm-feedback{font-weight:800;min-height:24px;margin-top:10px;font-size:15px}
+  .ok{color:var(--good)}.ng{color:var(--bad)}
+  /* timer */
+  .timer-display{font-size:62px;font-weight:800;color:var(--navy);text-align:center;font-variant-numeric:tabular-nums;margin:10px 0}
+  .timer-display.run{color:var(--blue)}
+  .timer-display.warn{color:var(--bad)}
+  .progress{height:8px;background:#eef2f8;border-radius:999px;overflow:hidden;margin:6px 0 14px}
+  .progress>i{display:block;height:100%;background:var(--blue);width:100%;transition:width .9s linear}
+  .row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+  /* glossary */
+  .search{width:100%;padding:11px 14px;border:1.5px solid var(--line);border-radius:10px;font-size:15px;outline:none}
+  .search:focus{border-color:var(--blue)}
+  .gloss dt{font-weight:800;color:var(--navy);margin-top:12px}
+  .gloss dd{margin:2px 0 0;color:var(--ink);font-size:14px}
+  .gloss .en{font-size:12px;color:var(--muted);font-weight:600}
+  .note{font-size:12.5px;color:var(--muted);background:#fbfcfe;border:1px dashed var(--line);border-radius:10px;padding:10px 12px;margin-top:8px}
+  .hero{background:linear-gradient(135deg,#0b1f3a,#1d4ed8);color:#fff;border-radius:18px;padding:26px 22px;margin-bottom:18px}
+  .hero h2{color:#fff;margin:0 0 6px;font-size:24px}
+  .hero p{color:#cdddff;margin:0 0 14px}
+  .hero .row{justify-content:flex-start}
+  .hero .btn.ghost{background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.4)}
+  .stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:6px}
+  .stat-box{background:rgba(255,255,255,.1);border-radius:12px;padding:12px;text-align:center}
+  .stat-box .n{font-size:22px;font-weight:800}
+  .stat-box .l{font-size:11px;color:#cdddff}
+  footer{max-width:1040px;margin:0 auto;padding:24px 16px 40px;color:var(--muted);font-size:12px;text-align:center}
+  .share{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1.5px solid var(--blue);color:var(--blue);padding:8px 14px;border-radius:10px;font-weight:700;cursor:pointer;font-size:13px}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--navy);color:#fff;padding:11px 20px;border-radius:10px;font-size:14px;opacity:0;transition:.25s;z-index:100;pointer-events:none}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<header class="site">
+  <div class="head-inner">
+    <div class="brand">
+      <h1>ケース面接ドリル</h1>
+      <span class="tag">全コンサル対応</span>
+    </div>
+    <div class="sub">MBB・戦略系・総合系まで網羅 ／ フレームワーク・練習ケース・フェルミ推定・暗算・思考タイマー</div>
+  </div>
+  <nav class="tabs" id="tabs">
+    <button data-view="home" class="active">ホーム</button>
+    <button data-view="firms">ファーム別</button>
+    <button data-view="frameworks">フレームワーク</button>
+    <button data-view="cases">練習ケース</button>
+    <button data-view="sizing">フェルミ推定</button>
+    <button data-view="math">暗算トレーナー</button>
+    <button data-view="timer">思考タイマー</button>
+    <button data-view="glossary">用語集</button>
+  </nav>
+</header>
+
+<main>
+  <!-- ============ HOME ============ -->
+  <section class="view active" id="view-home">
+    <div class="hero">
+      <h2>ケース面接、構造的に攻略する。</h2>
+      <p>マッキンゼーからアクセンチュアまで。ファームごとの「型」を押さえ、フレームワーク → 練習ケース → 計算ドリルで仕上げる。スマホ1つでどこでも。</p>
+      <div class="row">
+        <button class="btn ghost" onclick="go('firms')">ファーム別ガイド →</button>
+        <button class="btn ghost" onclick="go('cases')">練習ケースを解く →</button>
+      </div>
+      <div class="stat-row" style="margin-top:18px">
+        <div class="stat-box"><div class="n">12+</div><div class="l">対応ファーム</div></div>
+        <div class="stat-box"><div class="n">8</div><div class="l">練習ケース</div></div>
+        <div class="stat-box"><div class="n">∞</div><div class="l">暗算問題</div></div>
+      </div>
+    </div>
+
+    <div class="grid cols-2">
+      <div class="card">
+        <h3 style="margin-top:0">📋 ケース面接の全体像</h3>
+        <p class="kv">多くのファームで共通する標準的な流れ。<b>30〜45分</b>が目安。</p>
+        <div class="step"><h5>1. 問題提示を聞く</h5><span class="kv">クライアントの状況とゴールを正確に把握。前提・指標・スコープを確認。</span></div>
+        <div class="step"><h5>2. 明確化の質問</h5><span class="kv">目的・期間・地理・成功の定義を質問。1〜3問に絞る。</span></div>
+        <div class="step"><h5>3. 構造化（フレーム）</h5><span class="kv">MECEに論点を分解。30〜90秒で枠組みを作り、口頭で宣言。</span></div>
+        <div class="step"><h5>4. 分析・計算</h5><span class="kv">仮説を立て、数字で検証。声に出して思考過程を共有。</span></div>
+        <div class="step"><h5>5. 結論・提言</h5><span class="kv">「結論 → 根拠3点 → リスクと次の一手」で30秒に要約。</span></div>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-top:0">🎯 評価される5つの力</h3>
+        <ul class="tight">
+          <li><b>構造化力</b>：論点をMECEに分解できるか</li>
+          <li><b>定量力</b>：暗算・概算を素早く正確に</li>
+          <li><b>ビジネス感覚</b>：数字の意味を解釈できるか</li>
+          <li><b>コミュニケーション</b>：結論ファースト・簡潔さ</li>
+          <li><b>柔軟性</b>：新情報で軌道修正できるか</li>
+        </ul>
+        <div class="note">💡 「正解」より<b>思考プロセス</b>が見られている。声に出して考え、面接官を巻き込もう。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">🚀 おすすめの進め方</h3>
+      <div class="grid cols-3">
+        <div><span class="pill">STEP 1</span><br><b>ファーム別</b>で志望先の「型」（面接官主導か候補者主導か）を把握。</div>
+        <div><span class="pill">STEP 2</span><br><b>フレームワーク</b>で収益性・市場参入など8つの型を暗記。</div>
+        <div><span class="pill">STEP 3</span><br><b>練習ケース</b>を時間を計って解き、<b>暗算</b>で計算スピードを底上げ。</div>
+      </div>
+    </div>
+    <p style="text-align:center;margin-top:18px">
+      <button class="share" onclick="shareApp()">🔗 このアプリを友達に送る</button>
+    </p>
+  </section>
+
+  <!-- ============ FIRMS ============ -->
+  <section class="view" id="view-firms">
+    <h2 class="view-title">ファーム別ガイド</h2>
+    <p class="lead">同じ「ケース面接」でもファームごとに進め方とカルチャーが違う。志望先の<b>型</b>に合わせて準備しよう。</p>
+    <div class="card" style="padding:14px 16px">
+      <span class="pill led">面接官主導</span> = 面接官が次の論点を順に振る（誘導あり）
+      <span class="pill cand">候補者主導</span> = 自分でケースを進める（主体性が問われる）
+      <span class="pill mbb">MBB</span> = 戦略系トップ3
+    </div>
+    <div id="firmList" class="grid cols-2"></div>
+  </section>
+
+  <!-- ============ FRAMEWORKS ============ -->
+  <section class="view" id="view-frameworks">
+    <h2 class="view-title">フレームワーク集</h2>
+    <p class="lead">丸暗記ではなく「いつ使うか」をセットで覚える。実際のケースでは複数を組み合わせる。</p>
+    <div id="fwList"></div>
+  </section>
+
+  <!-- ============ CASES ============ -->
+  <section class="view" id="view-cases">
+    <h2 class="view-title">練習ケース</h2>
+    <p class="lead">まず自分で5〜10分構造化してから「解説を見る」を押そう。タイプ別・ファーム別に8問。</p>
+    <div class="card" style="padding:12px 16px">
+      <span class="badge b-prof">収益性</span> <span class="badge b-entry">市場参入</span>
+      <span class="badge b-ma">M&A</span> <span class="badge b-price">価格設定</span>
+      <span class="badge b-cost">コスト</span> <span class="badge b-growth">成長</span>
+      <span class="badge b-size">市場規模</span>
+    </div>
+    <div id="caseList"></div>
+  </section>
+
+  <!-- ============ SIZING ============ -->
+  <section class="view" id="view-sizing">
+    <h2 class="view-title">フェルミ推定ドリル</h2>
+    <p class="lead">市場規模・個数の概算。<b>「分解 → 各要素を推定 → 掛け算 → 妥当性チェック」</b>の型で。まず自分で出してから答えを開こう。</p>
+    <div class="card" style="padding:14px 16px;margin-bottom:14px">
+      <b>📐 基本の数字（日本）</b>
+      <div class="kv" style="margin-top:6px">人口 約1.2億人 ／ 世帯数 約5,400万 ／ 1世帯2.2人 ／ 平均寿命 約84歳 ／ 労働人口 約6,900万 ／ 東京都 約1,400万人</div>
+    </div>
+    <div id="sizingList"></div>
+  </section>
+
+  <!-- ============ MATH ============ -->
+  <section class="view" id="view-math">
+    <h2 class="view-title">暗算トレーナー</h2>
+    <p class="lead">ケースの計算スピードは練習量で決まる。難易度を選んでスタート。電卓は使わない！</p>
+    <div class="card trainer">
+      <div style="display:flex;justify-content:center;margin-bottom:6px">
+        <div class="seg" id="mmLevel">
+          <button data-lv="easy" class="active">やさしい</button>
+          <button data-lv="medium">ふつう</button>
+          <button data-lv="hard">むずかしい</button>
+          <button data-lv="biz">ビジネス算</button>
+        </div>
+      </div>
+      <div id="mmStart">
+        <p class="kv">「やさしい」=2桁×1桁 ／ 「ふつう」=2桁×2桁・割り算 ／ 「むずかしい」=3桁・%・概算 ／ 「ビジネス算」=売上・成長率・利益率の文章題</p>
+        <button class="btn" onclick="MM.start()">▶ 60秒チャレンジ開始</button>
+      </div>
+      <div id="mmPlay" class="hidden">
+        <div class="mm-problem" id="mmProblem">—</div>
+        <input class="mm-input" id="mmAnswer" inputmode="numeric" autocomplete="off" placeholder="答え" />
+        <div class="mm-feedback" id="mmFeedback"></div>
+        <div class="mm-stats">
+          <div class="mm-stat"><div class="n" id="mmTime">60</div><div class="l">残り秒</div></div>
+          <div class="mm-stat"><div class="n" id="mmScore">0</div><div class="l">正解</div></div>
+          <div class="mm-stat"><div class="n" id="mmStreak">0</div><div class="l">連続</div></div>
+        </div>
+        <div class="row" style="margin-top:14px">
+          <button class="btn ghost" onclick="MM.skip()">スキップ</button>
+          <button class="btn warn" onclick="MM.stop()">やめる</button>
+        </div>
+      </div>
+      <div id="mmResult" class="hidden">
+        <h3 id="mmResultTitle">結果</h3>
+        <p class="kv" id="mmResultText"></p>
+        <button class="btn" onclick="MM.start()">もう一回</button>
+      </div>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">⚡ 暗算のコツ</h3>
+      <ul class="tight">
+        <li><b>桁を丸める</b>：1,980円 ≒ 2,000円で概算 → 後で微調整</li>
+        <li><b>分配法則</b>：23×12 = 23×10 + 23×2 = 230+46 = 276</li>
+        <li><b>％は分数で</b>：25%=1/4、12.5%=1/8、33%≒1/3</li>
+        <li><b>桁数を先に</b>：億・万を分けて、最後に桁を合わせる</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ TIMER ============ -->
+  <section class="view" id="view-timer">
+    <h2 class="view-title">思考タイマー</h2>
+    <p class="lead">「構造化に何分かけられるか」を体に覚えさせる。沈黙OKと言われたら、まず黙って枠組みを作る練習を。</p>
+    <div class="card trainer">
+      <div style="display:flex;justify-content:center;margin-bottom:4px">
+        <div class="seg" id="tmPreset">
+          <button data-sec="60" class="active">構造化 60秒</button>
+          <button data-sec="90">90秒</button>
+          <button data-sec="300">分析 5分</button>
+          <button data-sec="1800">本番 30分</button>
+        </div>
+      </div>
+      <div class="timer-display" id="tmDisplay">01:00</div>
+      <div class="progress"><i id="tmBar"></i></div>
+      <div class="row">
+        <button class="btn" id="tmToggle" onclick="TM.toggle()">▶ スタート</button>
+        <button class="btn ghost" onclick="TM.reset()">リセット</button>
+      </div>
+      <p class="note" id="tmHint">構造化タイム：MECEに論点を分解。終わったら口頭で枠組みを宣言する練習を。</p>
+    </div>
+  </section>
+
+  <!-- ============ GLOSSARY ============ -->
+  <section class="view" id="view-glossary">
+    <h2 class="view-title">用語集</h2>
+    <p class="lead">面接官との会話で出てくる頻出ワード。検索で素早く確認。</p>
+    <input class="search" id="glossSearch" placeholder="🔍 用語を検索（例：MECE、損益分岐点、シナジー）" />
+    <div class="card" style="margin-top:14px"><dl class="gloss" id="glossList"></dl></div>
+  </section>
+</main>
+
+<footer>
+  ケース面接ドリル ／ 学習用の自作アプリ。掲載内容は一般的な対策情報であり、各社の実際の選考を保証するものではありません。<br>
+  <span style="opacity:.7">© 2026 Koki — Built for practice.</span>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ================= データ ================= */
+const FIRMS = [
+  {name:"McKinsey & Company", short:"McK", color:"#0b3d91", tags:["mbb","led"],
+   style:"面接官主導（インタビュアー・レッド）", focus:"論点を順に振られ、各設問で構造・計算・解釈を見られる。PEI（Personal Experience Interview）も必ずセット。",
+   tips:["設問ごとに『まず枠組み→数字→so what』を徹底","PEIでリーダーシップ/達成/対立の3エピソードを準備","結論ファースト、トップダウンで話す"]},
+  {name:"Boston Consulting Group", short:"BCG", color:"#177b57", tags:["mbb","cand"],
+   style:"候補者主導寄り（対話型）", focus:"自分でケースを前に進める。創造性とビジネス洞察、グラフ/図表の読み取りを重視。",
+   tips:["自分から次の論点を提案して主導する","定性的な示唆（so what）を厚めに","図表が出たら『軸→傾向→例外→示唆』で読む"]},
+  {name:"Bain & Company", short:"Bain", color:"#b3122b", tags:["mbb","cand"],
+   style:"候補者主導（結果志向）", focus:"実利・実装重視。『結局いくら儲かる/改善するのか』に強くこだわる。チームフィット（A Bainie）も重要。",
+   tips:["常に金額インパクトに落とす","80/20で重要論点から","明るく前のめりなコミュニケーション"]},
+  {name:"Strategy& (PwC)", short:"S&", color:"#e8511d", tags:["led"],
+   style:"面接官主導寄り", focus:"戦略×実行。業界知識と財務リテラシーをやや重視。",
+   tips:["バリュエーションや財務指標に慣れておく","業界トレンドを一つ語れるように"]},
+  {name:"Monitor Deloitte / Deloitte", short:"Del", color:"#86bc25", tags:["led"],
+   style:"面接官主導 ＋ グループ/ジョブもあり", focus:"総合系の戦略部門。デジタル・DXや実装まで含めた問いが出やすい。",
+   tips:["デジタル変革・テクノロジー文脈の引き出しを持つ","グループディスカッション対策も"]},
+  {name:"EY-Parthenon / EY", short:"EYP", color:"#ffe600", text:"#222", tags:["led"],
+   style:"面接官主導", focus:"PEファンドのデューデリ（商業DD）案件が多く、市場成長性・競争環境の分析を重視。",
+   tips:["市場の魅力度（規模×成長×競争）を素早く評価","投資判断（買う/買わない）に結論づける"]},
+  {name:"Kearney", short:"ATK", color:"#7a2fd6", tags:["led"],
+   style:"面接官主導", focus:"オペレーション/コスト/調達に強み。実務的で泥臭い改善ケースが出やすい。",
+   tips:["バリューチェーン/コスト構造の分解を得意に","実装可能性とクイックウィンを意識"]},
+  {name:"Roland Berger", short:"RB", color:"#c8102e", tags:["led"],
+   style:"面接官主導", focus:"欧州系。製造業・自動車・産業財に強い。論理的厳密さを重視。",
+   tips:["製造業のコスト/サプライチェーン文脈を準備","論理の飛躍を作らない"]},
+  {name:"Oliver Wyman", short:"OW", color:"#1f3a93", tags:["cand"],
+   style:"候補者主導（やや難）", focus:"金融・保険・リスクに強み。定量的に重い、ひねったケースが出やすい。",
+   tips:["重めの計算に動じない","前提を明示してから計算に入る"]},
+  {name:"L.E.K. Consulting", short:"LEK", color:"#005eb8", tags:["led"],
+   style:"面接官主導", focus:"商業DD・市場規模推定が頻出。マーケットサイジング力が直接効く。",
+   tips:["フェルミ推定を反復","市場成長率の前提を丁寧に置く"]},
+  {name:"Accenture (Strategy)", short:"ACN", color:"#a100ff", tags:["led"],
+   style:"面接官主導 ＋ グループワーク", focus:"戦略〜実装〜テクノロジーまで一気通貫。DX・デジタル文脈の問いが多い。",
+   tips:["テクノロジー実装の現実性を語れるように","グループケース・プレゼン対策も"]},
+  {name:"総合系・日系（PwC/KPMG/ABeam 等）", short:"+α", color:"#475569", tags:["led"],
+   style:"面接官主導が中心", focus:"戦略色の濃さはチーム次第。志望動機・カルチャーフィットの比重がやや高い傾向。",
+   tips:["なぜコンサル/なぜ当社を言語化","ケースは標準フレームで十分戦える"]},
+];
+
+const FRAMEWORKS = [
+  {name:"収益性分析（利益が減っている）", badge:"b-prof", when:"『利益/売上が下がった』『黒字化したい』系で最初に使う王道。",
+   tree:["利益 = 売上 − 費用","売上 = 単価 × 数量（× 客数 × 客単価 にも分解可）","費用 = 固定費 + 変動費","→ どの要素が、いつから、なぜ変化したかを特定"],
+   note:"まず『売上側 or 費用側 どちらの問題か』を切り分け、外部（市場・競合）か内部（自社）かを問う。"},
+  {name:"市場参入（新規市場に入るべきか）", badge:"b-entry", when:"『この市場に参入すべき？』『海外展開すべき？』系。",
+   tree:["① 市場の魅力度：規模・成長率・収益性（5 Forces）","② 自社の勝てる力：競争優位・ケイパビリティ","③ 参入方法：自前 / M&A / 提携","④ 採算：投資・回収・リスク → GO/NO-GO"],
+   note:"結論は必ず『参入する/しない＋条件』まで。期待リターンとリスクを天秤に。"},
+  {name:"M&A（買収すべきか）", badge:"b-ma", when:"『この会社を買うべき？』系。投資判断ケース。",
+   tree:["① なぜ買う：戦略的合理性（成長/シナジー/防衛）","② 対象の評価：事業・財務・市場ポジション","③ シナジー：売上シナジー＋コストシナジー","④ 価格と条件：バリュエーション、のれん","⑤ リスク：統合(PMI)、文化、規制 → 買う/見送る"],
+   note:"『シナジー額 vs 支払うプレミアム』が判断の核。過大評価に注意。"},
+  {name:"価格設定（プライシング）", badge:"b-price", when:"『この新製品いくらで売る？』『値上げすべき？』系。",
+   tree:["① コストベース：原価＋目標マージン（下限）","② 競合ベース：競合価格・代替品との比較","③ 価値ベース：顧客が感じる価値（上限・理想）","→ 3つの幅の中で、戦略目的に合わせて決定"],
+   note:"価格弾力性（値上げで数量がどれだけ減るか）を必ず意識。価値ベースが王道。"},
+  {name:"コスト削減 / オペレーション", badge:"b-cost", when:"『コストを下げたい』『利益率を改善したい』系。",
+   tree:["① コスト構造を分解：固定/変動、バリューチェーン別","② 大きい費目から（80/20）","③ ベンチマーク：競合/業界平均と比較","④ 施策：内製/外注、自動化、調達、人員","⑤ 実現性 × インパクトで優先順位"],
+   note:"『売上を犠牲にしない』視点を忘れない。クイックウィンと構造改革を分ける。"},
+  {name:"成長戦略（売上を伸ばす）", badge:"b-growth", when:"『売上を2倍にしたい』『次の成長の柱は？』系。",
+   tree:["アンゾフの成長マトリクス：","① 市場浸透（既存×既存）","② 新製品開発（既存市場×新製品）","③ 新市場開拓（新市場×既存製品）","④ 多角化（新×新）"],
+   note:"既存顧客の客単価・頻度アップは見落としがち。リスクの低い順に検討。"},
+  {name:"市場規模推定（フェルミ）", badge:"b-size", when:"『この市場は何円？』単独でも、他ケースの一部としても頻出。",
+   tree:["トップダウン：全体（人口等）→ 絞り込み → 単価で掛ける","ボトムアップ：1店舗/1人あたり → 積み上げ","→ 必ず妥当性チェック（桁が常識的か）"],
+   note:"前提の数字を声に出して置く。エレガントさより『分解の論理』が評価される。"},
+  {name:"思考の土台ツール（3C/4P/5Forces 等）", badge:"b-prof", when:"上記の各ステップの中で『漏れなく見る』ために使う補助輪。",
+   tree:["3C：Customer / Competitor / Company","4P：Product / Price / Place / Promotion","5 Forces：競合/新規参入/代替品/買い手/売り手","バリューチェーン：購買→製造→物流→販売→サービス","MECE：モレなく・ダブりなく分解する原則"],
+   note:"フレームに当てはめるのが目的化しないこと。ケースに合わせて『カスタムの枝』を作るのが上級者。"},
+];
+
+const CASES = [
+  {title:"地方スーパーの利益が3年連続で減少", firm:"McKinsey型", badge:"b-prof", lvl:"基礎",
+   bg:"クライアントは地方で20店舗を展開する食品スーパー。売上は横ばいだが、営業利益がこの3年で40%減少。原因を特定し、改善策を提言してほしい。",
+   q:"なぜ利益が減っているのか？どう改善するか？",
+   structure:["利益 = 売上 − 費用 に分解。売上は横ばい → <b>費用側</b>が主因と仮説","費用 = 売上原価（仕入）＋ 人件費 ＋ 地代・光熱費 などに分解","各費目が『いつから・どれだけ』増えたかを確認","外部要因（仕入価格高騰・最低賃金上昇）と内部要因（オペ非効率）を切り分け"],
+   calc:["売上 100億円（横ばい）","営業利益率：3年前 5% → 現在 3%","利益額：5億 → 3億（▲2億, ▲40%） ✔ お題と一致","原価率が 65%→68% に悪化 = 売上の3% = <span class='res'>3億円</span>のコスト増が主犯"],
+   conc:"利益減の主因は<b>仕入原価率の3pt悪化</b>。①共同仕入・PB拡大で原価率を1.5pt改善（+1.5億）、②人件費はシフト最適化で対応。まず原価に切り込むのが最大インパクト。値上げは客離れリスクがあるため最後の手段。"},
+
+  {title:"飲料メーカーが健康志向の新ジャンルに参入すべきか", firm:"BCG型", badge:"b-entry", lvl:"標準",
+   bg:"大手飲料メーカーが、急成長中の『無糖・機能性ドリンク』市場への参入を検討。参入すべきか判断してほしい。",
+   q:"この市場に参入すべきか？",
+   structure:["① 市場の魅力度：規模・成長率・収益性・競争環境(5 Forces)","② 自社の強み：既存ブランド・販路・製造能力を活かせるか","③ 参入方法：自社開発 / 既存ブランド拡張 / M&A","④ 採算と撤退基準 → GO/NO-GO"],
+   calc:["市場規模：2,000億円、年成長率 15%（魅力的）","必要投資：製造ライン＋マーケで 50億円","目標シェア 10% → 売上 200億円、営業利益率 10% = <span class='res'>20億円/年</span>","投資回収：50億 ÷ 20億 ≒ 2.5年（許容範囲）"],
+   conc:"<b>参入を推奨</b>。市場は高成長で、自社の全国販路とブランドが強力な参入優位になる。ただし既存ブランドのカニバリ（共食い）を避けるため<b>新ブランドで展開</b>。3年で回収見込み。撤退基準（2年後シェア5%未満なら縮小）を事前設定。"},
+
+  {title:"製薬企業が中堅バイオベンチャーを買収すべきか", firm:"Bain型", badge:"b-ma", lvl:"応用",
+   bg:"大手製薬が、有望な新薬パイプラインを持つバイオベンチャーの買収を検討。提示価格は800億円。買うべきか。",
+   q:"この買収は妥当か？いくらまでなら払えるか？",
+   structure:["① 戦略合理性：自社の弱い領域を補完できるか","② パイプライン評価：成功確率×市場規模×残存特許","③ シナジー：販売網による売上シナジー、研究の重複削減","④ バリュエーション：価値 vs 800億円のプレミアム"],
+   calc:["主力候補薬：ピーク売上 500億円/年、確率調整後 ×40%","自社の世界販売網でピーク売上が 1.5倍に（売上シナジー）","想定価値：将来CFの現在価値 ≒ 1,000億円規模","支払額 800億 < 価値 1,000億 → <span class='res'>差引 +200億</span>の妙味"],
+   conc:"<b>買収妥当</b>。販売シナジーを織り込めば価値は約1,000億円で、提示額800億円を上回る。ただし臨床第3相の成否が価値の大半を左右するため、<b>マイルストーン型の条件付き価格（アーンアウト）</b>でリスクを分担する形を推奨。"},
+
+  {title:"SaaSスタートアップの新プラン価格をいくらにするか", firm:"Strategy&型", badge:"b-price", lvl:"標準",
+   bg:"中小企業向け会計SaaSが、上位プラン（自動化機能付き）を新設。月額いくらに設定すべきか。現行プランは月3,000円。",
+   q:"新プランの価格をいくらにすべきか？",
+   structure:["① コスト下限：追加機能の限界費用はほぼゼロ（SaaS）","② 競合ベース：競合の上位プランは月5,000〜8,000円","③ 価値ベース：自動化で顧客は月『何時間』節約できるか","→ 価値を金額換算して上限を出す"],
+   calc:["自動化で経理作業を月20時間削減","人件費換算：時給2,000円 × 20h = <span class='res'>月4万円</span>の価値","顧客が払ってよい上限はこの一部 → 月8,000〜10,000円も正当化可","現行3,000円との差を考え、心理的な刻みで <span class='res'>月6,800円</span>を推奨"],
+   conc:"<b>月6,800円（現行の約2.3倍）</b>を推奨。コストはほぼゼロなので価値ベースで攻める。月4万円の価値提供に対し十分割安に見え、競合(5,000〜8,000円)とも整合。導入初月割引でアップセルを促進。"},
+
+  {title:"自動車部品工場のコストを15%削減せよ", firm:"Kearney型", badge:"b-cost", lvl:"応用",
+   bg:"自動車部品メーカーの主力工場。受注価格の下落圧力が強く、競争力維持のため製造コストを15%下げたい。",
+   q:"どこから、どうコストを削減するか？",
+   structure:["① コスト構造を分解：材料費・労務費・経費・減価償却","② 大きい費目から着手（80/20）","③ ベンチマーク：競合・他工場との差","④ 施策をインパクト×実現性でマッピング"],
+   calc:["総コスト 100：材料費 60／労務費 20／経費 15／償却 5","材料費が最大 → 1割改善で 全体の<span class='res'>6%</span>削減","集中購買・歩留改善・VA/VE で材料6%＋労務の自動化で4%＋経費5%","合計 ≒ <span class='res'>15%</span>を積み上げ達成"],
+   conc:"最大費目の<b>材料費（全体の60%）</b>を最優先。集中購買・歩留まり改善・設計見直し(VA/VE)で6%、工程自動化で労務4%、経費5%を積み上げて目標15%。品質を落とさないことを制約条件に、クイックウィン（購買）から着手。"},
+
+  {title:"地域カフェチェーンが売上を2倍にする打ち手は", firm:"Accenture型", badge:"b-growth", lvl:"標準",
+   bg:"50店舗のカフェチェーン。3年で売上2倍を目指す。現実的な成長戦略を描いてほしい。",
+   q:"どうやって売上を2倍にするか？",
+   structure:["売上 = 店舗数 × 1店舗売上。1店舗売上 = 客数 × 客単価","アンゾフで整理：①既存店強化 ②新商品 ③新規出店 ④新事業","リスクが低く確実な順に組み合わせる"],
+   calc:["現在：50店 × 年4,000万 = 売上 100億円","施策A 新規出店 50→80店（+60%）","施策B 客単価 +15%（フード強化・モバイルオーダー）","施策C 法人向けデリバリー新事業（+10%）","複合効果：1.6 × 1.15 × 1.10 ≒ <span class='res'>約2.0倍</span>"],
+   conc:"単一施策では2倍は困難。<b>出店(+60%)×客単価(+15%)×新チャネル(+10%)</b>の複合で到達。最も確実な客単価向上（既存資産の活用）から着手し、出店は採算地に絞る。デジタル（アプリ・デリバリー）を横串に。"},
+
+  {title:"日本のコンビニおにぎりの年間市場規模は？", firm:"L.E.K.型", badge:"b-size", lvl:"基礎",
+   bg:"クライアントがおにぎり関連事業を検討中。日本のコンビニおにぎりの年間市場規模（円）を推定してほしい。",
+   q:"年間で何個・何円売れているか？",
+   structure:["人口ベースのトップダウンで推定","『食べる人 × 頻度 × 単価』に分解","コンビニ利用に絞り込む","最後に桁の妥当性をチェック"],
+   calc:["人口 1.2億人 × おにぎりを買う層 60% = 7,200万人","1人あたり週1個 = 年52個","年間個数：7,200万 × 52 ≒ <span class='res'>37億個</span>","単価 130円 → 37億 × 130 ≒ <span class='res'>約4,800億円</span>"],
+   conc:"年間<b>約37億個・市場規模 約5,000億円</b>と推定。実際のコンビニおにぎり市場は数千億円規模とされ、桁は妥当。感度が高いのは『購入頻度』なので、ここの前提を面接官と握るのが重要。"},
+
+  {title:"航空会社が機内Wi-Fiを有料化すべきか", firm:"Oliver Wyman型", badge:"b-price", lvl:"応用",
+   bg:"中堅航空会社が、現在無料の機内Wi-Fiを有料化（または逆に全便無料化）するか検討。収益と顧客満足のバランスをどう取るか。",
+   q:"Wi-Fiを有料にすべきか、無料を維持すべきか？",
+   structure:["① 直接収益：有料化した場合の課金収入","② 間接効果：満足度・リピート・ブランドへの影響","③ コスト：通信インフラの固定費","④ 競合の動き → 戦略的に判断"],
+   calc:["年間搭乗者 1,000万人、Wi-Fi利用率 30% = 300万人","有料化で利用は半減 → 150万人 × 1,000円 = <span class='res'>15億円</span>の直接収入","一方、顧客満足低下でリピート 1%減 → 売上 1,000億 × 1% = <span class='res'>▲10億円</span>"],
+   conc:"<b>基本無料を維持し、ハイスピード版のみ有料</b>のフリーミアムを推奨。完全有料化は直接収入15億に対しブランド毀損▲10億で正味メリットが薄い。差別化要素として『全便無料』を打ち出しつつ、ヘビーユーザーからは上位プランで回収する二段構え。"},
+];
+
+const SIZING = [
+  {q:"日本にあるピアノの調律師の数は？", approach:["世帯ベースで保有台数を推定 → 必要な調律回数 → 1人の年間処理数で割る"],
+   ans:["世帯 5,400万 × ピアノ保有率 3% ≒ 162万台","年1回調律として 年162万回の需要","調律師1人 = 1日3台 × 250日 = 年750台","162万 ÷ 750 ≒ <span class='res'>約2,000人</span>"]},
+  {q:"東京都内を走るタクシーの台数は？", approach:["需要側（1日の利用回数）から逆算、または供給側（営業所×台数）"],
+   ans:["都内人口 1,400万 × 1日にタクシー利用 2% = 28万回/日","1台が1日に運ぶ回数 = 30回","28万 ÷ 30 ≒ <span class='res'>約9,000〜1万台</span>（実数は約3万台規模＝法人含む。前提の利用率で桁が動く点を明示）"]},
+  {q:"日本のスターバックスの年間売上は？", approach:["店舗数 × 1店舗あたり売上 で積み上げ"],
+   ans:["店舗数 約1,800店","1店1日 客数 500人 × 客単価 600円 = 30万円/日","年商：30万 × 350日 = 約1.05億円/店","1,800 × 1.05億 ≒ <span class='res'>約1,900億円</span>（実際 約2,000億円規模 ✔）"]},
+  {q:"日本で1年間に消費されるペットボトル飲料の本数は？", approach:["人口 × 1人あたり消費頻度 で推定"],
+   ans:["人口 1.2億人 × 飲む層 80% = 9,600万人","1人 週3本 = 年156本","9,600万 × 156 ≒ <span class='res'>約150億本/年</span>"]},
+  {q:"羽田空港で1日に離発着する飛行機の便数は？", approach:["滑走路の処理能力（時間×本数）から供給側で推定"],
+   ans:["滑走路4本、稼働 約18時間/日","1本あたり 1時間に 約15回（4分に1回）処理","4本 × 15 × 18 ≒ 1,080 → 余裕率を見て <span class='res'>約1,000便/日（離着陸計）</span>"]},
+  {q:"日本のオフィスにあるコピー機（複合機）の台数は？", approach:["働く人数 ÷ 1台あたり利用人数 で推定"],
+   ans:["オフィスワーカー 約4,000万人のうち オフィス勤務 60% = 2,400万人","複合機1台 = 約20人で共有","2,400万 ÷ 20 ≒ <span class='res'>約120万台</span>"]},
+];
+
+const GLOSSARY = [
+  ["MECE","Mutually Exclusive, Collectively Exhaustive","モレなく・ダブりなく。論点を分解する際の基本原則。"],
+  ["イシューツリー","Issue Tree","大きな問いを、MECEな小さな問いに枝分かれさせた図。構造化の道具。"],
+  ["仮説思考","Hypothesis-driven","先に答えの仮説を立て、それを検証する形で分析を進める進め方。"],
+  ["So What? / Why So?","—","『だから何が言えるか（示唆）』『なぜそう言えるか（根拠）』。分析を提言に変える問い。"],
+  ["ドライバー","Driver","結果を大きく左右する要因。『利益のドライバーは数量だ』のように使う。"],
+  ["損益分岐点","Break-even Point","利益がゼロになる売上/数量。固定費 ÷（単価−変動費）で求まる。"],
+  ["固定費 / 変動費","Fixed / Variable Cost","固定費は数量に関係なく一定、変動費は数量に比例して増える費用。"],
+  ["限界利益","Contribution Margin","売上 − 変動費。固定費の回収と利益に貢献する額。"],
+  ["シナジー","Synergy","統合により1+1が2より大きくなる効果。売上シナジーとコストシナジーがある。"],
+  ["カニバリゼーション","Cannibalization","自社の新製品が自社の既存製品の売上を食ってしまうこと（共食い）。"],
+  ["価格弾力性","Price Elasticity","価格を変えたとき需要(数量)がどれだけ動くか。弾力的＝価格に敏感。"],
+  ["バリューチェーン","Value Chain","購買→製造→物流→販売→サービスといった価値creation の連鎖。コスト分析に有効。"],
+  ["5フォース","Porter's Five Forces","業界の収益性を5つの力（競合・新規参入・代替品・買い手・売り手）で分析。"],
+  ["3C","Customer/Competitor/Company","市場・競合・自社の3視点。状況整理の基本フレーム。"],
+  ["アンゾフ・マトリクス","Ansoff Matrix","製品(既存/新)×市場(既存/新)で成長戦略を4分類する枠組み。"],
+  ["80/20の法則","Pareto Principle","結果の8割は2割の要因から。重要論点に絞り込む発想。"],
+  ["クイックウィン","Quick Win","短期間・低リスクで効果が出る施策。提言の実装で重宝。"],
+  ["PMI","Post Merger Integration","M&A後の統合プロセス。買収の成否を分ける難所。"],
+  ["DD（デューデリ）","Due Diligence","投資/買収前の精査。商業DDは市場・競争環境の調査を指す。"],
+  ["ボトムアップ / トップダウン","Bottom-up / Top-down","積み上げで推定するか、全体から絞り込むか。市場規模推定の2方向。"],
+  ["PEI","Personal Experience Interview","マッキンゼー等の人物面接。リーダーシップ等の過去経験を深掘りされる。"],
+  ["案件（エンゲージメント）","Engagement","コンサルが請け負うプロジェクト1件のこと。"],
+];
+
+/* ================= 描画 ================= */
+function el(html){const t=document.createElement('template');t.innerHTML=html.trim();return t.content.firstChild;}
+
+function renderFirms(){
+  const c=document.getElementById('firmList');
+  c.innerHTML='';
+  FIRMS.forEach(f=>{
+    const tagPills=f.tags.map(t=>{
+      if(t==='mbb')return '<span class="pill mbb">MBB</span>';
+      if(t==='led')return '<span class="pill led">面接官主導</span>';
+      if(t==='cand')return '<span class="pill cand">候補者主導</span>';
+      return '';
+    }).join('');
+    const txt = f.text||'#fff';
+    c.appendChild(el(`
+      <div class="card">
+        <div class="firm-h">
+          <div class="logo-dot" style="background:${f.color};color:${txt}">${f.short}</div>
+          <h3>${f.name}</h3>
+        </div>
+        <div>${tagPills}</div>
+        <p class="kv" style="margin:8px 0 4px"><b>進め方：</b>${f.style}</p>
+        <p class="kv" style="margin:0 0 6px">${f.focus}</p>
+        <b style="font-size:13px">対策のポイント</b>
+        <ul class="tight">${f.tips.map(t=>`<li>${t}</li>`).join('')}</ul>
+      </div>`));
+  });
+}
+
+function renderFrameworks(){
+  const c=document.getElementById('fwList');
+  c.innerHTML='';
+  FRAMEWORKS.forEach((f,i)=>{
+    c.appendChild(el(`
+      <details class="acc" ${i===0?'open':''}>
+        <summary>
+          <span><span class="badge ${f.badge}">FW</span>&nbsp; ${f.name}</span>
+          <span class="chev">▸</span>
+        </summary>
+        <div class="body">
+          <p class="kv" style="margin:10px 0 6px"><b>使う場面：</b>${f.when}</p>
+          <b style="font-size:13px">分解の型</b>
+          <ul class="tight">${f.tree.map(t=>`<li>${t}</li>`).join('')}</ul>
+          <div class="note">💡 ${f.note}</div>
+        </div>
+      </details>`));
+  });
+}
+
+function renderCases(){
+  const c=document.getElementById('caseList');
+  c.innerHTML='';
+  CASES.forEach((cs,i)=>{
+    const id='ans'+i;
+    c.appendChild(el(`
+      <details class="acc">
+        <summary>
+          <span><span class="badge ${cs.badge}">${cs.firm}</span>&nbsp; ${cs.title}</span>
+          <span class="meta">${cs.lvl}&nbsp;<span class="chev">▸</span></span>
+        </summary>
+        <div class="body">
+          <p class="kv" style="margin:12px 0 4px"><b>背景：</b>${cs.bg}</p>
+          <p style="margin:4px 0 10px"><b>❓ 問い：</b>${cs.q}</p>
+          <button class="reveal-btn" onclick="toggleAns('${id}',this)">解説を見る ▾</button>
+          <div class="hidden" id="${id}">
+            <div class="answer">
+              <b>🧭 構造化の流れ</b>
+              <ul class="tight">${cs.structure.map(s=>`<li>${s}</li>`).join('')}</ul>
+            </div>
+            <div class="calc"><b>🔢 計算例</b><br>${cs.calc.join('<br>')}</div>
+            <div class="answer" style="background:#f0fff5;border-color:#bff0cf">
+              <b>✅ 結論・提言</b><br>${cs.conc}
+            </div>
+          </div>
+        </div>
+      </details>`));
+  });
+}
+
+function toggleAns(id,btn){
+  const d=document.getElementById(id);
+  const open=d.classList.toggle('hidden')===false;
+  btn.textContent = open ? '解説を隠す ▴' : '解説を見る ▾';
+}
+
+function renderSizing(){
+  const c=document.getElementById('sizingList');
+  c.innerHTML='';
+  SIZING.forEach((s,i)=>{
+    const id='siz'+i;
+    c.appendChild(el(`
+      <details class="acc">
+        <summary><span><span class="badge b-size">フェルミ</span>&nbsp; ${s.q}</span><span class="chev">▸</span></summary>
+        <div class="body">
+          <p class="kv" style="margin:12px 0 8px"><b>アプローチ：</b>${s.approach[0]}</p>
+          <button class="reveal-btn" onclick="toggleAns('${id}',this)">推定例を見る ▾</button>
+          <div class="hidden" id="${id}">
+            <div class="calc">${s.ans.join('<br>')}</div>
+          </div>
+        </div>
+      </details>`));
+  });
+}
+
+function renderGlossary(filter){
+  const c=document.getElementById('glossList');
+  c.innerHTML='';
+  const f=(filter||'').toLowerCase();
+  let n=0;
+  GLOSSARY.forEach(g=>{
+    const hay=(g[0]+g[1]+g[2]).toLowerCase();
+    if(f && !hay.includes(f))return;
+    n++;
+    c.appendChild(el(`<dt>${g[0]} <span class="en">${g[1]}</span></dt><dd>${g[2]}</dd>`));
+  });
+  if(n===0)c.appendChild(el(`<dd class="kv">「${filter}」に一致する用語はありません。</dd>`));
+}
+
+/* ================= ナビ ================= */
+function go(view){
+  document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.toggle('active',b.dataset.view===view));
+  document.querySelectorAll('section.view').forEach(s=>s.classList.remove('active'));
+  document.getElementById('view-'+view).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(location.hash.slice(1)!==view) history.replaceState(null,'','#'+view);
+}
+document.getElementById('tabs').addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(b) go(b.dataset.view);
+});
+
+/* ================= 暗算トレーナー ================= */
+const MM = (function(){
+  let level='easy', cur=null, score=0, streak=0, timeLeft=60, timer=null, running=false;
+  const rnd=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+
+  function gen(){
+    if(level==='easy'){const a=rnd(11,99),b=rnd(2,9);return{q:`${a} × ${b}`,a:a*b};}
+    if(level==='medium'){
+      if(Math.random()<0.5){const a=rnd(11,49),b=rnd(11,29);return{q:`${a} × ${b}`,a:a*b};}
+      const b=rnd(3,12),a=b*rnd(8,40);return{q:`${a} ÷ ${b}`,a:a/b};
+    }
+    if(level==='hard'){
+      const r=Math.random();
+      if(r<0.4){const a=rnd(100,999),b=rnd(11,29);return{q:`${a} × ${b}`,a:a*b};}
+      if(r<0.7){const p=[10,20,25,30,40,50][rnd(0,5)];const base=rnd(20,400)*5;return{q:`${base} の ${p}%`,a:Math.round(base*p/100)};}
+      const a=rnd(2000,9000),b=rnd(1000,4000);return{q:`${a} + ${b}`,a:a+b};
+    }
+    // biz
+    const t=rnd(0,3);
+    if(t===0){const u=rnd(200,900),q=rnd(30,90)*100;return{q:`単価${u}円 × ${q}個 の売上は？(円)`,a:u*q};}
+    if(t===1){const rev=rnd(50,400)*10,m=[5,10,15,20,25][rnd(0,4)];return{q:`売上${rev}億 × 利益率${m}% の利益は？(億)`,a:Math.round(rev*m/100)};}
+    if(t===2){const a=rnd(80,300),g=[10,20,25,50][rnd(0,3)];return{q:`${a}億が ${g}%成長 したら？(億)`,a:Math.round(a*(100+g)/100)};}
+    const total=rnd(200,900),share=[5,10,20,25][rnd(0,3)];return{q:`市場${total}億 でシェア${share}% なら売上は？(億)`,a:Math.round(total*share/100)};
+  }
+  function next(){cur=gen();document.getElementById('mmProblem').textContent=cur.q;const i=document.getElementById('mmAnswer');i.value='';i.focus();}
+  function tick(){timeLeft--;document.getElementById('mmTime').textContent=timeLeft;if(timeLeft<=0)stop();}
+  function start(){
+    level=document.querySelector('#mmLevel button.active').dataset.lv;
+    score=0;streak=0;timeLeft=60;running=true;cur=null;
+    document.getElementById('mmStart').classList.add('hidden');
+    document.getElementById('mmResult').classList.add('hidden');
+    document.getElementById('mmPlay').classList.remove('hidden');
+    document.getElementById('mmScore').textContent=0;
+    document.getElementById('mmStreak').textContent=0;
+    document.getElementById('mmTime').textContent=60;
+    document.getElementById('mmFeedback').textContent='';
+    next();
+    clearInterval(timer);timer=setInterval(tick,1000);
+  }
+  function check(){
+    if(!running||!cur)return;
+    const v=document.getElementById('mmAnswer').value.trim();
+    if(v==='')return;
+    const fb=document.getElementById('mmFeedback');
+    if(Number(v)===cur.a){
+      score++;streak++;
+      fb.textContent='⭕ 正解！';fb.className='mm-feedback ok';
+      document.getElementById('mmScore').textContent=score;
+      document.getElementById('mmStreak').textContent=streak;
+      next();
+    }else{
+      streak=0;document.getElementById('mmStreak').textContent=0;
+      fb.textContent='❌ もう一度（答えは見えるよ）';fb.className='mm-feedback ng';
+    }
+  }
+  function skip(){if(!running)return;streak=0;document.getElementById('mmStreak').textContent=0;
+    document.getElementById('mmFeedback').textContent='答え：'+cur.a;document.getElementById('mmFeedback').className='mm-feedback';next();}
+  function stop(){
+    running=false;clearInterval(timer);
+    document.getElementById('mmPlay').classList.add('hidden');
+    const r=document.getElementById('mmResult');r.classList.remove('hidden');
+    let msg;
+    if(score>=20)msg='🏆 神レベル！本番でも計算で困らない。';
+    else if(score>=12)msg='🔥 かなり速い！この調子。';
+    else if(score>=6)msg='👍 いいペース。毎日続けよう。';
+    else msg='🌱 まずは桁を丸める練習から。継続が力。';
+    document.getElementById('mmResultTitle').textContent=`60秒で ${score} 問正解！`;
+    document.getElementById('mmResultText').textContent=msg;
+  }
+  document.getElementById('mmLevel').addEventListener('click',e=>{
+    const b=e.target.closest('button');if(!b)return;
+    document.querySelectorAll('#mmLevel button').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+  });
+  document.getElementById('mmAnswer').addEventListener('input',check);
+  return {start,skip,stop};
+})();
+
+/* ================= 思考タイマー ================= */
+const TM = (function(){
+  let total=60, left=60, timer=null, running=false;
+  const hints={
+    60:"構造化タイム：MECEに論点を分解。終わったら口頭で枠組みを宣言する練習を。",
+    90:"少し長めの構造化。複雑なケースで枝を深く作る練習に。",
+    300:"分析タイム：1つの論点を仮説→計算→示唆まで掘る練習。",
+    1800:"本番想定の30分。問題提示→構造化→分析→結論まで一周通す。"
+  };
+  function fmt(s){const m=Math.floor(s/60),x=s%60;return String(m).padStart(2,'0')+':'+String(x).padStart(2,'0');}
+  function paint(){
+    const d=document.getElementById('tmDisplay');d.textContent=fmt(left);
+    document.getElementById('tmBar').style.width=(left/total*100)+'%';
+    d.className='timer-display'+(running?' run':'')+(left<=10&&left>0?' warn':'');
+  }
+  function tick(){left--;paint();if(left<=0){clearInterval(timer);running=false;
+    document.getElementById('tmToggle').textContent='▶ スタート';
+    try{navigator.vibrate&&navigator.vibrate([200,100,200]);}catch(e){}
+    document.getElementById('tmDisplay').textContent='時間です';
+  }}
+  function toggle(){
+    if(running){clearInterval(timer);running=false;document.getElementById('tmToggle').textContent='▶ 再開';paint();}
+    else{if(left<=0)left=total;running=true;document.getElementById('tmToggle').textContent='⏸ 一時停止';clearInterval(timer);timer=setInterval(tick,1000);paint();}
+  }
+  function reset(){clearInterval(timer);running=false;left=total;document.getElementById('tmToggle').textContent='▶ スタート';paint();}
+  function setPreset(sec){total=sec;left=sec;reset();document.getElementById('tmHint').textContent=hints[sec]||'';}
+  document.getElementById('tmPreset').addEventListener('click',e=>{
+    const b=e.target.closest('button');if(!b)return;
+    document.querySelectorAll('#tmPreset button').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');setPreset(Number(b.dataset.sec));
+  });
+  paint();
+  return {toggle,reset};
+})();
+
+/* ================= 共有 ================= */
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000);}
+async function shareApp(){
+  const url=location.href.split('#')[0];
+  const data={title:'ケース面接ドリル｜全コンサル対応',text:'コンサルのケース面接対策アプリ作った。一緒に練習しよ！',url};
+  if(navigator.share){try{await navigator.share(data);return;}catch(e){}}
+  try{await navigator.clipboard.writeText(url);showToast('🔗 URLをコピーしました！友達に送ってね');}
+  catch(e){showToast('URL: '+url);}
+}
+
+/* ================= 用語検索 ================= */
+document.getElementById('glossSearch').addEventListener('input',e=>renderGlossary(e.target.value));
+
+/* ================= 初期化 ================= */
+renderFirms();renderFrameworks();renderCases();renderSizing();renderGlossary('');
+const initial=location.hash.slice(1);
+if(initial && document.getElementById('view-'+initial))go(initial);
+</script>
+</body>
+</html>
