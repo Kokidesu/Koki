@@ -32,10 +32,11 @@
   }
   a{color:var(--blue);text-decoration:none}
   header.site{
-    background:linear-gradient(135deg,var(--navy),var(--navy2));
-    color:#fff; padding:18px 16px 12px; position:sticky; top:0; z-index:50;
-    box-shadow:0 2px 12px rgba(11,31,58,.18);
-    border-bottom:2px solid rgba(201,162,39,.85);
+    background:linear-gradient(135deg,rgba(8,20,39,.94),rgba(17,39,72,.94));
+    backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+    color:#fff; padding:14px 16px 10px; position:sticky; top:0; z-index:50;
+    box-shadow:0 6px 26px rgba(5,15,35,.38);
+    border-bottom:1px solid rgba(201,162,39,.55);
   }
   .head-inner{max-width:1040px;margin:0 auto}
   .brand{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
@@ -53,7 +54,7 @@
   section.view{display:none;animation:fade .25s ease}
   section.view.active{display:block}
   @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-  h2.view-title{font-size:21px;margin:4px 0 2px;font-weight:800;color:var(--navy)}
+  h2.view-title{font-size:23px;margin:4px 0 2px;font-weight:800;color:var(--navy);font-family:"Shippori Mincho",Georgia,serif;letter-spacing:.02em}
   .lead{color:var(--muted);margin:0 0 16px;font-size:13.5px}
   .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin:0 0 12px;box-shadow:0 1px 3px rgba(16,31,58,.05)}
   .grid{display:grid;gap:12px}
@@ -105,7 +106,7 @@
   /* ===== 会社選択 ===== */
   .firm-grid{display:grid;gap:10px;grid-template-columns:1fr 1fr}
   @media(min-width:680px){.firm-grid{grid-template-columns:1fr 1fr 1fr}}
-  .firm-card{background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:16px 14px 14px;cursor:pointer;transition:.18s;display:flex;gap:11px;align-items:flex-start;position:relative;overflow:hidden}
+  .firm-card{background:#fff;border:1.5px solid var(--line);border-radius:16px;padding:16px 15px 14px;cursor:pointer;transition:.25s cubic-bezier(.2,.7,.3,1);display:flex;gap:11px;align-items:flex-start;position:relative;overflow:hidden;box-shadow:0 2px 8px rgba(16,31,58,.05)}
   .firm-card::before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--c,#2f6df6),transparent 85%)}
   .firm-card:hover{border-color:var(--c,var(--blue));box-shadow:0 6px 18px rgba(47,109,246,.13);transform:translateY(-2px)}
   .firm-card:hover{box-shadow:0 8px 22px color-mix(in srgb, var(--c, #2f6df6) 28%, transparent)}
@@ -198,6 +199,47 @@
   .share{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1.5px solid var(--blue);color:var(--blue);padding:8px 14px;border-radius:10px;font-weight:700;cursor:pointer;font-size:13px}
   .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--navy);color:#fff;padding:11px 20px;border-radius:10px;font-size:14px;opacity:0;transition:.25s;z-index:100;pointer-events:none}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  /* ===== ヒーロー（エグゼクティブ・ダーク） ===== */
+  .hero{
+    position:relative;overflow:hidden;color:#fff;border-radius:22px;
+    padding:36px 28px 28px;margin:4px 0 24px;
+    background:
+      radial-gradient(120% 150% at 88% -25%, #234a8c 0%, transparent 55%),
+      radial-gradient(80% 110% at -10% 110%, #15396e44 0%, transparent 60%),
+      linear-gradient(135deg,#071322 0%,#0b1f3a 55%,#122a50 100%);
+    box-shadow:0 20px 50px rgba(8,20,40,.35);
+  }
+  .hero::after{
+    content:"";position:absolute;top:0;left:-60%;width:38%;height:100%;
+    background:linear-gradient(100deg,transparent,rgba(255,255,255,.075),transparent);
+    transform:skewX(-18deg);animation:heroshine 7s ease-in-out infinite;
+  }
+  @keyframes heroshine{0%,55%{left:-60%}88%,100%{left:135%}}
+  .hero-eyebrow{font-family:Georgia,serif;font-size:11px;letter-spacing:.34em;color:var(--gold);font-weight:700;margin-bottom:10px}
+  .hero h2{font-family:"Shippori Mincho",Georgia,serif;font-size:26px;line-height:1.5;margin:0 0 8px;font-weight:800}
+  .hero p{color:#aebedd;font-size:13.5px;margin:0 0 20px}
+  .hero-stats{display:flex;align-items:center;gap:20px}
+  .hero-stats div{text-align:center}
+  .hero-stats b{display:block;font-size:26px;font-family:Georgia,serif;color:#ffd766;line-height:1.1}
+  .hero-stats span{font-size:9.5px;letter-spacing:.22em;color:#8fa3c8;font-weight:700}
+  .hero-stats i{width:1px;height:32px;background:rgba(255,255,255,.16)}
+  /* ===== 出現アニメーション ===== */
+  .reveal{opacity:0;transform:translateY(16px);transition:opacity .55s cubic-bezier(.2,.7,.3,1),transform .55s cubic-bezier(.2,.7,.3,1)}
+  .reveal.in{opacity:1;transform:none}
+  /* ===== マイクロインタラクション ===== */
+  .btn,.reveal-btn,.chips button,.share,.timer-chip{transition:transform .12s ease, filter .15s ease, box-shadow .2s ease}
+  .btn:active,.reveal-btn:active,.chips button:active,.share:active{transform:scale(.95)}
+  .firm-card:hover .logo-wrap img{transform:scale(1.05)}
+  .logo-wrap img{transition:transform .3s cubic-bezier(.2,.7,.3,1)}
+  /* ===== 面接官の入力中ドット ===== */
+  .typing{display:inline-flex;gap:4px;padding:5px 2px;align-items:center}
+  .typing i{width:7px;height:7px;border-radius:50%;background:#9fb1cc;animation:tblink 1s infinite}
+  .typing i:nth-child(2){animation-delay:.15s}
+  .typing i:nth-child(3){animation-delay:.3s}
+  @keyframes tblink{0%,60%,100%{opacity:.25;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
+  .bubble .avatar{box-shadow:0 0 0 2px #fff, 0 0 0 3.5px rgba(11,31,58,.14), 0 4px 10px rgba(11,31,58,.2)}
+  .bubble .msg{animation:msgin .3s cubic-bezier(.2,.7,.3,1)}
+  @keyframes msgin{from{opacity:0;transform:translateY(6px) scale(.985)}to{opacity:1;transform:none}}
 </style>
 </head>
 <body>
@@ -223,6 +265,16 @@
 
     <!-- 会社選択 -->
     <div id="subSelect">
+      <div class="hero">
+        <div class="hero-eyebrow">CASE INTERVIEW DRILL</div>
+        <h2>その一問が、<br>内定を分ける。</h2>
+        <p>志望ファームの「型」で挑む、実戦形式の模擬ケース面接。</p>
+        <div class="hero-stats">
+          <div><b>12</b><span>FIRMS</span></div><i></i>
+          <div><b>15</b><span>CASES</span></div><i></i>
+          <div><b id="heroDone">0</b><span>CLEARED</span></div>
+        </div>
+      </div>
       <div class="eyebrow">SELECT YOUR TARGET FIRM</div>
       <h2 class="view-title">どの会社の面接を受けますか？</h2>
       <p class="lead">会社を選ぶと、その会社の出題傾向・面接スタイルに合わせた模擬面接が始まります。</p>
@@ -876,6 +928,12 @@ function renderFirmGrid(){
     const n=totalSessions();
     t.innerHTML = n>0 ? `これまでの練習：<b>${n}回</b> — 継続は力 💪` : 'まずは志望度の高い1社から始めよう';
   }
+  const hd=document.getElementById('heroDone');
+  if(hd) hd.textContent=Object.keys(doneMap()).length;
+  // カードをふわっと順番に表示
+  const cards=g.querySelectorAll('.firm-card');
+  cards.forEach((c,i)=>{c.classList.add('reveal');c.style.transitionDelay=(i*45)+'ms';});
+  requestAnimationFrame(()=>requestAnimationFrame(()=>cards.forEach(c=>c.classList.add('in'))));
 }
 function startRandomAll(){
   const f=FIRMS[Math.floor(Math.random()*FIRMS.length)];
@@ -954,14 +1012,16 @@ function quitSession(){
 }
 function addBubble(html){
   const c=S.firm?S.firm.color:'#0b1f3a';
-  document.getElementById('sessLog').appendChild(el(`
+  const node=el(`
     <div class="bubble">
       <div class="avatar" style="${logoStyle(c)}">🤵</div>
       <div>
         <div class="who">面接官</div>
-        <div class="msg">${html}</div>
+        <div class="msg"><span class="typing"><i></i><i></i><i></i></span></div>
       </div>
-    </div>`));
+    </div>`);
+  document.getElementById('sessLog').appendChild(node);
+  setTimeout(()=>{node.querySelector('.msg').innerHTML=html;},520);
 }
 function addBlock(html){
   document.getElementById('sessLog').appendChild(el(html));
