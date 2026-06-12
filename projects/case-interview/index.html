@@ -240,6 +240,13 @@
   .bubble .avatar{box-shadow:0 0 0 2px #fff, 0 0 0 3.5px rgba(11,31,58,.14), 0 4px 10px rgba(11,31,58,.2)}
   .bubble .msg{animation:msgin .3s cubic-bezier(.2,.7,.3,1)}
   @keyframes msgin{from{opacity:0;transform:translateY(6px) scale(.985)}to{opacity:1;transform:none}}
+  /* ===== 音声面接（TTS / 音声入力） ===== */
+  .voice-btn{background:#eef2f8;border:1.5px solid var(--line);color:var(--muted);border-radius:999px;padding:7px 14px;font-weight:800;font-size:12.5px;cursor:pointer;flex:0 0 auto}
+  .voice-btn.on{background:var(--navy);color:#ffd766;border-color:var(--navy);box-shadow:0 3px 10px rgba(11,31,58,.3)}
+  .mic-btn{background:#fff;border:1.5px solid #cfe0ff;color:var(--blue);border-radius:999px;padding:7px 13px;font-weight:700;font-size:12.5px;cursor:pointer}
+  .mic-btn.rec{background:var(--bad);border-color:var(--bad);color:#fff;animation:recpulse 1.2s infinite}
+  @keyframes recpulse{0%,100%{box-shadow:0 0 0 0 rgba(220,38,38,.45)}50%{box-shadow:0 0 0 9px rgba(220,38,38,0)}}
+  .bubble .msg{cursor:pointer}
 </style>
 </head>
 <body>
@@ -305,6 +312,7 @@
           <div class="t" id="sessTitle">—</div>
           <div class="p" id="sessProg">—</div>
         </div>
+        <button class="voice-btn" id="voiceBtn" onclick="Voice.toggle()">🔇 音声OFF</button>
         <div class="prog"><i id="sessBar" style="width:0%"></i></div>
       </div>
       <div id="sessLog"></div>
@@ -1002,13 +1010,18 @@ function startCase(firmId,caseId){
   document.getElementById('sessLog').innerHTML='';
   document.getElementById('sessTitle').textContent=`${S.firm.short}模擬面接：${S.cs.title}`;
   show('subSession');
+  Voice.paint();
+  if(!localStorage.getItem('cid_vhint')){
+    localStorage.setItem('cid_vhint','1');
+    setTimeout(()=>showToast('🔊 上の音声ボタンをONにすると面接官が声で話します'),900);
+  }
   // 面接官の導入あいさつ
   addBubble(`本日は面接にお越しいただきありがとうございます。${S.firm.name} の面接官です。これからケース面接を始めます。メモを取りながら、<b>考えていることは声に出して</b>進めてくださいね。`);
   renderStep();
   window.scrollTo({top:0,behavior:'smooth'});
 }
 function quitSession(){
-  if(confirm('面接を中断して問題選択に戻りますか？')) openFirm(S.firm.id);
+  if(confirm('面接を中断して問題選択に戻りますか？')){Voice.stop();Mic.stop();openFirm(S.firm.id);}
 }
 function addBubble(html){
   const c=S.firm?S.firm.color:'#0b1f3a';
@@ -1021,7 +1034,10 @@ function addBubble(html){
       </div>
     </div>`);
   document.getElementById('sessLog').appendChild(node);
-  setTimeout(()=>{node.querySelector('.msg').innerHTML=html;},520);
+  const msg=node.querySelector('.msg');
+  msg.title='タップで読み上げ';
+  msg.onclick=()=>Voice.speak(html);
+  setTimeout(()=>{msg.innerHTML=html;Voice.speak(html);},520);
 }
 function addBlock(html){
   document.getElementById('sessLog').appendChild(el(html));
@@ -1058,6 +1074,7 @@ function renderStep(){
         <div class="yz-t">🧑‍💼 あなたの番：確認の質問を考えて、声に出してみよう</div>
         <textarea placeholder="例）利益の定義は？ 期間は？ 競合の動きは？"></textarea>
         <div class="qa-row">
+          <button class="mic-btn" onclick="Mic.toggle(this)">🎙️ 音声で答える</button>
           <button class="reveal-btn" onclick="toggleAns('cl${i}',this)">面接官との想定Q&Aを見る ▾</button>
         </div>
         <div class="hidden" id="cl${i}">
@@ -1075,6 +1092,7 @@ function renderStep(){
         </div>
         <textarea placeholder="ここに枠組みをメモ（売上＝…×…、費用＝…＋… など）"></textarea>
         <div class="qa-row">
+          <button class="mic-btn" onclick="Mic.toggle(this)">🎙️ 音声で答える</button>
           <button class="reveal-btn" onclick="toggleAns('stx${i}',this)">模範の枠組みを見る ▾</button>
         </div>
         <div class="hidden" id="stx${i}">
@@ -1110,6 +1128,7 @@ function renderStep(){
         <div class="yz-t">🧑‍💼 あなたの番：思いつく限り挙げてから、模範例と見比べよう</div>
         <textarea placeholder="仮説・アイデアをここにメモ"></textarea>
         <div class="qa-row">
+          <button class="mic-btn" onclick="Mic.toggle(this)">🎙️ 音声で答える</button>
           <button class="reveal-btn" onclick="toggleAns('ins${i}',this)">模範例を見る ▾</button>
         </div>
         <div class="hidden" id="ins${i}">
@@ -1124,6 +1143,7 @@ function renderStep(){
         <div class="yz-t">🧑‍💼 あなたの番：「結論 → 根拠 → リスクと次の一手」の順で声に出して言ってみよう</div>
         <textarea placeholder="結論ファーストで書いてみる"></textarea>
         <div class="qa-row">
+          <button class="mic-btn" onclick="Mic.toggle(this)">🎙️ 音声で答える</button>
           <button class="reveal-btn" onclick="toggleAns('rec${i}',this)">模範解答を見る ▾</button>
         </div>
         <div class="hidden" id="rec${i}">
@@ -1140,6 +1160,7 @@ function renderStep(){
   }
 }
 function advance(){
+  Mic.stop();
   S.step++;
   renderStep();
   const log=document.getElementById('sessLog');
@@ -1240,6 +1261,8 @@ function renderGlossary(filter){
    タブ切替
 ================================================================ */
 function go(view){
+  if(window.Voice)Voice.stop();
+  if(window.Mic)Mic.stop();
   document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.toggle('active',b.dataset.view===view));
   document.querySelectorAll('section.view').forEach(s=>s.classList.remove('active'));
   document.getElementById('view-'+view).classList.add('active');
@@ -1325,6 +1348,80 @@ const MM = (function(){
   });
   document.getElementById('mmAnswer').addEventListener('input',check);
   return {start,skip,stop};
+})();
+
+/* ================================================================
+   音声面接：読み上げ（TTS）と音声入力（STT）
+================================================================ */
+const Voice=(function(){
+  const ok='speechSynthesis' in window;
+  let on = ok && localStorage.getItem('cid_voice')==='1';
+  let jp=null;
+  function pick(){
+    if(!ok)return;
+    const vs=speechSynthesis.getVoices().filter(v=>v.lang&&v.lang.toLowerCase().startsWith('ja'));
+    const pref=['Google 日本語','Kyoko','Nanami','O-Ren','Hattori'];
+    jp=vs.find(v=>pref.some(pn=>v.name.includes(pn)))||vs[0]||null;
+  }
+  if(ok){pick();try{speechSynthesis.onvoiceschanged=pick;}catch(e){}}
+  function clean(text){
+    return text
+      .replace(/<[^>]*>/g,' ')
+      .replace(/&[a-z]+;/g,' ')
+      .replace(/[\u{1F000}-\u{1FAFF}\u{2190}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}]/gu,' ')
+      .replace(/\s+/g,' ').trim();
+  }
+  function speak(text){
+    if(!on||!ok)return;
+    const t=clean(text);
+    if(!t)return;
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(t);
+    if(jp)u.voice=jp;
+    u.lang='ja-JP';u.rate=1.06;u.pitch=1.0;
+    speechSynthesis.speak(u);
+  }
+  function stop(){if(ok)speechSynthesis.cancel();}
+  function toggle(){
+    if(!ok){showToast('この端末は音声合成に未対応です');return;}
+    on=!on;localStorage.setItem('cid_voice',on?'1':'0');paint();
+    if(on){pick();speak('音声をオンにしました。私が本日の面接官です。よろしくお願いします。');}
+    else stop();
+  }
+  function paint(){
+    const b=document.getElementById('voiceBtn');
+    if(b){b.textContent=on?'🔊 音声ON':'🔇 音声OFF';b.classList.toggle('on',on);}
+  }
+  return {speak,stop,toggle,paint,get on(){return on}};
+})();
+
+const Mic=(function(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  let rec=null, activeBtn=null, baseText='';
+  function toggle(btn){
+    if(!SR){showToast('この端末は音声入力に未対応です（Chrome / Safari 推奨）');return;}
+    if(activeBtn===btn){stop();return;}
+    stop();
+    Voice.stop(); // 面接官の声とマイクがかぶらないように
+    const ta=btn.closest('.you-zone').querySelector('textarea');
+    if(!ta)return;
+    activeBtn=btn;btn.classList.add('rec');btn.textContent='⏹ 録音中…タップで停止';
+    baseText=ta.value?ta.value.trim()+'\n':'';
+    rec=new SR();rec.lang='ja-JP';rec.interimResults=true;rec.continuous=true;
+    rec.onresult=e=>{
+      let fin='',inter='';
+      for(const r of e.results){if(r.isFinal)fin+=r[0].transcript;else inter+=r[0].transcript;}
+      ta.value=baseText+fin+inter;
+    };
+    rec.onend=()=>{if(activeBtn){activeBtn.classList.remove('rec');activeBtn.textContent='🎙️ 音声で答える';activeBtn=null;}rec=null;};
+    rec.onerror=()=>{showToast('音声入力エラー：マイク許可を確認してね');};
+    try{rec.start();showToast('🎙️ どうぞ、声に出して答えてください');}catch(e){}
+  }
+  function stop(){
+    if(rec){try{rec.stop();}catch(e){}rec=null;}
+    if(activeBtn){activeBtn.classList.remove('rec');activeBtn.textContent='🎙️ 音声で答える';activeBtn=null;}
+  }
+  return {toggle,stop};
 })();
 
 /* ================================================================
