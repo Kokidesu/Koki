@@ -2,7 +2,8 @@
 """Build a native Excel workbook (.xlsx) with the essay's data tables and Excel charts."""
 import os
 from openpyxl import Workbook
-from openpyxl.chart import LineChart, BarChart, Reference, Series
+from openpyxl.chart import LineChart, BarChart, ScatterChart, Reference, Series
+from openpyxl.chart.trendline import Trendline
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
 
@@ -156,6 +157,62 @@ bc2.set_categories(c2)
 bc2.series[0].graphicalProperties.solidFill = "C0392B"
 bc2.legend = None
 ws3.add_chart(bc2, "E4")
+
+# ---------------- Sheet 4: Prefectural correlation (all 47) ----------------
+ws4 = wb.create_sheet("Prefecture_Correlation")
+ws4["A1"] = "Minimum Wage vs. Non-Regular Employment, All 47 Prefectures"
+ws4["A1"].font = TITLE
+ws4["A2"] = ("Sources: MHLW FY2025 minimum-wage table (2024 & 2025); 2022 Employment Status Survey, "
+             "Table 2-3 (non-regular share of all workers).")
+ws4["A2"].font = NOTE
+ws4.append([])
+ws4.append(["Prefecture", "Min wage 2024 (¥)", "Min wage 2025 (¥)", "Non-regular share 2022 (%)"])
+style_header(ws4, 4, 4)
+pref_panel = [
+    ("Hokkaido",1010,1075,34.3),("Aomori",953,1029,29.1),("Iwate",952,1031,29.7),("Miyagi",973,1038,30.3),
+    ("Akita",951,1031,28.8),("Yamagata",955,1032,26.8),("Fukushima",955,1033,27.8),("Ibaraki",1005,1074,31.8),
+    ("Tochigi",1004,1068,31.0),("Gunma",985,1063,32.2),("Saitama",1078,1141,33.5),("Chiba",1076,1140,32.4),
+    ("Tokyo",1163,1226,28.0),("Kanagawa",1162,1225,32.2),("Niigata",985,1050,29.3),("Toyama",998,1062,27.7),
+    ("Ishikawa",984,1054,29.2),("Fukui",984,1053,28.1),("Yamanashi",988,1052,31.4),("Nagano",998,1061,30.0),
+    ("Gifu",1001,1065,32.7),("Shizuoka",1034,1097,32.4),("Aichi",1077,1140,32.1),("Mie",1023,1087,33.4),
+    ("Shiga",1017,1080,35.0),("Kyoto",1058,1122,34.2),("Osaka",1114,1177,34.1),("Hyogo",1052,1116,33.9),
+    ("Nara",986,1051,34.5),("Wakayama",980,1045,30.4),("Tottori",957,1030,29.2),("Shimane",962,1033,30.4),
+    ("Okayama",982,1047,30.0),("Hiroshima",1020,1085,31.2),("Yamaguchi",979,1043,30.8),("Tokushima",980,1046,26.6),
+    ("Kagawa",970,1036,28.8),("Ehime",956,1033,29.0),("Kochi",952,1023,28.3),("Fukuoka",992,1057,34.2),
+    ("Saga",956,1030,30.5),("Nagasaki",953,1031,32.2),("Kumamoto",952,1034,29.9),("Oita",954,1035,29.6),
+    ("Miyazaki",952,1023,30.7),("Kagoshima",953,1026,31.6),("Okinawa",952,1023,33.4),
+]
+for row in pref_panel:
+    ws4.append(list(row))
+first4, last4 = 5, 4 + len(pref_panel)
+for r in range(first4, last4 + 1):
+    for c in range(1, 5):
+        ws4.cell(row=r, column=c).border = BORDER
+for col, w in zip("ABCD", [13, 18, 18, 24]):
+    ws4.column_dimensions[col].width = w
+# Pearson correlation in-sheet
+ws4["F4"] = "Pearson r (2024 wage vs non-reg):"
+ws4["I4"] = f"=CORREL(B{first4}:B{last4},D{first4}:D{last4})"
+ws4["F5"] = "R-squared:"
+ws4["I5"] = f"=I4^2"
+for cell in ("F4", "F5"):
+    ws4[cell].font = Font(bold=True)
+# Scatter chart: x = min wage 2024, y = non-reg share
+sc = ScatterChart()
+sc.title = "Min Wage (2024) vs Non-Regular Share (2022), 47 Prefectures"
+sc.x_axis.title = "Minimum wage 2024 (¥/hour)"
+sc.y_axis.title = "Non-regular share 2022 (%)"
+sc.x_axis.scaling.min = 940; sc.x_axis.scaling.max = 1180
+sc.y_axis.scaling.min = 26; sc.y_axis.scaling.max = 36
+sc.height, sc.width = 11, 18
+xref = Reference(ws4, min_col=2, min_row=first4, max_row=last4)
+yref = Reference(ws4, min_col=4, min_row=first4, max_row=last4)
+series = Series(yref, xref, title="Prefectures")
+series.marker.symbol = "circle"; series.marker.size = 6
+series.graphicalProperties.line.noFill = True
+series.trendline = Trendline(trendlineType="linear", dispRSqr=True, dispEq=True)
+sc.series.append(series)
+ws4.add_chart(sc, "F8")
 
 path = os.path.join(OUT, "Japan_MinimumWage_Data.xlsx")
 wb.save(path)

@@ -144,7 +144,11 @@ para(
     "The competitive labour-market model predicts a negative employment response that is concentrated "
     "among young, less-educated, and rural workers, and the Japanese evidence—most prominently "
     "Kawaguchi and Mori’s (2021) elasticity of about −1.2 for young less-educated men—broadly "
-    "supports this prediction while pointing to substantial heterogeneity. The essay argues that "
+    "supports this prediction while pointing to substantial heterogeneity. A direct correlation across "
+    "all 47 prefectures, computed here from verified MHLW and Employment Status Survey data, is "
+    "revealingly weak and positive (r = 0.38)—a confounded association that itself demonstrates why "
+    "within-prefecture variation, not raw cross-sectional comparison, is needed to identify the effect. "
+    "The essay argues that "
     "Japan’s aggregate disemployment effect is real but moderate, that it is masked in the headline "
     "numbers by demographic ageing and service-sector growth, and that the government’s "
     "¥1,500 target for the early 2030s therefore raises genuine distributional questions for the "
@@ -230,7 +234,8 @@ figure("fig1_minwage_trend.png",
 para(
     "The regional structure produces substantial dispersion in wage levels. In the 2024 revision, "
     "Tokyo recorded the highest minimum wage at ¥1,163 per hour and Akita the lowest at ¥951, a gap "
-    "of ¥212, or roughly twenty-two percent of the lower figure. As Figure 3 illustrates, the "
+    "of ¥212, or roughly twenty-two percent of the lower figure; by the 2025 revision the top had risen "
+    "to ¥1,226 in Tokyo and the floor to ¥1,023. As Figure 3 illustrates with the full 2025 ranking, the "
     "high-wage prefectures form a tight cluster of metropolitan areas—Tokyo, Kanagawa, Osaka, Aichi, "
     "Saitama, and Chiba—while the lowest wages are found in the more rural prefectures of Tohoku, "
     "Kyushu, Shikoku, and Okinawa. This gap is the centrepiece of the identification strategy: a worker "
@@ -238,10 +243,10 @@ para(
     "comparable worker in Tokyo, and the two groups’ employment outcomes can be compared as the floors "
     "rise at different rates.")
 figure("fig3_prefectural_dispersion.png",
-       "Figure 3. Hourly minimum wages by prefecture in 2024 (selected prefectures spanning the full "
-       "range). Metropolitan prefectures cluster well above the ¥1,055 national average, while rural "
-       "prefectures cluster near the ¥951 floor. The Tokyo–Akita gap of ¥212 is the regional "
-       "variation exploited in this study. Data: MHLW, October 2024 revision.")
+       "Figure 3. Hourly minimum wages for all 47 prefectures, 2025. Metropolitan prefectures cluster "
+       "well above the ¥1,121 national average, while rural prefectures cluster near the floor. The "
+       "spread runs from Tokyo (¥1,226) to Kochi, Miyazaki, and Okinawa (¥1,023). This regional "
+       "variation is the basis of the identification strategy. Data: MHLW, FY2025 regional minimum wage table.")
 para(
     "It is worth emphasising how recent and how deliberate the convergence at the top has become. The "
     "October 2025 revision raised the national average by a record ¥66 (about 6.3 percent), lifted "
@@ -374,7 +379,10 @@ para(
     "total employment, taken from the Statistics Bureau’s Labour Force Survey (Detailed Tabulation). "
     "Control variables—prefectural gross domestic product per capita, the unemployment rate, and the "
     "industrial composition of employment—are available from the Cabinet Office and the Ministry of "
-    "Internal Affairs and Communications.")
+    "Internal Affairs and Communications. For the prefecture-level analysis in Section 7, I pair each "
+    "prefecture’s statutory minimum wage with its non-regular employment rate from the 2022 Employment "
+    "Status Survey (Shugyo Kozo Kihon Chosa, Table 2-3), which reports, for every one of the 47 "
+    "prefectures, the share of all workers who are non-regular.")
 para(
     "Two descriptive patterns frame the analysis. The first, already shown in Figure 1, is the steep and "
     "sustained rise in the minimum wage. The second, shown in Figure 2, is the behaviour of the "
@@ -458,9 +466,59 @@ para(
     "the putty-clay reasoning of Tanaka and co-authors (2025) would suggest.")
 
 # =====================================================================
-# 7. EXPECTED RESULTS AND DISCUSSION
+# 7. CROSS-PREFECTURE CORRELATION
 # =====================================================================
-h1("7. Expected Results and Discussion")
+h1("7. A First Look at the Prefectural Correlation")
+para(
+    "Because Japan sets a separate minimum wage in each prefecture, the most direct empirical question "
+    "one can put to the published data is whether prefectures with higher minimum wages also have lower "
+    "part-time employment. To answer it, I paired each of the 47 prefectures’ statutory minimum wage "
+    "(the October 2024 floor) with its non-regular employment rate from the 2022 Employment Status "
+    "Survey—the share of all workers who are non-regular. Figure 6 plots all 47 prefectures, with the "
+    "fitted regression line.")
+figure("fig6_correlation.png",
+       "Figure 6. Each point is one of the 47 prefectures: the horizontal axis is the 2024 minimum "
+       "wage, the vertical axis the 2022 non-regular employment share. The cross-prefecture correlation "
+       "is weakly positive (Pearson r = 0.38, R² = 0.15). Tokyo (top wage, low non-regular share) is a "
+       "telling outlier. Sources: MHLW; 2022 Employment Status Survey.")
+para(
+    "At first sight the result is the opposite of what the disemployment hypothesis predicts. The "
+    "cross-prefecture correlation is weakly positive (Pearson r = 0.38, R² = 0.15): prefectures with "
+    "higher minimum wages tend, if anything, to have slightly more non-regular employment, not less. "
+    "Taken at face value, a naive reader might conclude that higher minimum wages raise part-time work. "
+    "That conclusion would be wrong, and seeing why is the most valuable thing this simple exercise can "
+    "teach.")
+para(
+    "The positive sign is pure confounding, and three features of the data make the point. First, the "
+    "level of the minimum wage is overwhelmingly a marker of cost of living and urbanisation: Tokyo, "
+    "Osaka, Kanagawa, and Aichi sit at the high-wage end not because their floors bind harder but "
+    "because everything is more expensive there. Second, the non-regular share is driven by industrial "
+    "structure: prefectures heavy in services, tourism, and retail—Okinawa (33.4 percent), Hokkaido "
+    "(34.3 percent), Kyoto (34.2 percent), Osaka (34.1 percent)—carry high non-regular shares almost "
+    "regardless of the wage floor, while the regular-employment manufacturing strongholds of Hokuriku "
+    "and Tohoku sit low (Toyama 27.7 percent, Yamagata 26.8 percent, Fukushima 27.8 percent, Tokushima "
+    "26.6 percent). Third, Tokyo is a revealing outlier: it has the highest minimum wage in the country "
+    "(¥1,163 in 2024) yet one of the lowest non-regular shares (28.0 percent), because its labour market "
+    "is dominated by regular, professional, white-collar employment. Tokyo single-handedly flattens the "
+    "slope; without it the spurious positive association would be stronger still.")
+para(
+    "This is exactly the identification problem that motivates the two-way fixed-effects panel of "
+    "Section 6. The raw minimum-wage level is entangled with cost of living and industry mix, both of "
+    "which independently raise non-regular employment and swamp whatever negative effect the floor "
+    "itself exerts. By comparing each prefecture against its own past as its floor rises, and by "
+    "absorbing nationwide shocks through year effects, the panel removes the fixed cost-of-living and "
+    "industrial differences that generate the misleading cross-sectional pattern in Figure 6. It is "
+    "also why the literature prefers the minimum-wage “bite”—the floor relative to the local median "
+    "wage—to the raw level: the bite is highest in the low-wage rural prefectures, which reverses the "
+    "horizontal ranking of Figure 6 and aligns the treatment with the prefectures where the floor "
+    "actually binds. The honest lesson of Figure 6 is therefore methodological. A simple correlation of "
+    "the kind a policy debate often invokes points in the wrong direction; only a design that exploits "
+    "within-prefecture variation can recover the effect the theory predicts.")
+
+# =====================================================================
+# 8. EXPECTED RESULTS AND DISCUSSION
+# =====================================================================
+h1("8. Expected Results and Discussion")
 para(
     "Because this essay assembles published aggregate data and the existing econometric estimates rather "
     "than estimating the panel on confidential micro-data, its conclusions about the regression "
@@ -507,7 +565,7 @@ para(
 # =====================================================================
 # 8. POLICY IMPLICATIONS
 # =====================================================================
-h1("8. Policy Implications")
+h1("9. Policy Implications")
 para(
     "The policy relevance of these expectations is immediate. The Japanese government has committed to a "
     "national average of ¥1,500 per hour by the early 2030s, a further increase of more than forty "
@@ -532,7 +590,7 @@ para(
 # =====================================================================
 # 9. LIMITATIONS
 # =====================================================================
-h1("9. Limitations")
+h1("10. Limitations")
 para(
     "Several limitations should be stated plainly. The most important is that this essay does not "
     "estimate the panel regression on confidential micro-data; its quantitative conclusions are "
@@ -551,7 +609,7 @@ para(
 # =====================================================================
 # 10. CONCLUSION
 # =====================================================================
-h1("10. Conclusion")
+h1("11. Conclusion")
 para(
     "Does raising the minimum wage in Japan reduce part-time employment? The answer this essay defends "
     "is a qualified yes. Theory predicts a negative effect; the well-identified Japanese evidence, above "
@@ -562,7 +620,10 @@ para(
     "growth that have driven the non-regular share upward even as the floor climbed. The right research "
     "design—a two-way fixed-effects panel of the forty-seven prefectures, corroborated by a comparison "
     "of high-bite and low-bite regions—is precisely the tool needed to separate the wage effect from "
-    "these confounders.")
+    "these confounders. The weakly positive cross-prefecture correlation documented in Figure 6 "
+    "(r = 0.38) makes the case concretely: read naively, the raw data appear to say that higher minimum "
+    "wages go hand in hand with more part-time work, when in truth the pattern is an artefact of cost of "
+    "living and industrial structure that only a within-prefecture design can remove.")
 para(
     "The policy reading follows from the heterogeneity rather than the average. Japan’s drive toward a "
     "¥1,500 minimum wage will compress wage inequality and raise the incomes of millions of part-time "
