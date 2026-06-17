@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>写真で学ぶ AI 家庭教師 / Photo Study Tutor</title>
+<style>
+  :root {
+    --bg: #0f1226;
+    --panel: #1a1f3a;
+    --panel-2: #232a4d;
+    --accent: #6c8cff;
+    --accent-2: #46d6b6;
+    --text: #eef1ff;
+    --muted: #9aa3c7;
+    --danger: #ff6b6b;
+    --ok: #46d6b6;
+    --border: #2c3360;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Kaku Gothic ProN", "Noto Sans JP", Meiryo, sans-serif;
+    background: radial-gradient(1200px 600px at 20% -10%, #1d2350 0%, var(--bg) 55%) fixed;
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 20px 16px 80px; }
+  header { text-align: center; margin: 14px 0 18px; }
+  header h1 { font-size: 1.5rem; margin: 0 0 6px; }
+  header p { color: var(--muted); margin: 0; font-size: 0.9rem; }
+  .badge {
+    display: inline-block; font-size: 0.72rem; color: var(--accent-2);
+    border: 1px solid var(--border); border-radius: 999px; padding: 2px 10px; margin-top: 8px;
+  }
+  .card {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 16px;
+    padding: 16px; margin-bottom: 14px;
+  }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  label { font-size: 0.85rem; color: var(--muted); display: block; margin-bottom: 6px; }
+  input[type="text"], input[type="password"], textarea, select {
+    width: 100%; background: var(--panel-2); color: var(--text);
+    border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; font-size: 0.95rem;
+    font-family: inherit;
+  }
+  textarea { resize: vertical; min-height: 60px; }
+  .seg { display: flex; gap: 6px; flex-wrap: wrap; }
+  .seg button {
+    background: var(--panel-2); color: var(--muted); border: 1px solid var(--border);
+    border-radius: 999px; padding: 7px 14px; cursor: pointer; font-size: 0.85rem; transition: .15s;
+  }
+  .seg button.active { background: var(--accent); color: #0b0e22; border-color: var(--accent); font-weight: 700; }
+  .drop {
+    border: 2px dashed var(--border); border-radius: 14px; padding: 26px 16px; text-align: center;
+    cursor: pointer; transition: .15s; color: var(--muted);
+  }
+  .drop.hover { border-color: var(--accent); background: rgba(108,140,255,.08); color: var(--text); }
+  .thumbs { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+  .thumb { position: relative; width: 92px; height: 92px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); }
+  .thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .thumb button {
+    position: absolute; top: 3px; right: 3px; background: rgba(0,0,0,.6); color: #fff; border: none;
+    border-radius: 50%; width: 22px; height: 22px; cursor: pointer; font-size: 0.9rem; line-height: 1;
+  }
+  .btn {
+    background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #0b0e22; border: none;
+    border-radius: 12px; padding: 13px 18px; font-size: 1rem; font-weight: 800; cursor: pointer; width: 100%;
+    transition: .15s;
+  }
+  .btn:disabled { opacity: .5; cursor: not-allowed; }
+  .btn.secondary { background: var(--panel-2); color: var(--text); border: 1px solid var(--border); font-weight: 600; }
+  .muted { color: var(--muted); font-size: 0.82rem; }
+  details { margin-top: 8px; }
+  summary { cursor: pointer; color: var(--muted); font-size: 0.85rem; }
+  .result { white-space: normal; word-break: break-word; }
+  .result h1, .result h2, .result h3 { margin: 14px 0 6px; }
+  .result code { background: var(--panel-2); padding: 2px 6px; border-radius: 6px; font-size: 0.9em; }
+  .result pre { background: var(--panel-2); padding: 12px; border-radius: 10px; overflow-x: auto; }
+  .result ul, .result ol { margin: 6px 0 6px 1.2em; }
+  .think { background: var(--panel-2); border-radius: 10px; padding: 10px 12px; margin-bottom: 10px; font-size: 0.86rem; color: var(--muted); white-space: pre-wrap; }
+  .status { font-size: 0.85rem; margin: 6px 0; min-height: 1.2em; }
+  .status.err { color: var(--danger); }
+  .status.ok { color: var(--ok); }
+  .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid var(--muted); border-top-color: var(--accent); border-radius: 50%; animation: spin .8s linear infinite; vertical-align: -2px; margin-right: 6px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .disclaimer { font-size: 0.78rem; color: var(--muted); border-left: 3px solid var(--accent); padding: 8px 12px; background: rgba(108,140,255,.06); border-radius: 8px; }
+  a { color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>📸 写真で学ぶ AI 家庭教師</h1>
+    <p data-i18n="subtitle">問題集・過去問・参考書の写真をアップ → 答えと「なぜそうなるか」を解説</p>
+    <span class="badge" data-i18n="badge">学習・復習用 / For study & review</span>
+  </header>
+
+  <div class="card disclaimer" data-i18n="disclaimer">
+    このツールは学習・復習のためのものです。試験本番中の使用はカンニングにあたるため、絶対に使わないでください。
+  </div>
+
+  <!-- API key -->
+  <div class="card">
+    <label data-i18n="apiKeyLabel">Anthropic API キー（あなたのブラウザにだけ保存されます）</label>
+    <div class="row">
+      <input type="password" id="apiKey" placeholder="sk-ant-..." autocomplete="off" style="flex:1; min-width:200px;" />
+      <button class="btn secondary" id="saveKey" style="width:auto;" data-i18n="saveKey">保存</button>
+    </div>
+    <div class="muted" style="margin-top:6px;">
+      <span data-i18n="apiKeyHelp">キーは</span>
+      <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">console.anthropic.com</a>
+      <span data-i18n="apiKeyHelp2">で発行できます。サーバーには送られず、端末内に保存されます。</span>
+    </div>
+  </div>
+
+  <!-- settings -->
+  <div class="card">
+    <label data-i18n="answerLangLabel">回答の言語 / Answer language</label>
+    <div class="seg" id="langSeg">
+      <button data-lang="auto" class="active">自動 / Auto</button>
+      <button data-lang="ja">日本語</button>
+      <button data-lang="en">English</button>
+      <button data-lang="both">日本語 + English</button>
+    </div>
+
+    <label style="margin-top:14px;" data-i18n="modeLabel">モード / Mode</label>
+    <div class="seg" id="modeSeg">
+      <button data-mode="fast">⚡ 高速 / Fast</button>
+      <button data-mode="balanced" class="active">⚖️ 標準 / Balanced</button>
+      <button data-mode="accurate">🎯 高精度 / Accurate</button>
+    </div>
+    <div class="muted" style="margin-top:6px;" data-i18n="modeHint">高速＝即答／高精度＝難問も丁寧に検算（少し時間がかかります）</div>
+
+    <label style="margin-top:14px;" data-i18n="uiLangLabel">画面の言語 / Interface</label>
+    <div class="seg" id="uiSeg">
+      <button data-ui="ja" class="active">日本語</button>
+      <button data-ui="en">English</button>
+    </div>
+  </div>
+
+  <!-- image upload -->
+  <div class="card">
+    <div class="drop" id="drop">
+      <div style="font-size:1.6rem;">🖼️</div>
+      <div data-i18n="dropText">タップで写真を選ぶ・ドラッグ&ドロップ・貼り付け（複数可）</div>
+      <div class="muted" data-i18n="dropHint">JPG / PNG / WebP / GIF</div>
+    </div>
+    <input type="file" id="fileInput" accept="image/*" multiple hidden />
+    <div class="thumbs" id="thumbs"></div>
+
+    <label style="margin-top:14px;" data-i18n="questionLabel">補足・質問（任意） / Extra question (optional)</label>
+    <textarea id="question" placeholder="例：問3だけ詳しく解説して / e.g. Explain only Q3 in detail"></textarea>
+  </div>
+
+  <button class="btn" id="solveBtn" data-i18n="solve">解答する / Solve</button>
+  <div class="status" id="status"></div>
+
+  <!-- result -->
+  <div class="card" id="resultCard" style="display:none;">
+    <div id="thinkWrap" style="display:none;">
+      <details open>
+        <summary data-i18n="thinking">思考過程 / Reasoning</summary>
+        <div class="think" id="think"></div>
+      </details>
+    </div>
+    <div class="result" id="result"></div>
+  </div>
+</div>
+
+<script>
+const I18N = {
+  ja: {
+    subtitle: "問題集・過去問・参考書の写真をアップ → 答えと「なぜそうなるか」を解説",
+    badge: "学習・復習用 / For study & review",
+    disclaimer: "このツールは学習・復習のためのものです。試験本番中の使用はカンニングにあたるため、絶対に使わないでください。",
+    apiKeyLabel: "Anthropic API キー（あなたのブラウザにだけ保存されます）",
+    saveKey: "保存",
+    apiKeyHelp: "キーは",
+    apiKeyHelp2: "で発行できます。サーバーには送られず、端末内に保存されます。",
+    answerLangLabel: "回答の言語 / Answer language",
+    modeLabel: "モード / Mode",
+    modeHint: "高速＝即答／高精度＝難問も丁寧に検算（少し時間がかかります）",
+    uiLangLabel: "画面の言語 / Interface",
+    dropText: "タップで写真を選ぶ・ドラッグ&ドロップ・貼り付け（複数可）",
+    dropHint: "JPG / PNG / WebP / GIF",
+    questionLabel: "補足・質問（任意） / Extra question (optional)",
+    solve: "解答する / Solve",
+    thinking: "思考過程 / Reasoning",
+    saved: "保存しました",
+    needKey: "先に API キーを入力してください。",
+    needImg: "写真を1枚以上アップしてください。",
+    solving: "考えています…",
+    done: "完了しました",
+  },
+  en: {
+    subtitle: "Upload a photo of a problem → get the answer and a step-by-step explanation",
+    badge: "For study & review",
+    disclaimer: "This tool is for study and review only. Using it during a real exam is cheating — never do that.",
+    apiKeyLabel: "Anthropic API key (stored only in your browser)",
+    saveKey: "Save",
+    apiKeyHelp: "Get a key at",
+    apiKeyHelp2: ". It is never sent to any server; it stays on your device.",
+    answerLangLabel: "Answer language",
+    modeLabel: "Mode",
+    modeHint: "Fast = instant answer / Accurate = double-checks even hard problems (a bit slower)",
+    uiLangLabel: "Interface",
+    dropText: "Tap to choose, drag & drop, or paste images (multiple OK)",
+    dropHint: "JPG / PNG / WebP / GIF",
+    questionLabel: "Extra question (optional)",
+    solve: "Solve",
+    thinking: "Reasoning",
+    saved: "Saved",
+    needKey: "Please enter your API key first.",
+    needImg: "Please upload at least one image.",
+    solving: "Thinking…",
+    done: "Done",
+  }
+};
+
+let uiLang = localStorage.getItem("uiLang") || "ja";
+let answerLang = localStorage.getItem("answerLang") || "auto";
+let mode = localStorage.getItem("mode") || "balanced";
+let images = []; // { dataUrl, mediaType, base64 }
+
+const $ = (id) => document.getElementById(id);
+
+function t(key) { return (I18N[uiLang] && I18N[uiLang][key]) || I18N.ja[key] || key; }
+
+function applyUiLang() {
+  document.documentElement.lang = uiLang;
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    const key = el.getAttribute("data-i18n");
+    if (I18N[uiLang][key]) el.textContent = I18N[uiLang][key];
+  });
+}
+
+// ---- API key ----
+$("apiKey").value = localStorage.getItem("anthropicKey") || "";
+$("saveKey").addEventListener("click", () => {
+  localStorage.setItem("anthropicKey", $("apiKey").value.trim());
+  setStatus(t("saved"), "ok");
+});
+
+// ---- language segments ----
+function initSeg(segId, attr, current, onPick) {
+  const seg = $(segId);
+  seg.querySelectorAll("button").forEach(b => {
+    if (b.getAttribute(attr) === current) b.classList.add("active"); else b.classList.remove("active");
+    b.addEventListener("click", () => {
+      seg.querySelectorAll("button").forEach(x => x.classList.remove("active"));
+      b.classList.add("active");
+      onPick(b.getAttribute(attr));
+    });
+  });
+}
+initSeg("langSeg", "data-lang", answerLang, (v) => { answerLang = v; localStorage.setItem("answerLang", v); });
+initSeg("modeSeg", "data-mode", mode, (v) => { mode = v; localStorage.setItem("mode", v); });
+initSeg("uiSeg", "data-ui", uiLang, (v) => { uiLang = v; localStorage.setItem("uiLang", v); applyUiLang(); });
+
+// ---- image handling ----
+const drop = $("drop");
+drop.addEventListener("click", () => $("fileInput").click());
+$("fileInput").addEventListener("change", (e) => addFiles(e.target.files));
+["dragenter","dragover"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add("hover"); }));
+["dragleave","drop"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove("hover"); }));
+drop.addEventListener("drop", e => addFiles(e.dataTransfer.files));
+window.addEventListener("paste", e => { if (e.clipboardData && e.clipboardData.files.length) addFiles(e.clipboardData.files); });
+
+function addFiles(fileList) {
+  [...fileList].forEach(file => {
+    if (!file.type.startsWith("image/")) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataUrl = reader.result;
+      const base64 = dataUrl.split(",")[1];
+      let mediaType = file.type;
+      if (!["image/jpeg","image/png","image/webp","image/gif"].includes(mediaType)) mediaType = "image/jpeg";
+      images.push({ dataUrl, mediaType, base64 });
+      renderThumbs();
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function renderThumbs() {
+  const c = $("thumbs");
+  c.innerHTML = "";
+  images.forEach((img, i) => {
+    const d = document.createElement("div");
+    d.className = "thumb";
+    d.innerHTML = `<img src="${img.dataUrl}" /><button title="remove">×</button>`;
+    d.querySelector("button").addEventListener("click", () => { images.splice(i,1); renderThumbs(); });
+    c.appendChild(d);
+  });
+}
+
+// ---- status ----
+function setStatus(msg, cls) {
+  const s = $("status");
+  s.className = "status" + (cls ? " " + cls : "");
+  s.innerHTML = msg;
+}
+
+// ---- minimal markdown -> html ----
+function mdToHtml(md) {
+  const esc = (s) => s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  let html = esc(md);
+  // code blocks
+  html = html.replace(/```([\s\S]*?)```/g, (m, c) => `<pre><code>${c.replace(/\n$/,"")}</code></pre>`);
+  // inline code
+  html = html.replace(/`([^`]+)`/g, "<code>$1</code>");
+  // headings
+  html = html.replace(/^### (.*)$/gm, "<h3>$1</h3>")
+             .replace(/^## (.*)$/gm, "<h2>$1</h2>")
+             .replace(/^# (.*)$/gm, "<h2>$1</h2>");
+  // bold / italic
+  html = html.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+  html = html.replace(/(^|[^*])\*([^*]+)\*/g, "$1<em>$2</em>");
+  // bullet lists
+  html = html.replace(/(?:^|\n)((?:[-*] .*(?:\n|$))+)/g, (m, block) => {
+    const items = block.trim().split("\n").map(l => "<li>" + l.replace(/^[-*] /, "") + "</li>").join("");
+    return "\n<ul>" + items + "</ul>";
+  });
+  // numbered lists
+  html = html.replace(/(?:^|\n)((?:\d+\. .*(?:\n|$))+)/g, (m, block) => {
+    const items = block.trim().split("\n").map(l => "<li>" + l.replace(/^\d+\. /, "") + "</li>").join("");
+    return "\n<ol>" + items + "</ol>";
+  });
+  // paragraphs / line breaks
+  html = html.replace(/\n{2,}/g, "</p><p>").replace(/\n/g, "<br>");
+  return "<p>" + html + "</p>";
+}
+
+// ---- system prompt ----
+function buildSystemPrompt() {
+  const langMap = {
+    auto: "Respond in the same language as the problems in the image.",
+    ja: "Respond entirely in Japanese (日本語).",
+    en: "Respond entirely in English.",
+    both: "Respond in BOTH Japanese and English: give each explanation first in Japanese, then in English."
+  };
+  const lines = [
+    "You are a brilliant, patient tutor helping a student study and review for exams.",
+    "The student uploads photos of practice problems from a workbook, past exam, or textbook.",
+    "These can be ANY subject and ANY difficulty: math (incl. geometry, calculus, proofs), physics, chemistry, biology, English, language, reading comprehension, logic/aptitude tests (SPI, 玉手箱, TG-WEB), coding, economics, etc. Handle whatever appears.",
+    "The images may contain diagrams, geometric figures, graphs, charts, tables, circuits, maps, or handwriting. Read these visual elements carefully — measure, count, trace, and use coordinates/labels from the figure as needed.",
+    "Read EVERY problem in the image(s) carefully and completely. Do not skip sub-questions.",
+    "For each problem:",
+    "1. State the final answer clearly and prominently (e.g. '**答え: ...**' / '**Answer: ...**').",
+    "2. Then explain the reasoning step by step, so the student actually learns WHY.",
+    "For multiple-choice questions, identify the correct option and briefly say why the wrong options are wrong.",
+    "For math, show your work line by line. For figures, describe what you read from the figure before solving. For language questions, explain the grammar/vocabulary point.",
+    "Be accurate and rigorous. Double-check your arithmetic and logic before giving the final answer. If the image is blurry or a problem is ambiguous, say so clearly instead of guessing.",
+    "Use clear formatting with a heading per problem (e.g. '## 問1' / '## Q1')."
+  ];
+  if (mode === "accurate") {
+    lines.push("This is high-accuracy mode: verify every answer independently (re-derive or sanity-check) before stating it, and flag anything you are unsure about.");
+  } else if (mode === "fast") {
+    lines.push("This is fast mode: be correct but concise. Give the answer and a short justification without lengthy exploration.");
+  }
+  lines.push(langMap[answerLang] || langMap.auto);
+  return lines.join("\n");
+}
+
+function buildModelParams() {
+  // Speed vs accuracy trade-off
+  if (mode === "fast") {
+    // No extended thinking, low effort, instruct final-answer-only to avoid leaked reasoning
+    return { thinking: { type: "disabled" }, output_config: { effort: "low" } };
+  }
+  if (mode === "accurate") {
+    return { thinking: { type: "adaptive", display: "summarized" }, output_config: { effort: "high" } };
+  }
+  // balanced
+  return { thinking: { type: "adaptive", display: "summarized" }, output_config: { effort: "medium" } };
+}
+
+// ---- solve ----
+$("solveBtn").addEventListener("click", solve);
+
+async function solve() {
+  const key = ($("apiKey").value || localStorage.getItem("anthropicKey") || "").trim();
+  if (!key) { setStatus(t("needKey"), "err"); return; }
+  if (images.length === 0) { setStatus(t("needImg"), "err"); return; }
+
+  $("solveBtn").disabled = true;
+  setStatus('<span class="spinner"></span>' + t("solving"));
+  $("resultCard").style.display = "block";
+  $("result").innerHTML = "";
+  $("think").textContent = "";
+  $("thinkWrap").style.display = "none";
+
+  const content = [];
+  images.forEach(img => {
+    content.push({ type: "image", source: { type: "base64", media_type: img.mediaType, data: img.base64 } });
+  });
+  const q = $("question").value.trim();
+  content.push({ type: "text", text: q
+    ? "Solve the problems in the image(s). Additional request from the student: " + q
+    : "Solve all the problems in the image(s) and explain each one." });
+
+  const params = buildModelParams();
+  const body = {
+    model: "claude-opus-4-8",
+    max_tokens: 8000,
+    thinking: params.thinking,
+    output_config: params.output_config,
+    system: buildSystemPrompt(),
+    messages: [{ role: "user", content }],
+    stream: true
+  };
+
+  let answerText = "";
+  let thinkText = "";
+
+  try {
+    const resp = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-api-key": key,
+        "anthropic-version": "2023-06-01",
+        "anthropic-dangerous-direct-browser-access": "true"
+      },
+      body: JSON.stringify(body)
+    });
+
+    if (!resp.ok) {
+      let errMsg = "HTTP " + resp.status;
+      try { const j = await resp.json(); if (j.error && j.error.message) errMsg = j.error.message; } catch (_) {}
+      throw new Error(errMsg);
+    }
+
+    const reader = resp.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split("\n");
+      buffer = lines.pop();
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed.startsWith("data:")) continue;
+        const data = trimmed.slice(5).trim();
+        if (!data || data === "[DONE]") continue;
+        let evt;
+        try { evt = JSON.parse(data); } catch (_) { continue; }
+        if (evt.type === "content_block_delta") {
+          if (evt.delta.type === "text_delta") {
+            answerText += evt.delta.text;
+            $("result").innerHTML = mdToHtml(answerText);
+          } else if (evt.delta.type === "thinking_delta") {
+            thinkText += evt.delta.thinking;
+            $("thinkWrap").style.display = "block";
+            $("think").textContent = thinkText;
+          }
+        } else if (evt.type === "error") {
+          throw new Error(evt.error && evt.error.message ? evt.error.message : "stream error");
+        } else if (evt.type === "message_delta" && evt.delta && evt.delta.stop_reason === "refusal") {
+          throw new Error("The request was declined for safety reasons.");
+        }
+      }
+    }
+    setStatus(t("done"), "ok");
+  } catch (err) {
+    setStatus("⚠️ " + err.message, "err");
+  } finally {
+    $("solveBtn").disabled = false;
+  }
+}
+
+applyUiLang();
+</script>
+</body>
+</html>

@@ -14,6 +14,7 @@
 | `projects/koki-agent/` | Koki エージェント本体（CLI・計画・自動実行・GitHub同期・テスト） | hopeful-ritchie |
 | `projects/koki-gmail/` | Koki Gmail要約プロトタイプ（FastAPI + Claude + デプロイ設定） | trusting-pascal |
 | `projects/case-interview/` | ケース面接ドリル（全コンサル対応のWebアプリ。GitHub Pagesで公開可） | optimistic-thompson |
+| `projects/photo-tutor/` | 写真で学ぶAI家庭教師（写真→答え＋解説を日英で返す学習用Webアプリ。単一HTML） | dreamy-faraday |
 
 ## メモ
 - 各プロジェクトの元のブランチもGitHubにそのまま残っています（消していません）。
