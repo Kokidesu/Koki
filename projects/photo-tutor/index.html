@@ -103,15 +103,15 @@
 
   <!-- API key -->
   <div class="card">
-    <label data-i18n="apiKeyLabel">Anthropic API キー（あなたのブラウザにだけ保存されます）</label>
+    <label data-i18n="apiKeyLabel">Google AI Studio APIキー（無料・ブラウザにだけ保存）</label>
     <div class="row">
-      <input type="password" id="apiKey" placeholder="sk-ant-..." autocomplete="off" style="flex:1; min-width:200px;" />
+      <input type="password" id="apiKey" placeholder="AIza..." autocomplete="off" style="flex:1; min-width:200px;" />
       <button class="btn secondary" id="saveKey" style="width:auto;" data-i18n="saveKey">保存</button>
     </div>
     <div class="muted" style="margin-top:6px;">
       <span data-i18n="apiKeyHelp">キーは</span>
-      <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">console.anthropic.com</a>
-      <span data-i18n="apiKeyHelp2">で発行できます。サーバーには送られず、端末内に保存されます。</span>
+      <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a>
+      <span data-i18n="apiKeyHelp2">で無料発行できます。サーバーには送られず、端末内に保存されます。</span>
     </div>
   </div>
 
@@ -175,10 +175,10 @@ const I18N = {
     subtitle: "問題集・過去問・参考書の写真をアップ → 答えと「なぜそうなるか」を解説",
     badge: "学習・復習用 / For study & review",
     disclaimer: "このツールは学習・復習のためのものです。試験本番中の使用はカンニングにあたるため、絶対に使わないでください。",
-    apiKeyLabel: "Anthropic API キー（あなたのブラウザにだけ保存されます）",
+    apiKeyLabel: "Google AI Studio APIキー（無料・ブラウザにだけ保存）",
     saveKey: "保存",
     apiKeyHelp: "キーは",
-    apiKeyHelp2: "で発行できます。サーバーには送られず、端末内に保存されます。",
+    apiKeyHelp2: "で無料発行できます。サーバーには送られず、端末内に保存されます。",
     answerLangLabel: "回答の言語 / Answer language",
     modeLabel: "モード / Mode",
     modeHint: "高速＝即答／高精度＝難問も丁寧に検算（少し時間がかかります）",
@@ -198,9 +198,9 @@ const I18N = {
     subtitle: "Upload a photo of a problem → get the answer and a step-by-step explanation",
     badge: "For study & review",
     disclaimer: "This tool is for study and review only. Using it during a real exam is cheating — never do that.",
-    apiKeyLabel: "Anthropic API key (stored only in your browser)",
+    apiKeyLabel: "Google AI Studio API key (free, stored only in your browser)",
     saveKey: "Save",
-    apiKeyHelp: "Get a key at",
+    apiKeyHelp: "Get a free key at",
     apiKeyHelp2: ". It is never sent to any server; it stays on your device.",
     answerLangLabel: "Answer language",
     modeLabel: "Mode",
@@ -237,9 +237,9 @@ function applyUiLang() {
 }
 
 // ---- API key ----
-$("apiKey").value = localStorage.getItem("anthropicKey") || "";
+$("apiKey").value = localStorage.getItem("googleKey") || "";
 $("saveKey").addEventListener("click", () => {
-  localStorage.setItem("anthropicKey", $("apiKey").value.trim());
+  localStorage.setItem("googleKey", $("apiKey").value.trim());
   setStatus(t("saved"), "ok");
 });
 
@@ -364,24 +364,18 @@ function buildSystemPrompt() {
   return lines.join("\n");
 }
 
-function buildModelParams() {
-  // Speed vs accuracy trade-off
-  if (mode === "fast") {
-    // No extended thinking, low effort, instruct final-answer-only to avoid leaked reasoning
-    return { thinking: { type: "disabled" }, output_config: { effort: "low" } };
-  }
-  if (mode === "accurate") {
-    return { thinking: { type: "adaptive", display: "summarized" }, output_config: { effort: "high" } };
-  }
-  // balanced
-  return { thinking: { type: "adaptive", display: "summarized" }, output_config: { effort: "medium" } };
+function buildModel() {
+  // Free-tier Gemini models (Google AI Studio)
+  if (mode === "fast") return "gemini-2.0-flash";    // fastest
+  if (mode === "accurate") return "gemini-2.5-pro";  // most accurate (tighter free limits)
+  return "gemini-2.5-flash";                          // balanced (default)
 }
 
 // ---- solve ----
 $("solveBtn").addEventListener("click", solve);
 
 async function solve() {
-  const key = ($("apiKey").value || localStorage.getItem("anthropicKey") || "").trim();
+  const key = ($("apiKey").value || localStorage.getItem("googleKey") || "").trim();
   if (!key) { setStatus(t("needKey"), "err"); return; }
   if (images.length === 0) { setStatus(t("needImg"), "err"); return; }
 
@@ -392,38 +386,31 @@ async function solve() {
   $("think").textContent = "";
   $("thinkWrap").style.display = "none";
 
-  const content = [];
+  const parts = [];
   images.forEach(img => {
-    content.push({ type: "image", source: { type: "base64", media_type: img.mediaType, data: img.base64 } });
+    parts.push({ inline_data: { mime_type: img.mediaType, data: img.base64 } });
   });
   const q = $("question").value.trim();
-  content.push({ type: "text", text: q
+  parts.push({ text: q
     ? "Solve the problems in the image(s). Additional request from the student: " + q
     : "Solve all the problems in the image(s) and explain each one." });
 
-  const params = buildModelParams();
+  const model = buildModel();
   const body = {
-    model: "claude-opus-4-8",
-    max_tokens: 8000,
-    thinking: params.thinking,
-    output_config: params.output_config,
-    system: buildSystemPrompt(),
-    messages: [{ role: "user", content }],
-    stream: true
+    system_instruction: { parts: [{ text: buildSystemPrompt() }] },
+    contents: [{ role: "user", parts }],
+    generationConfig: { maxOutputTokens: 8192, temperature: mode === "accurate" ? 0.1 : 0.2 }
   };
 
   let answerText = "";
   let thinkText = "";
 
   try {
-    const resp = await fetch("https://api.anthropic.com/v1/messages", {
+    const endpoint = "https://generativelanguage.googleapis.com/v1beta/models/"
+      + model + ":streamGenerateContent?alt=sse&key=" + encodeURIComponent(key);
+    const resp = await fetch(endpoint, {
       method: "POST",
-      headers: {
-        "content-type": "application/json",
-        "x-api-key": key,
-        "anthropic-version": "2023-06-01",
-        "anthropic-dangerous-direct-browser-access": "true"
-      },
+      headers: { "content-type": "application/json" },
       body: JSON.stringify(body)
     });
 
@@ -450,19 +437,18 @@ async function solve() {
         if (!data || data === "[DONE]") continue;
         let evt;
         try { evt = JSON.parse(data); } catch (_) { continue; }
-        if (evt.type === "content_block_delta") {
-          if (evt.delta.type === "text_delta") {
-            answerText += evt.delta.text;
-            $("result").innerHTML = mdToHtml(answerText);
-          } else if (evt.delta.type === "thinking_delta") {
-            thinkText += evt.delta.thinking;
-            $("thinkWrap").style.display = "block";
-            $("think").textContent = thinkText;
+        if (evt.error) {
+          throw new Error(evt.error.message || "API error");
+        }
+        if (evt.promptFeedback && evt.promptFeedback.blockReason) {
+          throw new Error("Blocked by safety filter: " + evt.promptFeedback.blockReason);
+        }
+        const cand = evt.candidates && evt.candidates[0];
+        if (cand && cand.content && cand.content.parts) {
+          for (const p of cand.content.parts) {
+            if (typeof p.text === "string") answerText += p.text;
           }
-        } else if (evt.type === "error") {
-          throw new Error(evt.error && evt.error.message ? evt.error.message : "stream error");
-        } else if (evt.type === "message_delta" && evt.delta && evt.delta.stop_reason === "refusal") {
-          throw new Error("The request was declined for safety reasons.");
+          $("result").innerHTML = mdToHtml(answerText);
         }
       }
     }
