@@ -1,0 +1,12 @@
+{
+  "name": "ai-doctor-worker",
+  "private": true,
+  "description": "Cloudflare Worker backend for AI ドクター (serves the chat + /api/chat)",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^4"
+  }
+}

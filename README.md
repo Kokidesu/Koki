@@ -15,6 +15,7 @@
 | `projects/koki-gmail/` | Koki Gmail要約プロトタイプ（FastAPI + Claude + デプロイ設定） | trusting-pascal |
 | `projects/case-interview/` | ケース面接ドリル（全コンサル対応のWebアプリ。GitHub Pagesで公開可） | optimistic-thompson |
 | `projects/photo-tutor/` | 写真で学ぶAI家庭教師（写真→答え＋解説を日英で返す学習用Webアプリ。Gemini無料API・単一HTML） | dreamy-faraday |
+| `projects/ai-doctor/` | AI ドクター（チャットで健康相談。Cloudflare Workerが裏でAIを動かすので使う人はキー不要。情報提供用） | compassionate-franklin |
 
 ## メモ
 - 各プロジェクトの元のブランチもGitHubにそのまま残っています（消していません）。

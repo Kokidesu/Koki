@@ -1,0 +1,16 @@
+name = "ai-doctor"
+main = "worker.js"
+compatibility_date = "2024-11-06"
+
+# Cloudflare Workers AI — runs the LLM with no separate API key (uses your CF free allowance).
+[ai]
+binding = "AI"
+
+# Serve the chat page (../index.html) straight from the Worker, so one deploy = one shareable link.
+# The [build] step copies the single source-of-truth index.html into ./site before upload.
+[assets]
+directory = "./site"
+binding = "ASSETS"
+
+[build]
+command = "mkdir -p site && cp ../index.html site/index.html"

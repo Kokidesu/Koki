@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI ドクター / AI Doctor — チャットで健康相談</title>
+<meta name="description" content="世界トップクラスの医師AIにチャットで相談。症状の説明・対処法・受診の目安を、やさしく即答。キー不要。" />
+<style>
+  :root {
+    --bg: #0f1226;
+    --panel: #1a1f3a;
+    --panel-2: #232a4d;
+    --accent: #6c8cff;
+    --accent-2: #46d6b6;
+    --text: #eef1ff;
+    --muted: #9aa3c7;
+    --danger: #ff6b6b;
+    --ok: #46d6b6;
+    --border: #2c3360;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; height: 100%; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Kaku Gothic ProN", "Noto Sans JP", Meiryo, sans-serif;
+    background: radial-gradient(1200px 600px at 20% -10%, #1d2350 0%, var(--bg) 55%) fixed;
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 18px 16px 28px; }
+
+  header { text-align: center; margin: 10px 0 16px; }
+  header h1 { font-size: 1.5rem; margin: 0 0 6px; }
+  header p { color: var(--muted); margin: 0; font-size: 0.9rem; }
+  .badge {
+    display: inline-block; font-size: 0.72rem; color: var(--accent-2);
+    border: 1px solid var(--border); border-radius: 999px; padding: 2px 10px; margin-top: 8px;
+  }
+
+  .card {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 16px;
+    padding: 16px; margin-bottom: 14px;
+  }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  label { font-size: 0.85rem; color: var(--muted); display: block; margin-bottom: 6px; }
+  input[type="text"], textarea, select {
+    width: 100%; background: var(--panel-2); color: var(--text);
+    border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; font-size: 0.95rem;
+    font-family: inherit;
+  }
+  textarea { resize: none; }
+
+  .seg { display: flex; gap: 6px; flex-wrap: wrap; }
+  .seg button {
+    background: var(--panel-2); color: var(--muted); border: 1px solid var(--border);
+    border-radius: 999px; padding: 7px 14px; cursor: pointer; font-size: 0.85rem; transition: .15s;
+  }
+  .seg button.active { background: var(--accent); color: #0b0e22; border-color: var(--accent); font-weight: 700; }
+
+  .btn {
+    background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #0b0e22; border: none;
+    border-radius: 12px; padding: 12px 18px; font-size: 1rem; font-weight: 800; cursor: pointer;
+    transition: .15s;
+  }
+  .btn.secondary { background: var(--panel-2); color: var(--text); border: 1px solid var(--border); font-weight: 600; }
+  .muted { color: var(--muted); font-size: 0.82rem; }
+  a { color: var(--accent); }
+
+  .disclaimer {
+    font-size: 0.82rem; color: var(--text); border-left: 3px solid var(--danger);
+    padding: 10px 14px; background: rgba(255,107,107,.10); border-radius: 8px; margin-bottom: 14px;
+  }
+  .disclaimer strong { color: var(--danger); }
+
+  /* settings collapse */
+  details.settings { margin-bottom: 14px; }
+  details.settings > summary {
+    cursor: pointer; list-style: none; color: var(--muted); font-size: 0.85rem;
+    background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  details.settings > summary::-webkit-details-marker { display: none; }
+  details.settings[open] > summary { border-radius: 12px 12px 0 0; }
+  details.settings .settings-body {
+    background: var(--panel); border: 1px solid var(--border); border-top: none;
+    border-radius: 0 0 12px 12px; padding: 16px;
+  }
+
+  /* chat */
+  .chat-card { display: flex; flex-direction: column; padding: 0; overflow: hidden; }
+  .chat-head {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 16px; border-bottom: 1px solid var(--border);
+  }
+  .chat-head .who { display: flex; align-items: center; gap: 10px; }
+  .chat-head .avatar {
+    width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-size: 1.1rem;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #0b0e22;
+  }
+  .chat-head .who b { display: block; font-size: 0.95rem; }
+  .chat-head .who span { font-size: 0.75rem; color: var(--muted); }
+  .iconbtn {
+    background: var(--panel-2); color: var(--text); border: 1px solid var(--border);
+    border-radius: 10px; padding: 7px 12px; cursor: pointer; font-size: 0.82rem;
+  }
+
+  .chat {
+    padding: 16px; overflow-y: auto; min-height: 320px; max-height: 56vh;
+    display: flex; flex-direction: column; gap: 14px; scroll-behavior: smooth;
+  }
+  .msg { display: flex; gap: 10px; max-width: 100%; }
+  .msg .ava {
+    flex: 0 0 30px; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center;
+    font-size: 0.95rem; margin-top: 2px;
+  }
+  .msg.bot .ava { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #0b0e22; }
+  .msg.user { flex-direction: row-reverse; }
+  .msg.user .ava { background: var(--panel-2); border: 1px solid var(--border); }
+  .bubble {
+    border-radius: 14px; padding: 10px 14px; font-size: 0.95rem; word-break: break-word; max-width: 80%;
+  }
+  .msg.bot .bubble { background: var(--panel-2); border: 1px solid var(--border); border-top-left-radius: 4px; }
+  .msg.user .bubble {
+    background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #0b0e22;
+    border-top-right-radius: 4px; font-weight: 500;
+  }
+  .bubble :first-child { margin-top: 0; }
+  .bubble :last-child { margin-bottom: 0; }
+  .bubble h1, .bubble h2, .bubble h3 { margin: 12px 0 6px; font-size: 1.02rem; }
+  .bubble code { background: rgba(0,0,0,.25); padding: 2px 6px; border-radius: 6px; font-size: 0.9em; }
+  .bubble pre { background: rgba(0,0,0,.3); padding: 12px; border-radius: 10px; overflow-x: auto; }
+  .bubble ul, .bubble ol { margin: 6px 0 6px 1.2em; padding: 0; }
+  .bubble li { margin: 3px 0; }
+
+  /* welcome / suggestions */
+  .welcome { text-align: center; color: var(--muted); padding: 18px 8px; }
+  .welcome .big { font-size: 2.2rem; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 14px; }
+  .chip {
+    background: var(--panel-2); color: var(--text); border: 1px solid var(--border);
+    border-radius: 999px; padding: 8px 14px; cursor: pointer; font-size: 0.85rem; transition: .15s;
+  }
+  .chip:hover { border-color: var(--accent); }
+
+  /* typing dots */
+  .typing { display: inline-flex; gap: 4px; align-items: center; }
+  .typing i { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); display: inline-block; animation: blink 1.2s infinite both; }
+  .typing i:nth-child(2) { animation-delay: .2s; }
+  .typing i:nth-child(3) { animation-delay: .4s; }
+  @keyframes blink { 0%,80%,100% { opacity: .25; } 40% { opacity: 1; } }
+
+  /* composer */
+  .composer { border-top: 1px solid var(--border); padding: 12px; display: flex; gap: 10px; align-items: flex-end; }
+  .composer textarea { max-height: 160px; min-height: 24px; line-height: 1.4; padding: 12px 14px; }
+  .composer .send {
+    flex: 0 0 auto; background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #0b0e22;
+    border: none; border-radius: 12px; width: 46px; height: 46px; cursor: pointer; font-size: 1.1rem; font-weight: 800;
+  }
+  .composer .send:disabled { opacity: .5; cursor: not-allowed; }
+
+  .status { font-size: 0.82rem; min-height: 1.1em; padding: 0 16px 10px; }
+  .status.err { color: var(--danger); }
+  .status.ok { color: var(--ok); }
+  .spinner { display: inline-block; width: 13px; height: 13px; border: 2px solid var(--muted); border-top-color: var(--accent); border-radius: 50%; animation: spin .8s linear infinite; vertical-align: -2px; margin-right: 6px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  footer { text-align: center; color: var(--muted); font-size: 0.78rem; margin-top: 18px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>🩺 AI ドクター</h1>
+    <p data-i18n="subtitle">世界トップクラスの医師AIに、チャットで気軽に健康相談。やさしく、すぐに答えます。</p>
+    <span class="badge" data-i18n="badge">情報提供のみ / Information only</span>
+  </header>
+
+  <div class="disclaimer">
+    <strong data-i18n="discTitle">⚠️ 重要</strong>
+    <span data-i18n="disclaimer">：AI ドクターは一般的な健康情報を提供するAIで、医師の診断・治療の代わりにはなりません。気になる症状は医療機関を受診してください。胸の痛み・呼吸困難・意識障害・大量出血などの緊急時は、すぐに 119 番（救急）に連絡してください。</span>
+  </div>
+
+  <!-- settings -->
+  <details class="settings" id="settings">
+    <summary>
+      <span data-i18n="settingsTitle">⚙️ 設定（言語・モード）</span>
+      <span class="muted">▾</span>
+    </summary>
+    <div class="settings-body">
+      <label data-i18n="answerLangLabel">回答の言語 / Answer language</label>
+      <div class="seg" id="langSeg">
+        <button data-lang="auto" class="active">自動 / Auto</button>
+        <button data-lang="ja">日本語</button>
+        <button data-lang="en">English</button>
+      </div>
+
+      <label style="margin-top:14px;" data-i18n="modeLabel">モード / Mode</label>
+      <div class="seg" id="modeSeg">
+        <button data-mode="fast" class="active">⚡ 即答 / Fast</button>
+        <button data-mode="thorough">🔎 じっくり / Thorough</button>
+      </div>
+      <div class="muted" style="margin-top:6px;" data-i18n="modeHint">即答＝最速で回答／じっくり＝より詳しく丁寧に（少し時間がかかります）</div>
+
+      <label style="margin-top:14px;" data-i18n="uiLangLabel">画面の言語 / Interface</label>
+      <div class="seg" id="uiSeg">
+        <button data-ui="ja" class="active">日本語</button>
+        <button data-ui="en">English</button>
+      </div>
+
+      <details style="margin-top:16px;">
+        <summary class="muted" style="cursor:pointer;" data-i18n="advTitle">詳細設定（接続先・通常は不要）</summary>
+        <label style="margin-top:10px;" data-i18n="backendLabel">バックエンドURL（Cloudflare Worker）</label>
+        <div class="row">
+          <input type="text" id="backend" placeholder="https://ai-doctor.xxxx.workers.dev" style="flex:1; min-width:200px;" />
+          <button class="btn secondary" id="saveBackend" style="width:auto;" data-i18n="saveBackend">保存</button>
+        </div>
+        <div class="muted" style="margin-top:6px;" data-i18n="backendHelp">Workerが配信するURLでこのページを開いている場合は空欄でOK。GitHub Pagesなど別の場所で開く場合だけ、デプロイしたWorkerのURLを入れてください。</div>
+      </details>
+    </div>
+  </details>
+
+  <!-- chat -->
+  <div class="card chat-card">
+    <div class="chat-head">
+      <div class="who">
+        <div class="avatar">🩺</div>
+        <div>
+          <b data-i18n="docName">AI ドクター</b>
+          <span data-i18n="docTagline">いつでも相談OK・即答</span>
+        </div>
+      </div>
+      <button class="iconbtn" id="newChat" data-i18n="newChat">＋ 新しい相談</button>
+    </div>
+
+    <div class="chat" id="chat"></div>
+    <div class="status" id="status"></div>
+
+    <div class="composer">
+      <textarea id="input" rows="1" data-i18n-ph="inputPh" placeholder="症状や気になることを入力…（例：3日前から喉が痛いです）"></textarea>
+      <button class="send" id="sendBtn" title="送信">➤</button>
+    </div>
+  </div>
+
+  <footer data-i18n="footer">情報提供を目的としたツールです。診断・治療は医療機関で。</footer>
+</div>
+
+<script>
+// ===== Backend (Cloudflare Worker) =====
+// Workerがこのページを配信する場合は空のままでOK（同じドメインの /api/chat を使う）。
+// GitHub Pages など別の場所で配信する場合は、ここにWorkerのURLを入れるか、設定の「詳細設定」で保存してください。
+const BACKEND_URL = "";
+
+const I18N = {
+  ja: {
+    subtitle: "世界トップクラスの医師AIに、チャットで気軽に健康相談。やさしく、すぐに答えます。",
+    badge: "情報提供のみ / Information only",
+    discTitle: "⚠️ 重要",
+    disclaimer: "：AI ドクターは一般的な健康情報を提供するAIで、医師の診断・治療の代わりにはなりません。気になる症状は医療機関を受診してください。胸の痛み・呼吸困難・意識障害・大量出血などの緊急時は、すぐに 119 番（救急）に連絡してください。",
+    settingsTitle: "⚙️ 設定（言語・モード）",
+    answerLangLabel: "回答の言語 / Answer language",
+    modeLabel: "モード / Mode",
+    modeHint: "即答＝最速で回答／じっくり＝より詳しく丁寧に（少し時間がかかります）",
+    uiLangLabel: "画面の言語 / Interface",
+    advTitle: "詳細設定（接続先・通常は不要）",
+    backendLabel: "バックエンドURL（Cloudflare Worker）",
+    saveBackend: "保存",
+    backendHelp: "Workerが配信するURLでこのページを開いている場合は空欄でOK。GitHub Pagesなど別の場所で開く場合だけ、デプロイしたWorkerのURLを入れてください。",
+    docName: "AI ドクター",
+    docTagline: "いつでも相談OK・即答",
+    newChat: "＋ 新しい相談",
+    inputPh: "症状や気になることを入力…（例：3日前から喉が痛いです）",
+    footer: "情報提供を目的としたツールです。診断・治療は医療機関で。",
+    welcomeTitle: "こんにちは。今日はどうされましたか？",
+    welcomeSub: "気になる症状や健康のことを、なんでも話してください。",
+    saved: "保存しました",
+    thinking: "考えています…",
+    connErr: "AIに接続できませんでした。Workerをデプロイし、設定の「詳細設定」でURLを入れてください（READMEを参照）。",
+    chips: ["3日前から頭痛が続いています", "風邪っぽいです。市販薬は？", "健康診断の結果の見方を教えて", "子どもが発熱しました"],
+  },
+  en: {
+    subtitle: "Chat with a world-class doctor AI. Kind, clear answers — instantly.",
+    badge: "Information only",
+    discTitle: "⚠️ Important",
+    disclaimer: ": AI Doctor provides general health information and is not a substitute for diagnosis or treatment by a licensed physician. See a healthcare professional for any concerning symptoms. In an emergency (chest pain, trouble breathing, loss of consciousness, heavy bleeding, etc.), call your local emergency number immediately (119 in Japan).",
+    settingsTitle: "⚙️ Settings (language · mode)",
+    answerLangLabel: "Answer language",
+    modeLabel: "Mode",
+    modeHint: "Fast = quickest reply / Thorough = more detailed (a bit slower)",
+    uiLangLabel: "Interface",
+    advTitle: "Advanced (backend · usually not needed)",
+    backendLabel: "Backend URL (Cloudflare Worker)",
+    saveBackend: "Save",
+    backendHelp: "Leave empty if this page is served by the Worker (it uses /api/chat on the same domain). Only set this when hosting the page elsewhere (e.g. GitHub Pages).",
+    docName: "AI Doctor",
+    docTagline: "Always here · instant answers",
+    newChat: "＋ New chat",
+    inputPh: "Describe your symptoms or question… (e.g. sore throat for 3 days)",
+    footer: "An information tool. Diagnosis and treatment belong with a medical professional.",
+    welcomeTitle: "Hello. How can I help you today?",
+    welcomeSub: "Tell me about any symptom or health question — anything at all.",
+    saved: "Saved",
+    thinking: "Thinking…",
+    connErr: "Couldn't reach the AI. Deploy the Worker and set its URL under Advanced settings (see the README).",
+    chips: ["I've had a headache for 3 days", "Feeling like a cold — any OTC meds?", "Help me read my health checkup results", "My child has a fever"],
+  }
+};
+
+let uiLang = localStorage.getItem("aidoc_uiLang") || "ja";
+let answerLang = localStorage.getItem("aidoc_answerLang") || "auto";
+let mode = localStorage.getItem("aidoc_mode") || "fast";
+let history = [];           // [{ role: "user"|"bot", text }]
+let busy = false;
+
+const $ = (id) => document.getElementById(id);
+function t(key) { return (I18N[uiLang] && I18N[uiLang][key] !== undefined) ? I18N[uiLang][key] : I18N.ja[key]; }
+
+// ---- backend resolution ----
+function backendUrl() {
+  const fromQuery = new URLSearchParams(location.search).get("backend");
+  const base = (fromQuery || localStorage.getItem("aidoc_backend") || BACKEND_URL || "").trim().replace(/\/+$/, "");
+  return base ? base + "/api/chat" : "/api/chat";
+}
+
+// ---- load saved history ----
+try { history = JSON.parse(localStorage.getItem("aidoc_history") || "[]"); } catch (_) { history = []; }
+
+function applyUiLang() {
+  document.documentElement.lang = uiLang;
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    const key = el.getAttribute("data-i18n");
+    if (I18N[uiLang][key] !== undefined) el.textContent = I18N[uiLang][key];
+  });
+  document.querySelectorAll("[data-i18n-ph]").forEach(el => {
+    const key = el.getAttribute("data-i18n-ph");
+    if (I18N[uiLang][key] !== undefined) el.setAttribute("placeholder", I18N[uiLang][key]);
+  });
+  renderChat();
+}
+
+// ---- backend setting ----
+$("backend").value = localStorage.getItem("aidoc_backend") || "";
+$("saveBackend").addEventListener("click", () => {
+  localStorage.setItem("aidoc_backend", $("backend").value.trim());
+  setStatus(t("saved"), "ok");
+});
+
+// ---- segments ----
+function initSeg(segId, attr, current, onPick) {
+  const seg = $(segId);
+  seg.querySelectorAll("button").forEach(b => {
+    if (b.getAttribute(attr) === current) b.classList.add("active"); else b.classList.remove("active");
+    b.addEventListener("click", () => {
+      seg.querySelectorAll("button").forEach(x => x.classList.remove("active"));
+      b.classList.add("active");
+      onPick(b.getAttribute(attr));
+    });
+  });
+}
+initSeg("langSeg", "data-lang", answerLang, (v) => { answerLang = v; localStorage.setItem("aidoc_answerLang", v); });
+initSeg("modeSeg", "data-mode", mode, (v) => { mode = v; localStorage.setItem("aidoc_mode", v); });
+initSeg("uiSeg", "data-ui", uiLang, (v) => { uiLang = v; localStorage.setItem("aidoc_uiLang", v); applyUiLang(); });
+
+// ---- status ----
+function setStatus(msg, cls) {
+  const s = $("status");
+  s.className = "status" + (cls ? " " + cls : "");
+  s.innerHTML = msg || "";
+}
+
+// ---- minimal markdown -> html ----
+function mdToHtml(md) {
+  const esc = (s) => s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  let html = esc(md);
+  html = html.replace(/```([\s\S]*?)```/g, (m, c) => `<pre><code>${c.replace(/\n$/,"")}</code></pre>`);
+  html = html.replace(/`([^`]+)`/g, "<code>$1</code>");
+  html = html.replace(/^### (.*)$/gm, "<h3>$1</h3>")
+             .replace(/^## (.*)$/gm, "<h3>$1</h3>")
+             .replace(/^# (.*)$/gm, "<h3>$1</h3>");
+  html = html.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+  html = html.replace(/(^|[^*])\*([^*\n]+)\*/g, "$1<em>$2</em>");
+  html = html.replace(/(?:^|\n)((?:[-*] .*(?:\n|$))+)/g, (m, block) => {
+    const items = block.trim().split("\n").map(l => "<li>" + l.replace(/^[-*] /, "") + "</li>").join("");
+    return "\n<ul>" + items + "</ul>";
+  });
+  html = html.replace(/(?:^|\n)((?:\d+\. .*(?:\n|$))+)/g, (m, block) => {
+    const items = block.trim().split("\n").map(l => "<li>" + l.replace(/^\d+\. /, "") + "</li>").join("");
+    return "\n<ol>" + items + "</ol>";
+  });
+  html = html.replace(/\n{2,}/g, "</p><p>").replace(/\n/g, "<br>");
+  return "<p>" + html + "</p>";
+}
+
+// ---- render ----
+function renderChat() {
+  const chat = $("chat");
+  chat.innerHTML = "";
+  if (history.length === 0) {
+    const w = document.createElement("div");
+    w.className = "welcome";
+    const chips = (t("chips") || []).map(c =>
+      `<button class="chip" type="button">${c.replace(/</g,"&lt;")}</button>`).join("");
+    w.innerHTML = `<div class="big">🩺</div>
+      <div style="font-size:1.05rem;color:var(--text);margin-top:6px;">${t("welcomeTitle")}</div>
+      <div style="margin-top:4px;">${t("welcomeSub")}</div>
+      <div class="chips">${chips}</div>`;
+    chat.appendChild(w);
+    w.querySelectorAll(".chip").forEach((btn, i) => {
+      btn.addEventListener("click", () => { send((t("chips") || [])[i]); });
+    });
+    return;
+  }
+  history.forEach(m => chat.appendChild(makeMsgEl(m.role, m.text)));
+  scrollDown();
+}
+
+function makeMsgEl(role, text) {
+  const row = document.createElement("div");
+  row.className = "msg " + (role === "user" ? "user" : "bot");
+  const ava = document.createElement("div");
+  ava.className = "ava";
+  ava.textContent = role === "user" ? "🧑" : "🩺";
+  const bubble = document.createElement("div");
+  bubble.className = "bubble";
+  if (role === "user") bubble.textContent = text;
+  else bubble.innerHTML = mdToHtml(text);
+  row.appendChild(ava);
+  row.appendChild(bubble);
+  return row;
+}
+
+function scrollDown() {
+  const chat = $("chat");
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function persist() {
+  localStorage.setItem("aidoc_history", JSON.stringify(history.slice(-40)));
+}
+
+// ---- new chat ----
+$("newChat").addEventListener("click", () => {
+  history = [];
+  persist();
+  setStatus("");
+  renderChat();
+});
+
+// ---- composer behavior ----
+const input = $("input");
+function autoGrow() { input.style.height = "auto"; input.style.height = Math.min(input.scrollHeight, 160) + "px"; }
+input.addEventListener("input", autoGrow);
+input.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); }
+});
+$("sendBtn").addEventListener("click", () => send());
+
+// ---- send a message ----
+async function send(presetText) {
+  if (busy) return;
+  const text = (presetText !== undefined ? presetText : input.value).trim();
+  if (!text) return;
+
+  busy = true;
+  $("sendBtn").disabled = true;
+  input.value = "";
+  autoGrow();
+
+  // append user message
+  history.push({ role: "user", text });
+  renderChat();
+  persist();
+
+  // build messages payload (bot -> assistant)
+  const messages = history.map(m => ({
+    role: m.role === "user" ? "user" : "assistant",
+    content: m.text
+  }));
+
+  // add an empty bot bubble with a typing indicator
+  const chat = $("chat");
+  const botRow = makeMsgEl("bot", "");
+  const botBubble = botRow.querySelector(".bubble");
+  botBubble.innerHTML = '<span class="typing"><i></i><i></i><i></i></span>';
+  chat.appendChild(botRow);
+  scrollDown();
+  setStatus('<span class="spinner"></span>' + t("thinking"));
+
+  let answer = "";
+  try {
+    const resp = await fetch(backendUrl(), {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ messages, mode, answerLang })
+    });
+
+    if (!resp.ok) {
+      let errMsg = "HTTP " + resp.status;
+      try { const j = await resp.json(); if (j.error) errMsg = j.error; } catch (_) {}
+      throw new Error(errMsg);
+    }
+    if (!resp.body) throw new Error("No response stream");
+
+    const reader = resp.body.getReader();
+    const decoder = new TextDecoder();
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      answer += decoder.decode(value, { stream: true });
+      botBubble.innerHTML = mdToHtml(answer);
+      scrollDown();
+    }
+
+    if (!answer.trim()) throw new Error(uiLang === "ja" ? "回答が空でした。もう一度お試しください。" : "Empty response. Please try again.");
+
+    history.push({ role: "bot", text: answer });
+    persist();
+    setStatus("");
+  } catch (err) {
+    const isConn = (err instanceof TypeError) || /Failed to fetch|NetworkError|HTTP 404/.test(err.message || "");
+    const msg = isConn ? t("connErr") : ("⚠️ " + (err.message || "Error"));
+    botBubble.innerHTML = '<span style="color:var(--danger)">⚠️ ' + msg + '</span>';
+    setStatus(msg, "err");
+  } finally {
+    busy = false;
+    $("sendBtn").disabled = false;
+    input.focus();
+  }
+}
+
+applyUiLang();
+autoGrow();
+</script>
+</body>
+</html>

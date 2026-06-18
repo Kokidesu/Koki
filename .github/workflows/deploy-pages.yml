@@ -3,6 +3,7 @@ name: Deploy apps to GitHub Pages
 # projects 配下の各Webアプリを1つの GitHub Pages サイトにまとめて公開する。
 # 公開URL: https://kokidesu.github.io/koki/
 #   - トップ:         /              (projects/landing)
+#   - AIドクター:      /ai-doctor/    (projects/ai-doctor)
 #   - 写真AI家庭教師:  /photo-tutor/  (projects/photo-tutor)
 #   - ケース面接:      /case-interview/ (projects/case-interview)
 
@@ -11,6 +12,7 @@ on:
     branches: [ "main" ]
     paths:
       - "projects/landing/**"
+      - "projects/ai-doctor/**"
       - "projects/photo-tutor/**"
       - "projects/case-interview/**"
       - ".github/workflows/deploy-pages.yml"
@@ -39,6 +41,8 @@ jobs:
         run: |
           mkdir -p _site
           cp -r projects/landing/. _site/
+          mkdir -p _site/ai-doctor
+          cp projects/ai-doctor/index.html _site/ai-doctor/index.html
           mkdir -p _site/photo-tutor
           cp -r projects/photo-tutor/. _site/photo-tutor/
           mkdir -p _site/case-interview
