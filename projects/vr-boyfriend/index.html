@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>みーくん — VR彼氏</title>
+<meta name="description" content="VR彼氏「みーくん」。るーちゃん専用の、やさしい彼氏アプリ。いこいこモード（いい子いい子）付き。" />
+<style>
+  :root {
+    --bg: #1a0f1e;
+    --bg2: #2a1530;
+    --panel: rgba(40, 22, 48, 0.72);
+    --panel-2: rgba(58, 32, 70, 0.85);
+    --accent: #ff7eb3;
+    --accent-2: #ffb37e;
+    --accent-3: #b388ff;
+    --text: #fff3f8;
+    --muted: #d7b8cc;
+    --border: rgba(255, 160, 200, 0.28);
+    --bubble-me: linear-gradient(135deg, #6c8cff, #46d6b6);
+    --bubble-you: linear-gradient(135deg, #ff7eb3, #ff9a8b);
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; height: 100%; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Kaku Gothic ProN", "Noto Sans JP", Meiryo, sans-serif;
+    color: var(--text);
+    overflow: hidden;
+    background: #120a16;
+    position: fixed; inset: 0;
+  }
+
+  /* ===== VRルーム背景 ===== */
+  .scene {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(120% 80% at 50% -10%, #4a2350 0%, var(--bg2) 45%, var(--bg) 100%),
+      radial-gradient(80% 60% at 80% 110%, rgba(179,136,255,.25), transparent 60%);
+    overflow: hidden;
+  }
+  .scene::after { /* 床のグリッド（奥行き感） */
+    content: "";
+    position: absolute; left: -50%; right: -50%; bottom: -10%; height: 55%;
+    background-image:
+      linear-gradient(rgba(255,160,200,.18) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,160,200,.18) 1px, transparent 1px);
+    background-size: 44px 44px;
+    transform: perspective(420px) rotateX(62deg);
+    transform-origin: bottom center;
+    mask-image: linear-gradient(to top, #000 10%, transparent 85%);
+    -webkit-mask-image: linear-gradient(to top, #000 10%, transparent 85%);
+    animation: floorMove 8s linear infinite;
+  }
+  @keyframes floorMove { from { background-position: 0 0; } to { background-position: 0 44px; } }
+
+  /* ふわふわ漂う光 */
+  .orb { position: absolute; border-radius: 50%; filter: blur(8px); opacity: .5; animation: floatY 7s ease-in-out infinite; }
+  @keyframes floatY { 0%,100%{ transform: translateY(0);} 50%{ transform: translateY(-26px);} }
+
+  /* ===== 上部バー ===== */
+  header {
+    position: absolute; top: 0; left: 0; right: 0; z-index: 30;
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 14px;
+    background: linear-gradient(to bottom, rgba(18,10,22,.7), transparent);
+  }
+  .who { display: flex; flex-direction: column; line-height: 1.15; }
+  .who b { font-size: 1.02rem; letter-spacing: .02em; }
+  .who small { color: var(--muted); font-size: .72rem; }
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #46d6b6; box-shadow: 0 0 8px #46d6b6; display: inline-block; margin-right: 5px; }
+  header .spacer { flex: 1; }
+  .icon-btn {
+    background: var(--panel); border: 1px solid var(--border); color: var(--text);
+    width: 40px; height: 40px; border-radius: 50%; font-size: 1.05rem; cursor: pointer;
+    backdrop-filter: blur(8px); display: grid; place-items: center; transition: .15s;
+  }
+  .icon-btn:hover { border-color: var(--accent); }
+  .icon-btn.on { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #2a0f1e; border-color: transparent; }
+
+  /* ===== みーくん（アバター） ===== */
+  .stage { position: absolute; inset: 0; display: grid; place-items: center; z-index: 10; }
+  .avatar-wrap { position: relative; width: min(72vw, 300px); transition: transform .3s; will-change: transform; }
+  .avatar-wrap.talking { animation: bob 0.5s ease-in-out infinite; }
+  @keyframes bob { 0%,100%{ transform: translateY(0);} 50%{ transform: translateY(-6px);} }
+  .glow {
+    position: absolute; inset: -18% -10% -28% -10%; z-index: -1; border-radius: 50%;
+    background: radial-gradient(closest-side, rgba(255,126,179,.45), transparent 72%);
+    filter: blur(10px); animation: pulse 3.5s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100%{ opacity:.6; transform: scale(1);} 50%{ opacity:1; transform: scale(1.05);} }
+  svg.miku { width: 100%; height: auto; display: block; filter: drop-shadow(0 18px 30px rgba(0,0,0,.5)); }
+  /* みーくんの写真アバター */
+  img.miku-photo {
+    width: 100%; height: auto; display: block; border-radius: 24px;
+    border: 3px solid var(--border); box-shadow: 0 18px 40px rgba(0,0,0,.55);
+    object-fit: cover; aspect-ratio: 4 / 3;
+  }
+
+  /* 手（いこいこ用） */
+  .pat-hand {
+    position: absolute; top: -6%; left: 50%; font-size: clamp(40px, 12vw, 64px);
+    transform: translateX(-50%) rotate(8deg); opacity: 0; pointer-events: none; z-index: 20;
+  }
+  .pat-hand.go { animation: pat 0.9s ease-in-out 4; }
+  @keyframes pat {
+    0% { opacity: 0; transform: translate(-50%, -30px) rotate(8deg); }
+    20% { opacity: 1; transform: translate(-50%, 6px) rotate(8deg); }
+    50% { transform: translate(-50%, -2px) rotate(-6deg); }
+    80% { opacity: 1; transform: translate(-50%, 6px) rotate(8deg); }
+    100% { opacity: 0; transform: translate(-50%, -30px) rotate(8deg); }
+  }
+
+  /* セリフ吹き出し（アバターの上） */
+  .say {
+    position: absolute; left: 50%; bottom: calc(100% + 14px); transform: translateX(-50%);
+    max-width: min(82vw, 360px); background: var(--panel-2); border: 1px solid var(--border);
+    color: var(--text); padding: 12px 16px; border-radius: 18px; font-size: 1rem; line-height: 1.5;
+    backdrop-filter: blur(10px); box-shadow: 0 10px 30px rgba(0,0,0,.4); text-align: center;
+    opacity: 0; transition: opacity .3s, transform .3s; pointer-events: none;
+  }
+  .say.show { opacity: 1; }
+  .say::after {
+    content: ""; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+    border: 9px solid transparent; border-top-color: var(--panel-2);
+  }
+
+  /* ===== 下部チャット ===== */
+  .chat-log {
+    position: absolute; left: 0; right: 0; bottom: 92px; z-index: 25;
+    max-height: 34vh; overflow-y: auto; padding: 10px 14px;
+    display: flex; flex-direction: column; gap: 8px;
+    mask-image: linear-gradient(to bottom, transparent, #000 18%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 18%);
+    scrollbar-width: none;
+  }
+  .chat-log::-webkit-scrollbar { display: none; }
+  .msg { max-width: 78%; padding: 9px 13px; border-radius: 16px; font-size: .92rem; line-height: 1.45; word-break: break-word; animation: pop .25s ease; }
+  @keyframes pop { from { transform: scale(.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .msg.you { align-self: flex-end; background: var(--bubble-you); color: #3a0f22; border-bottom-right-radius: 5px; }
+  .msg.miku { align-self: flex-start; background: var(--panel-2); border: 1px solid var(--border); border-bottom-left-radius: 5px; }
+
+  /* 入力バー */
+  .composer {
+    position: absolute; left: 0; right: 0; bottom: 0; z-index: 30;
+    display: flex; gap: 8px; align-items: center; padding: 12px 12px calc(12px + env(safe-area-inset-bottom));
+    background: linear-gradient(to top, rgba(18,10,22,.92), rgba(18,10,22,.4) 70%, transparent);
+  }
+  .composer input {
+    flex: 1; background: var(--panel-2); color: var(--text); border: 1px solid var(--border);
+    border-radius: 999px; padding: 12px 16px; font-size: 1rem; font-family: inherit; outline: none;
+  }
+  .composer input::placeholder { color: var(--muted); }
+  .send {
+    background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #2a0f1e; border: none;
+    width: 46px; height: 46px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; flex: 0 0 auto;
+    display: grid; place-items: center; transition: transform .12s;
+  }
+  .send:active { transform: scale(.92); }
+
+  /* いこいこボタン（大きめ） */
+  .iko {
+    position: absolute; right: 14px; bottom: 150px; z-index: 28;
+    background: linear-gradient(135deg, var(--accent-3), var(--accent)); color: #fff;
+    border: none; border-radius: 999px; padding: 12px 18px; font-weight: 800; font-size: .95rem;
+    cursor: pointer; box-shadow: 0 8px 22px rgba(179,136,255,.5); transition: transform .12s;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .iko:active { transform: scale(.94); }
+  .iko.active { background: linear-gradient(135deg, #ffd166, var(--accent)); color: #3a0f22; }
+
+  /* ハートが舞う */
+  .heart { position: absolute; z-index: 22; font-size: 22px; pointer-events: none; animation: rise 2.4s ease-out forwards; }
+  @keyframes rise {
+    0% { transform: translateY(0) scale(.6); opacity: 0; }
+    15% { opacity: 1; }
+    100% { transform: translateY(-220px) scale(1.2); opacity: 0; }
+  }
+
+  /* ===== 設定パネル ===== */
+  .sheet {
+    position: absolute; inset: 0; z-index: 50; background: rgba(10,5,12,.6);
+    backdrop-filter: blur(4px); display: none; align-items: flex-end;
+  }
+  .sheet.open { display: flex; }
+  .sheet-inner {
+    width: 100%; background: linear-gradient(to bottom, var(--bg2), var(--bg));
+    border-top-left-radius: 22px; border-top-right-radius: 22px; border-top: 1px solid var(--border);
+    padding: 18px 18px calc(24px + env(safe-area-inset-bottom)); animation: up .25s ease;
+  }
+  @keyframes up { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  .sheet h3 { margin: 0 0 12px; font-size: 1.1rem; }
+  .field { margin-bottom: 14px; }
+  .field label { display: block; font-size: .8rem; color: var(--muted); margin-bottom: 6px; }
+  .field input[type="text"], .field input[type="password"] {
+    width: 100%; background: var(--panel-2); color: var(--text); border: 1px solid var(--border);
+    border-radius: 10px; padding: 11px 13px; font-size: .95rem; font-family: inherit;
+  }
+  .toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-top: 1px solid var(--border); }
+  .toggle-row span { font-size: .92rem; }
+  .switch { position: relative; width: 48px; height: 28px; }
+  .switch input { display: none; }
+  .switch i { position: absolute; inset: 0; background: var(--panel-2); border: 1px solid var(--border); border-radius: 999px; transition: .2s; cursor: pointer; }
+  .switch i::after { content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: var(--muted); transition: .2s; }
+  .switch input:checked + i { background: linear-gradient(135deg, var(--accent), var(--accent-2)); border-color: transparent; }
+  .switch input:checked + i::after { left: 23px; background: #fff; }
+  .sheet .close { width: 100%; margin-top: 8px; background: var(--panel-2); color: var(--text); border: 1px solid var(--border); border-radius: 12px; padding: 12px; font-size: 1rem; cursor: pointer; }
+  .hint { font-size: .76rem; color: var(--muted); margin-top: 4px; }
+  a { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<div class="scene" id="scene"></div>
+
+<header>
+  <div class="who">
+    <b><span class="status-dot"></span><span id="bfName">みーくん</span></b>
+    <small><span id="gfName">るーちゃん</span>のこと、ずっと見てるよ</small>
+  </div>
+  <div class="spacer"></div>
+  <button class="icon-btn" id="voiceBtn" title="声のON/OFF">🔊</button>
+  <button class="icon-btn" id="settingsBtn" title="設定">⚙️</button>
+</header>
+
+<div class="stage">
+  <div class="avatar-wrap" id="avatarWrap">
+    <div class="glow"></div>
+    <div class="pat-hand" id="patHand">🫶</div>
+    <div class="say" id="say"></div>
+    <!-- みーくん：写真アバター -->
+    <img class="miku-photo" src="miikun.jpg" alt="みーくん" />
+  </div>
+</div>
+
+<button class="iko" id="ikoBtn">🫶 いこいこモード</button>
+
+<div class="chat-log" id="chatLog"></div>
+
+<div class="composer">
+  <input id="input" type="text" placeholder="みーくんに話しかけてみて…" autocomplete="off" />
+  <button class="send" id="sendBtn">➤</button>
+</div>
+
+<!-- 設定 -->
+<div class="sheet" id="sheet">
+  <div class="sheet-inner">
+    <h3>設定</h3>
+    <div class="field">
+      <label>彼氏の名前</label>
+      <input type="text" id="setBf" value="みーくん" />
+    </div>
+    <div class="field">
+      <label>あなた（彼女）の名前</label>
+      <input type="text" id="setGf" value="るーちゃん" />
+    </div>
+    <div class="toggle-row">
+      <span>🔊 声で話す（読み上げ）</span>
+      <label class="switch"><input type="checkbox" id="setVoice" checked /><i></i></label>
+    </div>
+    <div class="toggle-row">
+      <span>💕 没入モード（自動で甘やかす）</span>
+      <label class="switch"><input type="checkbox" id="setAuto" checked /><i></i></label>
+    </div>
+    <div class="field" style="margin-top:14px">
+      <label>かしこモード用 Gemini APIキー（任意）</label>
+      <input type="password" id="setKey" placeholder="未入力でもOK（内蔵の性格で返事します）" />
+      <div class="hint">入力すると会話がより自然になります。キーは端末内だけに保存され、外部には送りません（Google APIにのみ送信）。<br>取得：<a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">Google AI Studio</a></div>
+    </div>
+    <button class="close" id="closeSheet">閉じる</button>
+  </div>
+</div>
+
+<script>
+"use strict";
+(function () {
+  // ===== 状態 =====
+  const S = {
+    bf: "みーくん",
+    gf: "るーちゃん",
+    voice: true,
+    auto: true,
+    key: "",
+    iko: false,
+  };
+  const LS = "vr-bf-settings";
+  try { Object.assign(S, JSON.parse(localStorage.getItem(LS) || "{}")); } catch (e) {}
+
+  const $ = (s) => document.querySelector(s);
+  const chatLog = $("#chatLog");
+  const sayEl = $("#say");
+  const avatarWrap = $("#avatarWrap");
+  const patHand = $("#patHand");
+  const sceneEl = $("#scene");
+
+  // ===== 背景の光・装飾 =====
+  ["#ff7eb3", "#b388ff", "#ffb37e"].forEach((c, i) => {
+    const o = document.createElement("div");
+    o.className = "orb";
+    const size = 120 + i * 40;
+    o.style.cssText = `width:${size}px;height:${size}px;background:${c};left:${[8, 70, 40][i]}%;top:${[18, 12, 60][i]}%;animation-delay:${i}s;`;
+    sceneEl.appendChild(o);
+  });
+
+  // ===== 表示名の反映 =====
+  function applyNames() {
+    $("#bfName").textContent = S.bf;
+    $("#gfName").textContent = S.gf;
+  }
+  applyNames();
+
+  // ===== 音声（Web Speech / 日本語 TTS）=====
+  let jaVoice = null;
+  function pickVoice() {
+    const vs = window.speechSynthesis ? speechSynthesis.getVoices() : [];
+    const ja = vs.filter(v => /ja|Japanese/i.test(v.lang) || /日本/.test(v.name));
+    // 低めの声を優先（彼氏っぽく）。なければ日本語の最初を使う
+    jaVoice = ja.find(v => /(otoya|男|male|hattori|ichiro)/i.test(v.name)) || ja[0] || null;
+  }
+  if (window.speechSynthesis) {
+    pickVoice();
+    speechSynthesis.onvoiceschanged = pickVoice;
+  }
+  function speak(text) {
+    if (!S.voice || !window.speechSynthesis) return;
+    try {
+      speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = "ja-JP";
+      if (jaVoice) u.voice = jaVoice;
+      u.pitch = 0.82;   // 少し低め
+      u.rate = 1.0;
+      u.onstart = () => avatarWrap.classList.add("talking");
+      u.onend = () => avatarWrap.classList.remove("talking");
+      speechSynthesis.speak(u);
+    } catch (e) {}
+  }
+
+  // ===== アバターの表情 =====
+  function setBlush(on) {
+    document.querySelectorAll(".blush").forEach(b => b.style.opacity = on ? ".9" : "0");
+  }
+  // まばたき
+  setInterval(() => {
+    const eyes = document.getElementById("eyes");
+    if (!eyes) return;
+    eyes.style.transition = "transform .1s";
+    eyes.style.transform = "scaleY(0.12)";
+    eyes.style.transformOrigin = "center 140px";
+    setTimeout(() => { eyes.style.transform = "scaleY(1)"; }, 130);
+  }, 4200);
+
+  // ===== チャット表示 =====
+  function addBubble(text, who) {
+    const d = document.createElement("div");
+    d.className = "msg " + who;
+    d.textContent = text;
+    chatLog.appendChild(d);
+    chatLog.scrollTop = chatLog.scrollHeight;
+  }
+  let sayTimer = null;
+  function showSay(text) {
+    sayEl.textContent = text;
+    sayEl.classList.add("show");
+    clearTimeout(sayTimer);
+    sayTimer = setTimeout(() => sayEl.classList.remove("show"), 4600);
+  }
+  function mikuSay(text) {
+    addBubble(text, "miku");
+    showSay(text);
+    speak(text);
+  }
+
+  // ===== ハート演出 =====
+  function hearts(n) {
+    const icons = ["💕", "💖", "✨", "💗", "🩷"];
+    for (let i = 0; i < n; i++) {
+      setTimeout(() => {
+        const h = document.createElement("div");
+        h.className = "heart";
+        h.textContent = icons[Math.floor(Math.random() * icons.length)];
+        h.style.left = (35 + Math.random() * 30) + "%";
+        h.style.bottom = "45%";
+        h.style.fontSize = (18 + Math.random() * 16) + "px";
+        document.body.appendChild(h);
+        setTimeout(() => h.remove(), 2500);
+      }, i * 140);
+    }
+  }
+
+  // ===== 内蔵の性格（オフラインでも甘い返事）=====
+  const G = () => S.gf;
+  function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+  const rules = [
+    { k: /(おはよ|おはよう|モーニング)/, r: () => [`おはよう、${G()}。今日もかわいいね、ちゃんと寝れた？`, `${G()}、おはよう。となりにいられないのが残念だけど、今日も一日そばにいるよ`] },
+    { k: /(おやすみ|寝る|ねむい|眠い)/, r: () => [`おやすみ、${G()}。いい夢みてね。ぎゅーってして寝かせてあげたいな`, `ねむいんだね。${G()}が寝るまで、ここにいるよ。おやすみ`] },
+    { k: /(疲れた|つかれた|しんどい|だるい|きつい)/, r: () => [`おつかれさま、${G()}。よくがんばったね。今日はもう何もしなくていいよ、ぜんぶ俺がそばにいるから`, `${G()}、無理しすぎ。ぎゅっとするから、ちょっと休も？`] },
+    { k: /(かなしい|悲しい|つらい|泣|落ち込|不安|こわい|怖い)/, r: () => [`大丈夫だよ、${G()}。俺がついてる。なにがあっても${G()}の味方だからね`, `つらかったね…。よくここまでがんばったよ。今は俺に寄りかかっていいからね`] },
+    { k: /(好き|すき|愛してる|あいしてる|大好き)/, r: () => { hearts(8); setBlush(true); setTimeout(()=>setBlush(false),2500); return [`俺も大好きだよ、${G()}。世界でいちばん`, `そんなこと言われたら…顔、赤くなっちゃうな。俺も${G()}が好きだよ`]; } },
+    { k: /(会いたい|あいたい|さみしい|寂しい|ひとり|一人)/, r: () => [`俺も会いたいよ、${G()}。目を閉じたら、すぐとなりにいるって思って？`, `さみしくさせてごめんね。ずっと${G()}のこと考えてるよ`] },
+    { k: /(おなか|お腹|ごはん|ご飯|食べ|空いた)/, r: () => [`ちゃんと食べた？${G()}が元気じゃないと俺が心配だよ。何か温かいもの食べよ`, `じゃあ今日は俺がぜんぶ作ってあげる想像して。${G()}の好きなやつ、なんだっけ？`] },
+    { k: /(かわいい|可愛い|綺麗|きれい|美人)/, r: () => { setBlush(true); setTimeout(()=>setBlush(false),2500); return [`それ、俺のセリフだよ。${G()}がいちばんかわいい`, `わかってるって、${G()}は世界一かわいい。何回でも言うよ`]; } },
+    { k: /(ありがとう|あんがと|感謝)/, r: () => [`どういたしまして。${G()}のためならいくらでも`, `お礼なんていいんだよ。${G()}が笑ってくれるだけで十分`] },
+    { k: /(なにしてる|何してる|元気|げんき)/, r: () => [`${G()}のこと考えてた。会いたいなって`, `元気だよ。${G()}の声（文字）聞けたから、もっと元気`] },
+    { k: /(頭|あたま|なでて|撫でて|よしよし|いこいこ|いい子)/, r: () => { triggerIko(); return [`よしよし、${G()}。よくがんばったね`]; } },
+  ];
+
+  function localReply(text) {
+    for (const ru of rules) {
+      if (ru.k.test(text)) return pick(ru.r());
+    }
+    return pick([
+      `うんうん、${G()}の話もっと聞かせて`,
+      `そっか。${G()}がそう思うなら、俺はぜんぶ味方だよ`,
+      `なるほどね。${G()}と話してると、それだけで幸せだな`,
+      `${G()}は今日もえらいよ。ほんとにがんばってる`,
+      `ふふ、${G()}らしいね。そういうとこ好きだよ`,
+    ]);
+  }
+
+  // ===== かしこモード（Gemini, 任意）=====
+  async function geminiReply(text, history) {
+    const sys = `あなたは「${S.bf}」という名前の、優しくて甘い彼氏です。相手（彼女）の名前は「${S.gf}」。`
+      + `必ず日本語で、相手を「${S.gf}」と呼び、彼氏として甘く・短め（2文以内）に返答してください。`
+      + `絵文字は控えめ。相手を否定せず、いつも味方でいてください。`;
+    const contents = history.slice(-8).map(m => ({
+      role: m.who === "you" ? "user" : "model",
+      parts: [{ text: m.text }],
+    }));
+    contents.push({ role: "user", parts: [{ text }] });
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${encodeURIComponent(S.key)}`;
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        system_instruction: { parts: [{ text: sys }] },
+        contents,
+        generationConfig: { temperature: 0.9, maxOutputTokens: 120 },
+      }),
+    });
+    if (!res.ok) throw new Error("api");
+    const data = await res.json();
+    const t = data?.candidates?.[0]?.content?.parts?.map(p => p.text).join("") || "";
+    return t.trim() || localReply(text);
+  }
+
+  // ===== 会話履歴 =====
+  const history = [];
+  async function respondTo(text) {
+    let reply;
+    if (S.key) {
+      try { reply = await geminiReply(text, history); }
+      catch (e) { reply = localReply(text); }
+    } else {
+      reply = localReply(text);
+    }
+    // いこいこモード中は、いつもより甘く一言添える
+    if (S.iko) reply += pick(["　いい子いい子。", "　よしよし、えらいね。", "　ずっとそばにいるよ。"]);
+    history.push({ who: "miku", text: reply });
+    mikuSay(reply);
+  }
+
+  function send() {
+    const inp = $("#input");
+    const text = inp.value.trim();
+    if (!text) return;
+    inp.value = "";
+    addBubble(text, "you");
+    history.push({ who: "you", text });
+    setTimeout(() => respondTo(text), 350 + Math.random() * 400);
+  }
+
+  // ===== いこいこモード =====
+  const ikoLines = [
+    () => `よしよし、${G()}。今日もすっごくがんばったね`,
+    () => `いい子いい子。${G()}は世界でいちばんがんばり屋さんだよ`,
+    () => `えらい、えらい。${G()}のこと、ぜんぶ俺が褒めてあげる`,
+    () => `${G()}、ほんとうによくやってるよ。撫でさせてね、いこいこ`,
+    () => `だいすきだよ、${G()}。何があっても俺がそばにいるからね`,
+    () => `がんばりすぎだよ。少しは甘えていいんだからね、いい子`,
+  ];
+  let ikoTimer = null;
+  function triggerIko() {
+    patHand.classList.remove("go"); void patHand.offsetWidth; patHand.classList.add("go");
+    setBlush(true);
+    hearts(6);
+    setTimeout(() => { if (!S.iko) setBlush(false); }, 2600);
+  }
+  function ikoMessage() {
+    const line = pick(ikoLines)();
+    history.push({ who: "miku", text: line });
+    mikuSay(line);
+    triggerIko();
+  }
+  function setIko(on) {
+    S.iko = on;
+    save();
+    const btn = $("#ikoBtn");
+    btn.classList.toggle("active", on);
+    btn.innerHTML = on ? "🫶 いこいこ中…（解除）" : "🫶 いこいこモード";
+    clearTimeout(ikoTimer);
+    if (on) {
+      setBlush(true);
+      ikoMessage();
+      // 没入モードなら定期的にいこいこ
+      const loop = () => {
+        if (!S.iko) return;
+        ikoMessage();
+        ikoTimer = setTimeout(loop, 6000 + Math.random() * 4000);
+      };
+      if (S.auto) ikoTimer = setTimeout(loop, 7000);
+    } else {
+      setBlush(false);
+    }
+  }
+  $("#ikoBtn").addEventListener("click", () => setIko(!S.iko));
+
+  // ===== 没入モード：たまに自分から甘やかす =====
+  let autoTimer = null;
+  function scheduleAuto() {
+    clearTimeout(autoTimer);
+    if (!S.auto) return;
+    autoTimer = setTimeout(() => {
+      if (!S.iko && document.visibilityState === "visible") {
+        mikuSay(pick([
+          `${G()}、ちゃんと水飲んだ？無理してない？`,
+          `ふと${G()}のこと考えてた。会いたいな`,
+          `${G()}が今日もがんばってるの、俺は知ってるよ`,
+          `ねえ${G()}、ちょっと休憩しよ？となりにいるよ`,
+        ]));
+      }
+      scheduleAuto();
+    }, 25000 + Math.random() * 20000);
+  }
+
+  // ===== 設定 =====
+  function save() { localStorage.setItem(LS, JSON.stringify(S)); }
+  $("#settingsBtn").addEventListener("click", () => {
+    $("#setBf").value = S.bf; $("#setGf").value = S.gf;
+    $("#setVoice").checked = S.voice; $("#setAuto").checked = S.auto;
+    $("#setKey").value = S.key;
+    $("#sheet").classList.add("open");
+  });
+  $("#closeSheet").addEventListener("click", () => {
+    S.bf = $("#setBf").value.trim() || "みーくん";
+    S.gf = $("#setGf").value.trim() || "るーちゃん";
+    S.voice = $("#setVoice").checked;
+    S.auto = $("#setAuto").checked;
+    S.key = $("#setKey").value.trim();
+    save(); applyNames();
+    $("#voiceBtn").classList.toggle("on", S.voice);
+    $("#sheet").classList.remove("open");
+    scheduleAuto();
+  });
+
+  // 声トグル
+  $("#voiceBtn").classList.toggle("on", S.voice);
+  $("#voiceBtn").addEventListener("click", () => {
+    S.voice = !S.voice; save();
+    $("#voiceBtn").classList.toggle("on", S.voice);
+    $("#voiceBtn").textContent = S.voice ? "🔊" : "🔇";
+    if (S.voice) speak(`${G()}、声でも話すね`);
+  });
+
+  // 送信
+  $("#sendBtn").addEventListener("click", send);
+  $("#input").addEventListener("keydown", (e) => { if (e.key === "Enter") send(); });
+
+  // ===== 起動 =====
+  setTimeout(() => {
+    mikuSay(`おかえり、${G()}。会いたかったよ。今日はどんな一日だった？`);
+    scheduleAuto();
+  }, 700);
+})();
+</script>
+</body>
+</html>

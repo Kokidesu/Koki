@@ -15,6 +15,7 @@
 | `projects/koki-gmail/` | Koki Gmail要約プロトタイプ（FastAPI + Claude + デプロイ設定） | trusting-pascal |
 | `projects/case-interview/` | ケース面接ドリル（全コンサル対応のWebアプリ。GitHub Pagesで公開可） | optimistic-thompson |
 | `projects/photo-tutor/` | 写真で学ぶAI家庭教師（写真→答え＋解説を日英で返す学習用Webアプリ。Gemini無料API・単一HTML） | dreamy-faraday |
+| `projects/vr-boyfriend/` | みーくん（VR彼氏アプリ。るーちゃん専用・いこいこモード付き。単一HTML＋写真アバター） | exciting-mendel |
 
 ## メモ
 - 各プロジェクトの元のブランチもGitHubにそのまま残っています（消していません）。

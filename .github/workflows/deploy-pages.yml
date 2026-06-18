@@ -5,6 +5,7 @@ name: Deploy apps to GitHub Pages
 #   - トップ:         /              (projects/landing)
 #   - 写真AI家庭教師:  /photo-tutor/  (projects/photo-tutor)
 #   - ケース面接:      /case-interview/ (projects/case-interview)
+#   - VR彼氏みーくん:  /vr-boyfriend/   (projects/vr-boyfriend)
 
 on:
   push:
@@ -13,6 +14,7 @@ on:
       - "projects/landing/**"
       - "projects/photo-tutor/**"
       - "projects/case-interview/**"
+      - "projects/vr-boyfriend/**"
       - ".github/workflows/deploy-pages.yml"
   workflow_dispatch:
 
@@ -43,6 +45,8 @@ jobs:
           cp -r projects/photo-tutor/. _site/photo-tutor/
           mkdir -p _site/case-interview
           cp -r projects/case-interview/. _site/case-interview/
+          mkdir -p _site/vr-boyfriend
+          cp -r projects/vr-boyfriend/. _site/vr-boyfriend/
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
