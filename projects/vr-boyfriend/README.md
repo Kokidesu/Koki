@@ -2,7 +2,7 @@
 
 るーちゃん専用の、やさしい彼氏「みーくん」と話せる単一HTMLのWebアプリ。
 
-公開URL（GitHub Pages）: https://kokidesu.github.io/koki/vr-boyfriend/
+公開URL（GitHub Pages）: https://kokidesu.github.io/Koki/vr-boyfriend/
 
 ## 特長
 - 💬 **チャット**：みーくんが「るーちゃん」と呼んで甘く返事してくれる
