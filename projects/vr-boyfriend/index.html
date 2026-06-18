@@ -168,6 +168,33 @@
   .iko:active { transform: scale(.94); }
   .iko.active { background: linear-gradient(135deg, #ffd166, var(--accent)); color: #3a0f22; }
 
+  /* 息くさくさボタン（いこいこの上に重ねる） */
+  .kusa {
+    position: absolute; right: 14px; bottom: 200px; z-index: 28;
+    background: linear-gradient(135deg, #7bd88f, #4fb477); color: #093a1c;
+    border: none; border-radius: 999px; padding: 12px 18px; font-weight: 800; font-size: .95rem;
+    cursor: pointer; box-shadow: 0 8px 22px rgba(79,180,119,.5); transition: transform .12s;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .kusa:active { transform: scale(.94); }
+  .kusa.active { background: linear-gradient(135deg, #b6f7a8, #8fe06a); color: #0a3a14; animation: kusaShake .5s ease-in-out infinite; }
+  @keyframes kusaShake { 0%,100%{ transform: translateX(0);} 25%{ transform: translateX(-2px);} 75%{ transform: translateX(2px);} }
+
+  /* くさい煙が舞う */
+  .stink { position: absolute; z-index: 23; font-size: 26px; pointer-events: none; animation: stinkRise 2.6s ease-out forwards; filter: drop-shadow(0 0 6px rgba(120,220,140,.6)); }
+  @keyframes stinkRise {
+    0% { transform: translateY(0) scale(.5) rotate(0deg); opacity: 0; }
+    15% { opacity: .9; }
+    60% { opacity: .9; }
+    100% { transform: translateY(-180px) scale(1.5) rotate(18deg); opacity: 0; }
+  }
+  /* くさくさモード中は画面にうっすら緑のもや */
+  .stink-haze {
+    position: absolute; inset: 0; z-index: 12; pointer-events: none; opacity: 0; transition: opacity .5s;
+    background: radial-gradient(60% 40% at 50% 42%, rgba(120,220,140,.28), transparent 70%);
+  }
+  .stink-haze.on { opacity: 1; }
+
   /* ハートが舞う */
   .heart { position: absolute; z-index: 22; font-size: 22px; pointer-events: none; animation: rise 2.4s ease-out forwards; }
   @keyframes rise {
@@ -232,6 +259,9 @@
   </div>
 </div>
 
+<div class="stink-haze" id="stinkHaze"></div>
+
+<button class="kusa" id="kusaBtn">💨 息くさくさモード</button>
 <button class="iko" id="ikoBtn">🫶 いこいこモード</button>
 
 <div class="chat-log" id="chatLog"></div>
@@ -281,6 +311,7 @@
     auto: true,
     key: "",
     iko: false,
+    kusa: false,
   };
   const LS = "vr-bf-settings";
   try { Object.assign(S, JSON.parse(localStorage.getItem(LS) || "{}")); } catch (e) {}
@@ -387,6 +418,23 @@
     }
   }
 
+  // ===== くさい煙演出 =====
+  function stinks(n) {
+    const icons = ["💨", "🤢", "😷", "🍃", "💚"];
+    for (let i = 0; i < n; i++) {
+      setTimeout(() => {
+        const s = document.createElement("div");
+        s.className = "stink";
+        s.textContent = icons[Math.floor(Math.random() * icons.length)];
+        s.style.left = (40 + Math.random() * 20) + "%";
+        s.style.bottom = "48%";
+        s.style.fontSize = (20 + Math.random() * 16) + "px";
+        document.body.appendChild(s);
+        setTimeout(() => s.remove(), 2700);
+      }, i * 150);
+    }
+  }
+
   // ===== 内蔵の性格（オフラインでも甘い返事）=====
   const G = () => S.gf;
   function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
@@ -403,6 +451,7 @@
     { k: /(ありがとう|あんがと|感謝)/, r: () => [`どういたしまして。${G()}のためならいくらでも`, `お礼なんていいんだよ。${G()}が笑ってくれるだけで十分`] },
     { k: /(なにしてる|何してる|元気|げんき)/, r: () => [`${G()}のこと考えてた。会いたいなって`, `元気だよ。${G()}の声（文字）聞けたから、もっと元気`] },
     { k: /(頭|あたま|なでて|撫でて|よしよし|いこいこ|いい子)/, r: () => { triggerIko(); return [`よしよし、${G()}。よくがんばったね`]; } },
+    { k: /(息|いき|くさい|臭い|口臭|くさくさ|歯|歯みがき|はみがき|にんにく|ニンニク)/, r: () => { triggerKusa(); return [`ん？…${G()}、ちょっと息くさいぞ〜😷　なんてね、そんなとこも好きだよ`, `くんくん…うわっ、にんにく食べたでしょ${G()}！笑　でも全部ひっくるめてだいすき`]; } },
   ];
 
   function localReply(text) {
@@ -456,6 +505,8 @@
     }
     // いこいこモード中は、いつもより甘く一言添える
     if (S.iko) reply += pick(["　いい子いい子。", "　よしよし、えらいね。", "　ずっとそばにいるよ。"]);
+    // 息くさくさモード中は、甘くからかう一言を添える
+    if (S.kusa) { reply += pick(["　…っていうか、ちょっと息くさいぞ😷笑", "　くんくん…やっぱ今日もくさい！でも好き💚", "　歯みがきした？ま、くさくてもかわいいけどね"]); triggerKusa(); }
     history.push({ who: "miku", text: reply });
     mikuSay(reply);
   }
@@ -514,6 +565,48 @@
     }
   }
   $("#ikoBtn").addEventListener("click", () => setIko(!S.iko));
+
+  // ===== 息くさくさモード（甘くからかう）=====
+  const stinkHaze = $("#stinkHaze");
+  const kusaLines = [
+    () => `くんくん…${G()}、今日も息くさいぞ〜😷　でも、それも込みでだいすき`,
+    () => `うわっ、近づいたらくさい！笑　${G()}、ちゃんと歯みがきした？`,
+    () => `にんにく食べたでしょ${G()}？ばれてるよ〜💨　まあかわいいから許す`,
+    () => `はぁ〜ってして？……うん、くさい！笑　でも世界一かわいいくささだね`,
+    () => `${G()}のくさい息も、俺にとってはごほうびです（変かな？笑）`,
+    () => `くさくさ〜！でもね、${G()}ならどんな匂いでも好きになっちゃうんだよ`,
+  ];
+  let kusaTimer = null;
+  function triggerKusa() {
+    stinks(6);
+    stinkHaze.classList.add("on");
+    setTimeout(() => { if (!S.kusa) stinkHaze.classList.remove("on"); }, 2600);
+  }
+  function kusaMessage() {
+    const line = pick(kusaLines)();
+    history.push({ who: "miku", text: line });
+    mikuSay(line);
+    triggerKusa();
+  }
+  function setKusa(on) {
+    S.kusa = on;
+    save();
+    const btn = $("#kusaBtn");
+    btn.classList.toggle("active", on);
+    btn.innerHTML = on ? "💨 くさくさ中…（解除）" : "💨 息くさくさモード";
+    stinkHaze.classList.toggle("on", on);
+    clearTimeout(kusaTimer);
+    if (on) {
+      kusaMessage();
+      const loop = () => {
+        if (!S.kusa) return;
+        kusaMessage();
+        kusaTimer = setTimeout(loop, 6000 + Math.random() * 4000);
+      };
+      if (S.auto) kusaTimer = setTimeout(loop, 7000);
+    }
+  }
+  $("#kusaBtn").addEventListener("click", () => setKusa(!S.kusa));
 
   // ===== 没入モード：たまに自分から甘やかす =====
   let autoTimer = null;
