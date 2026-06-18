@@ -61,13 +61,19 @@
   header {
     position: absolute; top: 0; left: 0; right: 0; z-index: 30;
     display: flex; align-items: center; gap: 10px;
-    padding: 12px 14px;
-    background: linear-gradient(to bottom, rgba(18,10,22,.7), transparent);
+    padding: 10px 14px calc(10px); padding-top: calc(10px + env(safe-area-inset-top));
+    background: linear-gradient(to bottom, rgba(18,10,22,.85), rgba(18,10,22,.35) 70%, transparent);
+    backdrop-filter: blur(6px);
   }
-  .who { display: flex; flex-direction: column; line-height: 1.15; }
-  .who b { font-size: 1.02rem; letter-spacing: .02em; }
-  .who small { color: var(--muted); font-size: .72rem; }
-  .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #46d6b6; box-shadow: 0 0 8px #46d6b6; display: inline-block; margin-right: 5px; }
+  .hdr-ava {
+    width: 42px; height: 42px; border-radius: 50%; object-fit: cover;
+    border: 2px solid var(--accent); flex: 0 0 auto; box-shadow: 0 2px 10px rgba(0,0,0,.4);
+  }
+  .who { display: flex; flex-direction: column; line-height: 1.2; min-width: 0; }
+  .who b { font-size: 1.04rem; letter-spacing: .02em; }
+  .who small { color: var(--muted); font-size: .72rem; display: flex; align-items: center; }
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #46d6b6; box-shadow: 0 0 8px #46d6b6; display: inline-block; margin-right: 5px; animation: livePulse 2s ease-in-out infinite; }
+  @keyframes livePulse { 0%,100%{ opacity:1;} 50%{ opacity:.4;} }
   header .spacer { flex: 1; }
   .icon-btn {
     background: var(--panel); border: 1px solid var(--border); color: var(--text);
@@ -126,18 +132,30 @@
 
   /* ===== 下部チャット ===== */
   .chat-log {
-    position: absolute; left: 0; right: 0; bottom: 92px; z-index: 25;
-    max-height: 34vh; overflow-y: auto; padding: 10px 14px;
-    display: flex; flex-direction: column; gap: 8px;
-    mask-image: linear-gradient(to bottom, transparent, #000 18%);
-    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 18%);
+    position: absolute; left: 0; right: 0; bottom: 126px; z-index: 25;
+    max-height: 32vh; overflow-y: auto; padding: 10px 14px;
+    display: flex; flex-direction: column; gap: 9px;
+    mask-image: linear-gradient(to bottom, transparent, #000 16%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 16%);
     scrollbar-width: none;
   }
   .chat-log::-webkit-scrollbar { display: none; }
-  .msg { max-width: 78%; padding: 9px 13px; border-radius: 16px; font-size: .92rem; line-height: 1.45; word-break: break-word; animation: pop .25s ease; }
-  @keyframes pop { from { transform: scale(.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-  .msg.you { align-self: flex-end; background: var(--bubble-you); color: #3a0f22; border-bottom-right-radius: 5px; }
-  .msg.miku { align-self: flex-start; background: var(--panel-2); border: 1px solid var(--border); border-bottom-left-radius: 5px; }
+  /* メッセージ行（アバター＋吹き出し＋時刻） */
+  .line { display: flex; align-items: flex-end; gap: 6px; max-width: 86%; animation: pop .25s ease; }
+  .line.miku { align-self: flex-start; }
+  .line.you { align-self: flex-end; margin-left: auto; }
+  .msg-ava { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border); flex: 0 0 auto; }
+  .time { font-size: .62rem; color: var(--muted); flex: 0 0 auto; margin-bottom: 2px; }
+  .msg { padding: 9px 13px; border-radius: 16px; font-size: .92rem; line-height: 1.45; word-break: break-word; box-shadow: 0 2px 8px rgba(0,0,0,.18); }
+  @keyframes pop { from { transform: translateY(6px) scale(.97); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
+  .msg.you { background: var(--bubble-you); color: #3a0f22; border-bottom-right-radius: 5px; }
+  .msg.miku { background: var(--panel-2); border: 1px solid var(--border); border-bottom-left-radius: 5px; }
+  /* 入力中インジケータ */
+  .typing { display: inline-flex; gap: 4px; align-items: center; padding: 12px 14px; }
+  .typing span { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); display: inline-block; animation: blink 1.2s infinite; }
+  .typing span:nth-child(2){ animation-delay: .2s; }
+  .typing span:nth-child(3){ animation-delay: .4s; }
+  @keyframes blink { 0%,60%,100%{ opacity:.3; transform: translateY(0);} 30%{ opacity:1; transform: translateY(-3px);} }
 
   /* 入力バー */
   .composer {
@@ -157,27 +175,26 @@
   }
   .send:active { transform: scale(.92); }
 
-  /* いこいこボタン（大きめ） */
-  .iko {
-    position: absolute; right: 14px; bottom: 150px; z-index: 28;
-    background: linear-gradient(135deg, var(--accent-3), var(--accent)); color: #fff;
-    border: none; border-radius: 999px; padding: 12px 18px; font-weight: 800; font-size: .95rem;
-    cursor: pointer; box-shadow: 0 8px 22px rgba(179,136,255,.5); transition: transform .12s;
-    display: flex; align-items: center; gap: 6px;
+  /* ===== モードバー（横スクロールのチップ） ===== */
+  .mode-bar {
+    position: absolute; left: 0; right: 0; bottom: 72px; z-index: 27;
+    display: flex; gap: 8px; padding: 6px 12px; overflow-x: auto;
+    scrollbar-width: none; -webkit-overflow-scrolling: touch;
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 3%, #000 97%, transparent);
+    mask-image: linear-gradient(to right, transparent, #000 3%, #000 97%, transparent);
   }
-  .iko:active { transform: scale(.94); }
-  .iko.active { background: linear-gradient(135deg, #ffd166, var(--accent)); color: #3a0f22; }
-
-  /* 息くさくさボタン（いこいこの上に重ねる） */
-  .kusa {
-    position: absolute; right: 14px; bottom: 200px; z-index: 28;
-    background: linear-gradient(135deg, #7bd88f, #4fb477); color: #093a1c;
-    border: none; border-radius: 999px; padding: 12px 18px; font-weight: 800; font-size: .95rem;
-    cursor: pointer; box-shadow: 0 8px 22px rgba(79,180,119,.5); transition: transform .12s;
-    display: flex; align-items: center; gap: 6px;
+  .mode-bar::-webkit-scrollbar { display: none; }
+  .chip {
+    flex: 0 0 auto; display: inline-flex; align-items: center; gap: 6px;
+    background: var(--panel); color: var(--text); border: 1px solid var(--border);
+    border-radius: 999px; padding: 8px 14px; font-size: .84rem; font-weight: 700;
+    cursor: pointer; white-space: nowrap; transition: .15s; backdrop-filter: blur(8px);
   }
-  .kusa:active { transform: scale(.94); }
-  .kusa.active { background: linear-gradient(135deg, #b6f7a8, #8fe06a); color: #0a3a14; animation: kusaShake .5s ease-in-out infinite; }
+  .chip:active { transform: scale(.95); }
+  .chip.active { color: #2a0f1e; border-color: transparent; box-shadow: 0 6px 16px rgba(0,0,0,.32); }
+  .chip.iko.active  { background: linear-gradient(135deg, #ffd166, var(--accent)); }
+  .chip.kusa.active { background: linear-gradient(135deg, #b6f7a8, #8fe06a); animation: kusaShake .5s ease-in-out infinite; }
+  .chip.ashi.active { background: linear-gradient(135deg, #aee1ff, #7ec8ff); }
   @keyframes kusaShake { 0%,100%{ transform: translateX(0);} 25%{ transform: translateX(-2px);} 75%{ transform: translateX(2px);} }
 
   /* くさい煙が舞う */
@@ -194,6 +211,16 @@
     background: radial-gradient(60% 40% at 50% 42%, rgba(120,220,140,.28), transparent 70%);
   }
   .stink-haze.on { opacity: 1; }
+
+  /* うれしくて足バタバタ＝アバターがぷるぷる小刻みに揺れる */
+  .avatar-wrap.kicking { animation: kick .18s ease-in-out infinite; }
+  @keyframes kick {
+    0%   { transform: translateY(0) rotate(0deg); }
+    25%  { transform: translateY(-4px) rotate(-3deg); }
+    50%  { transform: translateY(0) rotate(0deg); }
+    75%  { transform: translateY(-4px) rotate(3deg); }
+    100% { transform: translateY(0) rotate(0deg); }
+  }
 
   /* ハートが舞う */
   .heart { position: absolute; z-index: 22; font-size: 22px; pointer-events: none; animation: rise 2.4s ease-out forwards; }
@@ -240,9 +267,10 @@
 <div class="scene" id="scene"></div>
 
 <header>
+  <img class="hdr-ava" src="miikun.jpg" alt="みーくん" />
   <div class="who">
-    <b><span class="status-dot"></span><span id="bfName">みーくん</span></b>
-    <small><span id="gfName">るーちゃん</span>のこと、ずっと見てるよ</small>
+    <b><span id="bfName">みーくん</span></b>
+    <small><span class="status-dot"></span>オンライン・<span id="gfName">るーちゃん</span>の彼氏</small>
   </div>
   <div class="spacer"></div>
   <button class="icon-btn" id="voiceBtn" title="声のON/OFF">🔊</button>
@@ -261,10 +289,13 @@
 
 <div class="stink-haze" id="stinkHaze"></div>
 
-<button class="kusa" id="kusaBtn">💨 息くさくさモード</button>
-<button class="iko" id="ikoBtn">🫶 いこいこモード</button>
-
 <div class="chat-log" id="chatLog"></div>
+
+<div class="mode-bar">
+  <button class="chip iko" id="ikoBtn">🫶 いこいこ</button>
+  <button class="chip kusa" id="kusaBtn">💨 息くさくさ</button>
+  <button class="chip ashi" id="ashiBtn">🦵 足バタバタ</button>
+</div>
 
 <div class="composer">
   <input id="input" type="text" placeholder="みーくんに話しかけてみて…" autocomplete="off" />
@@ -312,9 +343,11 @@
     key: "",
     iko: false,
     kusa: false,
+    ashi: false,
   };
   const LS = "vr-bf-settings";
   try { Object.assign(S, JSON.parse(localStorage.getItem(LS) || "{}")); } catch (e) {}
+  S.iko = S.kusa = S.ashi = false; // 各モードは起動時オフから始める
 
   const $ = (s) => document.querySelector(s);
   const chatLog = $("#chatLog");
@@ -381,13 +414,39 @@
   }, 4200);
 
   // ===== チャット表示 =====
+  function nowTime() {
+    const d = new Date();
+    return String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0");
+  }
   function addBubble(text, who) {
-    const d = document.createElement("div");
-    d.className = "msg " + who;
-    d.textContent = text;
-    chatLog.appendChild(d);
+    const line = document.createElement("div");
+    line.className = "line " + who;
+    const bubble = document.createElement("div");
+    bubble.className = "msg " + who;
+    bubble.textContent = text;
+    const time = document.createElement("span");
+    time.className = "time";
+    time.textContent = nowTime();
+    if (who === "miku") {
+      const ava = document.createElement("img");
+      ava.className = "msg-ava"; ava.src = "miikun.jpg"; ava.alt = "";
+      line.append(ava, bubble, time);
+    } else {
+      line.append(time, bubble);
+    }
+    chatLog.appendChild(line);
     chatLog.scrollTop = chatLog.scrollHeight;
   }
+  // 入力中（…）インジケータ
+  function showTyping() {
+    hideTyping();
+    const line = document.createElement("div");
+    line.className = "line miku"; line.id = "typingLine";
+    line.innerHTML = '<img class="msg-ava" src="miikun.jpg" alt=""><div class="msg miku typing"><span></span><span></span><span></span></div>';
+    chatLog.appendChild(line);
+    chatLog.scrollTop = chatLog.scrollHeight;
+  }
+  function hideTyping() { const t = document.getElementById("typingLine"); if (t) t.remove(); }
   let sayTimer = null;
   function showSay(text) {
     sayEl.textContent = text;
@@ -396,6 +455,7 @@
     sayTimer = setTimeout(() => sayEl.classList.remove("show"), 4600);
   }
   function mikuSay(text) {
+    hideTyping();
     addBubble(text, "miku");
     showSay(text);
     speak(text);
@@ -435,6 +495,23 @@
     }
   }
 
+  // ===== 足バタバタ演出（うれしさ爆発の絵文字）=====
+  function ashiBurst(n) {
+    const icons = ["🦵", "👟", "✨", "💞", "🎵"];
+    for (let i = 0; i < n; i++) {
+      setTimeout(() => {
+        const e = document.createElement("div");
+        e.className = "heart"; // 上昇アニメを流用
+        e.textContent = icons[Math.floor(Math.random() * icons.length)];
+        e.style.left = (28 + Math.random() * 44) + "%";
+        e.style.bottom = "42%";
+        e.style.fontSize = (18 + Math.random() * 16) + "px";
+        document.body.appendChild(e);
+        setTimeout(() => e.remove(), 2500);
+      }, i * 110);
+    }
+  }
+
   // ===== 内蔵の性格（オフラインでも甘い返事）=====
   const G = () => S.gf;
   function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
@@ -452,6 +529,7 @@
     { k: /(なにしてる|何してる|元気|げんき)/, r: () => [`${G()}のこと考えてた。会いたいなって`, `元気だよ。${G()}の声（文字）聞けたから、もっと元気`] },
     { k: /(頭|あたま|なでて|撫でて|よしよし|いこいこ|いい子)/, r: () => { triggerIko(); return [`よしよし、${G()}。よくがんばったね`]; } },
     { k: /(息|いき|くさい|臭い|口臭|くさくさ|歯|歯みがき|はみがき|にんにく|ニンニク)/, r: () => { triggerKusa(); return [`ん？…${G()}、ちょっと息くさいぞ〜😷　なんてね、そんなとこも好きだよ`, `くんくん…うわっ、にんにく食べたでしょ${G()}！笑　でも全部ひっくるめてだいすき`]; } },
+    { k: /(足ばた|足バタ|バタバタ|うれしい|嬉しい|やった|きゃー|キャー|テンション|わーい)/, r: () => { triggerAshi(); return [`うわ〜${G()}にそんなこと言われたら、足バタバタしちゃうよ🦵💞`, `うれしすぎて足バタバタ止まらない！${G()}のせいだからね`]; } },
   ];
 
   function localReply(text) {
@@ -507,6 +585,8 @@
     if (S.iko) reply += pick(["　いい子いい子。", "　よしよし、えらいね。", "　ずっとそばにいるよ。"]);
     // 息くさくさモード中は、甘くからかう一言を添える
     if (S.kusa) { reply += pick(["　…っていうか、ちょっと息くさいぞ😷笑", "　くんくん…やっぱ今日もくさい！でも好き💚", "　歯みがきした？ま、くさくてもかわいいけどね"]); triggerKusa(); }
+    // 足バタバタモード中は、うれしさを爆発させる一言を添える
+    if (S.ashi) { reply += pick(["　…って、うれしくて足バタバタしてる🦵💞", "　あー幸せ、足バタバタ止まらない！", "　${gf}とこうしてるだけで足バタバタだよ".replace("${gf}", G())]); triggerAshi(); }
     history.push({ who: "miku", text: reply });
     mikuSay(reply);
   }
@@ -518,7 +598,8 @@
     inp.value = "";
     addBubble(text, "you");
     history.push({ who: "you", text });
-    setTimeout(() => respondTo(text), 350 + Math.random() * 400);
+    showTyping();
+    setTimeout(() => respondTo(text), 650 + Math.random() * 600);
   }
 
   // ===== いこいこモード =====
@@ -548,7 +629,7 @@
     save();
     const btn = $("#ikoBtn");
     btn.classList.toggle("active", on);
-    btn.innerHTML = on ? "🫶 いこいこ中…（解除）" : "🫶 いこいこモード";
+    btn.innerHTML = on ? "🫶 いこいこ中 ✓" : "🫶 いこいこ";
     clearTimeout(ikoTimer);
     if (on) {
       setBlush(true);
@@ -593,7 +674,7 @@
     save();
     const btn = $("#kusaBtn");
     btn.classList.toggle("active", on);
-    btn.innerHTML = on ? "💨 くさくさ中…（解除）" : "💨 息くさくさモード";
+    btn.innerHTML = on ? "💨 くさくさ中 ✓" : "💨 息くさくさ";
     stinkHaze.classList.toggle("on", on);
     clearTimeout(kusaTimer);
     if (on) {
@@ -607,6 +688,48 @@
     }
   }
   $("#kusaBtn").addEventListener("click", () => setKusa(!S.kusa));
+
+  // ===== 足バタバタモード（うれしくてジタバタ）=====
+  const ashiLines = [
+    () => `${G()}とお話しできて、足バタバタしちゃう🦵💞`,
+    () => `うれし〜！テンション上がって足バタバタ！`,
+    () => `${G()}のこと考えるだけで、足バタバタが止まらないんだよ`,
+    () => `ねえ${G()}、好きすぎてジタバタしちゃう…どうしてくれるの`,
+    () => `きゃー！${G()}かわいい！足バタバタ〜🎵`,
+    () => `しあわせで足バタバタ。${G()}、ずっとこのままがいいな`,
+  ];
+  let ashiTimer = null, ashiKickOff = null;
+  function triggerAshi() {
+    avatarWrap.classList.add("kicking");
+    ashiBurst(7);
+    clearTimeout(ashiKickOff);
+    ashiKickOff = setTimeout(() => { if (!S.ashi) avatarWrap.classList.remove("kicking"); }, 1500);
+  }
+  function ashiMessage() {
+    const line = pick(ashiLines)();
+    history.push({ who: "miku", text: line });
+    mikuSay(line);
+    triggerAshi();
+  }
+  function setAshi(on) {
+    S.ashi = on;
+    save();
+    const btn = $("#ashiBtn");
+    btn.classList.toggle("active", on);
+    btn.innerHTML = on ? "🦵 バタバタ中 ✓" : "🦵 足バタバタ";
+    avatarWrap.classList.toggle("kicking", on);
+    clearTimeout(ashiTimer);
+    if (on) {
+      ashiMessage();
+      const loop = () => {
+        if (!S.ashi) return;
+        ashiMessage();
+        ashiTimer = setTimeout(loop, 6000 + Math.random() * 4000);
+      };
+      if (S.auto) ashiTimer = setTimeout(loop, 7000);
+    }
+  }
+  $("#ashiBtn").addEventListener("click", () => setAshi(!S.ashi));
 
   // ===== 没入モード：たまに自分から甘やかす =====
   let autoTimer = null;
